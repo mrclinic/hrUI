@@ -1,0 +1,79 @@
+<p-toast dir="rtl"></p-toast>
+<div class="progress-spinner" *ngIf="isLoading$ | async;">
+  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+</div>
+<div class="card" dir="rtl">
+  <p-toolbar styleClass="mb-4">
+    <ng-template pTemplate="left">
+    </ng-template>
+    <ng-template pTemplate="right">
+      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+        (click)="openNew()"></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table responsiveLayout="stack" [value]="bloodGroups" selectionMode="single" [(selection)]="bloodGroup"
+    [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+        {{'bloodGroups' | translate }}
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of cols" class="th">
+          {{col.header}}
+        </th>
+        <th class="th"> {{'controlTilte' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-bloodgroup let-columns="columns">
+      <tr>
+        <td *ngFor="let col of cols" class="td" [ngSwitch]="col.field">
+          <ng-container *ngSwitchCase="'name'">
+            {{bloodgroup[col.field]}}
+          </ng-container>
+        </td>
+        <td class="td">
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+            (click)="editBloodGroup(bloodgroup)" title="{{'editTitle' | translate }}"></button>
+          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
+            class="p-button-rounded p-button-warning" (click)="deleteSelectedBloodGroup(bloodgroup)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog [(visible)]="bloodgroupDialog" [style]="{width: '750px'}" header="{{'BloodGroupDialogHeader' | translate }}"
+  [modal]="true" styleClass="p-fluid" dir="rtl">
+  <ng-template pTemplate="content">
+    <form [formGroup]="bloodgroupForm" (ngSubmit)="saveBloodGroup()">
+      <div class="p-field col-sm">
+        <span class="p-float-label">
+          <input pInputText formControlName="name" id="name" name="name" [(ngModel)]="bloodGroup.name" />
+          <small class="p-invalid" [style]="{color: 'red'}"
+            *ngIf="submitted && f['name'].invalid && f['name'].errors && f['name'].errors['required']">{{'PlaceError'
+            |
+            translate }}</small>
+          <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['name'].errors?.['maxlength']">{{'PlaceLength'
+            |
+            translate }}</small>
+          <label for="name" dir="rtl">{{'name' | translate }}</label>
+        </span>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="row">
+      <div class="p-button-rounded col-sm"></div>
+      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+        (click)="saveBloodGroup()"></button>
+      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+        class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
+      <div class="p-button-rounded col-sm"></div>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

@@ -1,0 +1,102 @@
+.th {
+  text-align: center !important;
+  position: sticky !important;
+  top: 0 !important;
+}
+
+.td {
+  text-align: center !important;
+}
+
+:host ::ng-deep .p-float-label>label {
+  right: 0.75rem !important;
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal:before {
+  border-top: 0px #dee2e6 !important;
+}
+
+:host ::ng-deep .p-toolbar {
+  background: unset !important;
+  border: 0px solid #dee2e6 !important;
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .mb-4 {
+  margin-bottom: 0.5rem !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+  background: #aa9fe7 !important;
+  border-width: 0px 0 0 0 !important;
+  padding: 0rem 3rem !important;
+}
+
+:host ::ng-deep .pi-angle-double-left:before {
+  content: "\e92e" !important;
+}
+
+:host ::ng-deep .pi-angle-double-right:before {
+  content: "\e92d" !important;
+}
+
+:host ::ng-deep .pi-angle-left:before {
+  content: "\e932" !important;
+}
+
+:host ::ng-deep .pi-angle-right:before {
+  content: "\e931" !important;
+}
+
+:host ::ng-deep .p-datatable .p-paginator-bottom {
+  border-width: 0px 0 0 0 !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-current {
+  border: 0px solid #dee2e6 !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-first,
+:host ::ng-deep .p-paginator .p-paginator-prev,
+:host ::ng-deep .p-paginator .p-paginator-next,
+:host ::ng-deep .p-paginator .p-paginator-last {
+  border: 0px solid #dee2e6 !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
+  border: 0px solid #dee2e6 !important;
+}
+
+:host ::ng-deep .p-dropdown {
+  border: 0px solid #ced4da !important;
+}
+
+:host ::ng-deep .p-breadcrumb {
+  padding: 0.5rem !important;
+}
+
+:host ::ng-deep .p-breadcrumb ul {
+  justify-content: center !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
+  padding: 0rem 1rem !important;
+  border: 0px solid #dee2e6 !important;
+}
+
+:host ::ng-deep .p-toolbar {
+  padding: 0rem 1.25rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  border-bottom: 0px solid #e9ecef !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  border-top: 0px solid #e9ecef !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding: 1.5rem !important;
+}

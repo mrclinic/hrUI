@@ -1,0 +1,152 @@
+<p-toast dir="rtl"></p-toast>
+<div class="progress-spinner" *ngIf="isLoading$ | async;">
+  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+</div>
+<div class="card" dir="rtl">
+  <p-toolbar styleClass="mb-4">
+    <ng-template pTemplate="left">
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+        (click)="openNew()"></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table responsiveLayout="scroll" [value]="userProfiles" selectionMode="single" [(selection)]="userProfile"
+    [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+        {{'UserProfiles' | translate }}
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of cols" class="th">
+          {{col.header}}
+        </th>
+        <th class="th"> {{'controlTilte' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-userProfile let-columns="columns">
+      <tr>
+        <td *ngFor="let col of cols" class="td" [ngSwitch]="col.field">
+          <ng-container *ngSwitchCase="'FatherName'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'MotherName'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'BirthPlace'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'BirthDate'">
+            {{userProfile[col.field] |date :'yyyy-MM-dd'}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'Gender'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'CardNumber'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'Address'">
+            {{userProfile[col.field]}}
+          </ng-container>
+          <ng-container *ngSwitchCase="'UserId'">
+            {{userProfile?.User?.FName}} {{ userProfile?.User?.LName }}
+          </ng-container>
+        </td>
+        <td class="td">
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+            (click)="editUserProfile(userProfile)" title="{{'editTitle' | translate }}"></button>
+          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
+            class="p-button-rounded p-button-warning" (click)="deleteSelectedUserProfile(userProfile)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="userProfileDialog" [style]="{width: '750px'}" header="{{'UserProfileHeaderDialog' | translate }}"
+  [modal]="true" styleClass="p-fluid" dir="rtl">
+  <ng-template pTemplate="content">
+
+    <div class="row">
+      <div class="p-field col-sm">
+        <label for="FatherName">{{'FatherName' | translate }}</label>
+        <input type="text" pInputText id="FatherName" [(ngModel)]="userProfile.FatherName" required autofocus
+          maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.FatherName">{{'fnameReq' |
+          translate
+          }}</small>
+      </div>
+      <div class="p-field col-sm">
+        <label for="MotherName">{{'MotherName' | translate }}</label>
+        <input id="MotherName" pInputText [(ngModel)]="userProfile.MotherName" required maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.MotherName">{{'lnameReq' |
+          translate
+          }}</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="p-field col-sm">
+        <label for="BirthPlace">{{'BirthPlace' | translate }}</label>
+        <input id="BirthPlace" pInputText [(ngModel)]="userProfile.BirthPlace" required maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthPlace">{{'usernameReq' |
+          translate
+          }}</small>
+      </div>
+      <div class="p-field col-sm">
+        <label for="BirthDate">{{'BirthDate' | translate }}</label>
+        <p-calendar id="BirthDate" [(ngModel)]="userProfile.BirthDate" dateFormat="yy-mm-dd" appendTo="body"
+          [required]=true [showIcon]="true" dataType="string"></p-calendar>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthDate">{{'passwordReq' |
+          translate
+          }}</small>
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="p-field col-sm">
+        <label for="Gender">{{'Gender' | translate }}</label>
+        <p-dropdown [options]="sexTypes" [showClear]="true" appendTo="body" name="Gender" [required]=true
+          [required]="isGenderReq" onClear="onClear()" [(ngModel)]="userProfile.Gender" placeholder="اختر الجنس">
+        </p-dropdown>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Gender">{{'mobileReq' |
+          translate
+          }}</small>
+      </div>
+      <div class="p-field col-sm">
+        <label for="Address">{{'Address' | translate }}</label>
+        <input id="Address" pInputText [(ngModel)]="userProfile.Address" required maxlength="11" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Address">{{'natNumReq' |
+          translate
+          }}</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="p-field col-sm">
+        <label for="CardNumber">{{'CardNumber' | translate }}</label>
+        <input id="CardNumber" pInputText [(ngModel)]="userProfile.CardNumber" required maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.CardNumber">{{'emailReq' |
+          translate
+          }}</small>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="row">
+      <div class="p-button-rounded col-sm"></div>
+      <div class="p-button-rounded col-sm"></div>
+      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+        (click)="saveUserProfile()"></button>
+      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+        class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
+      <div class="p-button-rounded col-sm"></div>
+      <div class="p-button-rounded col-sm"></div>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

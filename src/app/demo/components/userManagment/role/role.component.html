@@ -1,0 +1,88 @@
+<p-toast dir="rtl"></p-toast>
+<p-breadcrumb [model]="items"></p-breadcrumb>
+<div class="progress-spinner" *ngIf="isLoading$ | async;">
+  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+</div>
+<div class="card" dir="rtl">
+  <p-toolbar styleClass="mb-4">
+    <ng-template pTemplate="left">
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+        (click)="openNew()"></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table responsiveLayout="scroll" [value]="roles" selectionMode="single" [(selection)]="role" [rowHover]="true"
+    [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of cols" class="th">
+          {{col.header}}
+        </th>
+        <th class="th"> {{'controlTilte' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-role let-columns="columns">
+      <tr>
+        <td *ngFor="let col of cols" class="td">
+          {{role[col.field]}}
+        </td>
+        <td class="td">
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+            (click)="editRole(role)" title="{{'editTitle' | translate }}"></button>
+          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
+            class="p-button-rounded p-button-warning" (click)="deleteSelectedRole(role)"></button>
+          <button pButton pRipple icon="pi pi-slack" title="{{'RolePermissionsLabel' | translate }}"
+            class="p-button-rounded p-button-Primary" (click)="setPermissions(role)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="roleDialog" [style]="{width: '450px'}" header="{{'roleDialogHeader' | translate }}"
+  [modal]="true" styleClass="p-fluid" dir="rtl">
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <span class="p-float-label">
+        <input type="text" pInputText id="Name" [(ngModel)]="role.Name" required autofocus maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.Name">{{'NameError' | translate
+        }}</small>
+        <label for="Name" dir="rtl">{{'Name' | translate }}</label>
+      </span>
+    </div>
+    <p-divider></p-divider>
+    <div class="p-field">
+      <span class="p-float-label">
+        <input id="DisplayName" pInputText [(ngModel)]="role.DisplayName" required maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.DisplayName">{{'DisplayNameError' |
+        translate }}</small>
+        <label for="DisplayName" dir="rtl">{{'DisplayName' | translate }}</label>
+      </span>
+    </div>
+    <p-divider></p-divider>
+    <div class="p-field">
+      <span class="p-float-label">
+        <input id="StatusCode" pInputText type="number" [(ngModel)]="role.StatusCode" required />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.StatusCode">{{'StatusCodeError'
+        | translate }}</small>
+        <label for="StatusCode" dir="rtl">{{'StatusCode' | translate }}</label>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="row">
+      <div class="p-button-rounded col-sm"></div>
+      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+        (click)="saveRole()"></button>
+      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+        class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
+      <div class="p-button-rounded col-sm"></div>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
