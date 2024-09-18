@@ -19,8 +19,6 @@ import { UserService } from "src/app/demo/service/userManagment/user.service";
 import { RolePermission } from "src/app/demo/models/userManagment/RolePermission";
 import { UserProfile } from "src/app/demo/models/userManagment/UserProfile";
 import { Role } from "src/app/demo/models/userManagment/Role";
-import { BloodGroupActions } from "../../constants/actions/bloodgroup.action";
-import { BloodGroupService } from "src/app/demo/service/constants/bloodgroup.service";
 export interface UserStateModel {
   isLoading: boolean;
   isLoggedIn: boolean;
@@ -60,8 +58,7 @@ export class UserState {
     private readonly roleService: RoleService,
     private readonly permissionService: PermissionService,
     private readonly rolePermissionService: RolePermissionService,
-    private readonly userProfileService: UserProfileService,
-    private readonly bloodGroupService: BloodGroupService) { }
+    private readonly userProfileService: UserProfileService) { }
 
   /*User Actions */
   @Action(UserActions.AddUser)
@@ -168,7 +165,7 @@ export class UserState {
     ctx.patchState({ isLoggedIn: false, isLoading: true });
     try {
       localStorage.setItem('users.loggedUser', '{}');
-      const link = ['login'];
+      const link = ['auth/login'];
       this.zone.run(() => {
         this.router.navigate(link);
       });
@@ -724,80 +721,6 @@ export class UserState {
       });
     }
   }
-
-  /*BloodGroup Actions */
-  @Action(BloodGroupActions.AddBloodGroup)
-  async AddBloodGroup(ctx: Context, action: BloodGroupActions.AddBloodGroup) {
-    ctx.patchState({ isLoading: true });
-    try {
-      const result = await lastValueFrom(this.bloodGroupService
-        .AddBloodGroup(action.payLoad));
-      ctx.patchState({
-        LoadError: '',
-        isLoading: false
-      });
-    } catch (err: any) {
-      ctx.patchState({
-        LoadError: err,
-        isLoading: false
-      });
-    }
-  }
-  @Action(BloodGroupActions.UpdateBloodGroup)
-  async UpdateBloodGroup(ctx: Context, action: BloodGroupActions.UpdateBloodGroup) {
-    ctx.patchState({ isLoading: true });
-    try {
-      const result = await lastValueFrom(this.bloodGroupService
-        .UpdateBloodGroup(action.payLoad));
-      ctx.patchState({
-        LoadError: '',
-        isLoading: false
-      });
-    } catch (err: any) {
-      ctx.patchState({
-        LoadError: err,
-        isLoading: false
-      });
-    }
-  }
-  @Action(BloodGroupActions.GetAllBloodGroups)
-  async GetAllBloodGroups(ctx: Context, action: BloodGroupActions.GetAllBloodGroups) {
-    ctx.patchState({ isLoading: true });
-    try {
-      const result = await lastValueFrom(this.bloodGroupService
-        .GetAllBloodGroups(action.payLoad));
-      ctx.patchState({
-        LoadError: '',
-        isLoading: false
-      });
-      return result;
-    } catch (err: any) {
-      ctx.patchState({
-        LoadError: err,
-        isLoading: false
-      });
-      return [];
-    }
-  }
-
-  @Action(BloodGroupActions.DeleteBloodGroup)
-  async DeleteBloodGroup(ctx: Context, action: BloodGroupActions.DeleteBloodGroup) {
-    ctx.patchState({ isLoading: true });
-    try {
-      const result = await lastValueFrom(this.bloodGroupService
-        .DeleteBloodGroup(action.Id));
-      ctx.patchState({
-        LoadError: '',
-        isLoading: false
-      });
-    } catch (err: any) {
-      ctx.patchState({
-        LoadError: err,
-        isLoading: false
-      });
-    }
-  }
-  /*End BloodGroup Actions */
   /*End UserProfile Actions */
 }
 type Context = StateContext<UserStateModel>;

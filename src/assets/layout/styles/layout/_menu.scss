@@ -1,4 +1,5 @@
 .layout-sidebar {
+    direction: rtl;
     position: fixed;
     width: 300px;
     height: calc(100vh - 9rem);
@@ -6,7 +7,7 @@
     overflow-y: auto;
     user-select: none;
     top: 7rem;
-    left: 2rem;
+    right: 2rem;
     transition: transform $transitionDuration, left $transitionDuration;
     background-color: var(--surface-overlay);
     border-radius: $borderRadius;

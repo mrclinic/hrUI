@@ -11,13 +11,13 @@
     .layout-wrapper {
         &.layout-overlay {
             .layout-main-container {
-                margin-left: 0;
-                padding-left: 2rem;
+                margin-right: 0;
+                padding-right: 2rem;
             }
 
             .layout-sidebar {
-                transform: translateX(-100%);
-                left: 0;
+                transform: translateX(100%);
+                right: 0;
                 top: 0;
                 height: 100vh;
                 border-top-left-radius: 0;
@@ -33,18 +33,18 @@
 
         &.layout-static {
             .layout-main-container {
-                margin-left: 300px;
+                margin-right: 300px;
             }
 
             &.layout-static-inactive {
                 .layout-sidebar {
-                    transform: translateX(-100%);
-                    left: 0;
+                    transform: translateX(100%);
+                    right: 0;
                 }
 
                 .layout-main-container {
-                    margin-left: 0;
-                    padding-left: 2rem;
+                    margin-right: 0;
+                    padding-right: 2rem;
                 }
             }
         }
@@ -62,13 +62,13 @@
 
     .layout-wrapper {
         .layout-main-container {
-            margin-left: 0;
-            padding-left: 2rem;
+            margin-right: 0;
+            padding-right: 2rem;
         }
 
         .layout-sidebar {
-            transform: translateX(-100%);
-            left: 0;
+            transform: translateX(100%);
+            right: 0;
             top: 0;
             height: 100vh;
             border-top-left-radius: 0;

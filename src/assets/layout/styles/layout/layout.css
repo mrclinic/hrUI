@@ -151,7 +151,7 @@ a {
   font-size: 1.25rem;
 }
 .layout-topbar .layout-topbar-menu {
-  margin: 0 0 0 auto;
+  margin: 0 auto 0 0;
   padding: 0;
   list-style: none;
   display: flex;
@@ -169,16 +169,16 @@ a {
     order: 2;
   }
   .layout-topbar .layout-menu-button {
-    margin-left: 0;
+    margin-right: 0;
     order: 1;
   }
   .layout-topbar .layout-topbar-menu-button {
     display: inline-flex;
-    margin-left: 0;
+    margin-right: 0;
     order: 3;
   }
   .layout-topbar .layout-topbar-menu {
-    margin-left: 0;
+    margin-right: 0;
     position: absolute;
     flex-direction: column;
     background-color: var(--surface-overlay);
@@ -196,7 +196,7 @@ a {
     display: block;
   }
   .layout-topbar .layout-topbar-menu .layout-topbar-button {
-    margin-left: 0;
+    margin-right: 0;
     display: flex;
     width: 100%;
     height: auto;
@@ -346,7 +346,7 @@ a {
 }
 
 .layout-config-sidebar.p-sidebar .p-sidebar-content {
-  padding-left: 2rem;
+  padding-right: 2rem;
   padding-right: 2rem;
 }
 
@@ -381,12 +381,12 @@ a {
 }
 @media (min-width: 992px) {
   .layout-wrapper.layout-overlay .layout-main-container {
-    margin-left: 0;
-    padding-left: 2rem;
+    margin-right: 0;
+    padding-right: 2rem;
   }
   .layout-wrapper.layout-overlay .layout-sidebar {
-    transform: translateX(-100%);
-    left: 0;
+    transform: translateX(100%);
+    right: 0;
     top: 0;
     height: 100vh;
     border-top-left-radius: 0;
@@ -396,15 +396,15 @@ a {
     transform: translateX(0);
   }
   .layout-wrapper.layout-static .layout-main-container {
-    margin-left: 300px;
+    margin-right: 300px;
   }
   .layout-wrapper.layout-static.layout-static-inactive .layout-sidebar {
-    transform: translateX(-100%);
-    left: 0;
+    transform: translateX(100%);
+    right: 0;
   }
   .layout-wrapper.layout-static.layout-static-inactive .layout-main-container {
-    margin-left: 0;
-    padding-left: 2rem;
+    margin-right: 0;
+    padding-right: 2rem;
   }
   .layout-wrapper .layout-mask {
     display: none;
@@ -415,12 +415,12 @@ a {
     overflow: hidden;
   }
   .layout-wrapper .layout-main-container {
-    margin-left: 0;
-    padding-left: 2rem;
+    margin-right: 0;
+    padding-right: 2rem;
   }
   .layout-wrapper .layout-sidebar {
-    transform: translateX(-100%);
-    left: 0;
+    transform: translateX(100%);
+    right: 0;
     top: 0;
     height: 100vh;
     border-top-left-radius: 0;

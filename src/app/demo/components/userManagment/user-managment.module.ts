@@ -8,7 +8,7 @@ import { RolePermissionComponent } from './role.permission/role.permission.compo
 import { UserComponent } from './user/user.component';
 import { UserProfileComponent } from './user.profile/user.profile.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { UserManagmentRoutingModule } from './user-managment-routing.module';
 
@@ -20,17 +20,22 @@ import { UserManagmentRoutingModule } from './user-managment-routing.module';
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: httpTranslateLoader,
+                useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
-            }
+            },
+            extend: true
         })
     ],
     declarations: [MyProfileComponent, PermissionComponent, RoleComponent, RolePermissionComponent
         , UserComponent, UserProfileComponent
-    ]
+    ],
+    providers: [
+        provideHttpClient(withInterceptorsFromDi())
+    ],
 })
 export class UserManagmentModule { }
 // AOT compilation support
-export function httpTranslateLoader(http: HttpClient) {
-    return new TranslateHttpLoader(http);
+// required for AOT compilation
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }

@@ -29,15 +29,15 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
         });
         return next.handle(request);
       }
-      const link = ['login'];
-      this.zone.run(() => {
+      const link = ['auth/login'];
+      /* this.zone.run(() => {
         this.router.navigate(link);
-      });
+      }); */
     } catch (err) {
-      const link = ['login'];
-      this.zone.run(() => {
+      const link = ['auth/login'];
+      /* this.zone.run(() => {
         this.router.navigate(link);
-      });
+      }); */
     }
     return next.handle(request);
   }

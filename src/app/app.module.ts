@@ -17,7 +17,7 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { environment } from 'src/environments/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtInterceptorInterceptor } from 'src/intercepters/jwt-interceptor.interceptor';
 import { ErrorInterceptorInterceptor } from 'src/intercepters/error-interceptor.interceptor';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -39,7 +39,7 @@ import { PermissionListComponent } from './demo/dialogs/permissions.dialog/permi
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: httpTranslateLoader,
+                useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
         })
@@ -58,13 +58,15 @@ import { PermissionListComponent } from './demo/dialogs/permissions.dialog/permi
             useClass: ErrorInterceptorInterceptor,
             multi: true,
         },
-        MessageService, ConfirmationService, DatePipe, BaseGuard, DialogService
+        MessageService, ConfirmationService, DatePipe, BaseGuard, DialogService,
+        provideHttpClient(withInterceptorsFromDi())
     ],
     bootstrap: [AppComponent],
 })
 export class AppModule { }
 
 // AOT compilation support
-export function httpTranslateLoader(http: HttpClient) {
-    return new TranslateHttpLoader(http);
+// required for AOT compilation
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }

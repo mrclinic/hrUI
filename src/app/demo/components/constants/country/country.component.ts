@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { Country } from 'src/app/models/hr/country.model';
-import { University } from 'src/app/models/hr/University';
-import { CountryActions } from 'src/app/stateManagement/hr/actions/Country.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { Country } from 'src/app/demo/models/constants/country.model';
+import { CountryService } from 'src/app/demo/service/constants/country.service';
 
 @Component({
   selector: 'app-country',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class CountryComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  countrys: Country[] = [];
   cols: any[];
-  countryDialog: boolean;
-  Country!: Country;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class CountryComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   countryForm: FormGroup;
+  name: string = '';
+  countryDialog: boolean = false;
+
+  deleteCountryDialog: boolean = false;
+
+  deleteCountrysDialog: boolean = false;
+
+  countrys: Country[] = [];
+
+  country: Country = {};
+
+  selectedCountrys: Country[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.countryForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly countryService: CountryService) {
+    this.countryForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.countryDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new CountryActions.GetCountrysInfo('')).subscribe(
-      () => {
-        this.countrys = this.store.selectSnapshot<Country[]>((state) => state.users.countrys);
+    this.countryService.GetAllCountrys('').subscribe(
+      (res) => {
+        this.countrys = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,39 +66,35 @@ export class CountryComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
-    this.Country = {};
-    this.submitted = false;
+    this.country = {};
     this.countryDialog = true;
   }
-  editCountry(Country: Country) {
-    this.Country = { ...Country };
+  editCountry(country: Country) {
+    this.country = { ...country };
     this.countryDialog = true;
   }
-  deleteSelectedCountry(Country: Country) {
-    this.Country = Country;
+  deleteSelectedCountry(country: Country) {
+    this.country = country;
     this.deleteCountry();
   }
   deleteCountry() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.Country.Place + '?',
+      message: this.ConfirmMsg + this.country.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new CountryActions.DeleteCountry(this.Country.Id as string)).subscribe(
-          data => {
+        this.countryService.DeleteCountry(this.country.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class CountryComponent implements OnInit {
 
   hideDialog() {
     this.countryDialog = false;
-    this.submitted = false;
   }
 
   saveCountry() {
-    this.submitted = true;
     if (this.countryForm.valid) {
-      if (this.Country.Id) {
-        delete this.Country.Request;
-        this.store.dispatch(new CountryActions.UpdateCountry(this.Country)).subscribe(
+      if (this.country.id) {
+        this.countryService.UpdateCountry(this.country).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class CountryComponent implements OnInit {
         )
       }
       else {
-        delete this.Country.Id;
-        this.store.dispatch(new CountryActions.AddCountry(this.Country)).subscribe(
+        this.countryService.AddCountry(this.country).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -147,31 +128,17 @@ export class CountryComponent implements OnInit {
         )
       }
       this.countryDialog = false;
-      this.Country = {};
+      this.country = {};
     }
   }
 
   reload() {
-    this.store.dispatch(new CountryActions.GetCountrysInfo('')).subscribe(
-      () => {
-        this.countrys = this.store.selectSnapshot<Country[]>((state) => state.users.countrys);
+    this.countryService.GetAllCountrys('').subscribe(
+      (res) => {
+        this.countrys = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.Country.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.countryForm.controls;
   }

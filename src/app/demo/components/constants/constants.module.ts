@@ -6,12 +6,18 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BloodGroupComponent } from './bloodgroup/bloodgroup.component';
 import { ConstantsRoutingModule } from './constants-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ChildstatusComponent } from './childstatus/childstatus.component';
+import { CityComponent } from './city/city.component';
+import { CountryComponent } from './country/country.component';
+import { DegreesAuthorityComponent } from './degreesauthority/degreesauthority.component';
 
 @NgModule({
     imports: [
         CommonModule,
         ConstantsRoutingModule,
         PrimengModule,
+        ReactiveFormsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -20,7 +26,8 @@ import { ConstantsRoutingModule } from './constants-routing.module';
             }
         })
     ],
-    declarations: [BloodGroupComponent
+    declarations: [BloodGroupComponent, ChildstatusComponent, CityComponent, CountryComponent
+        , DegreesAuthorityComponent
     ]
 })
 export class ConstantsModule { }

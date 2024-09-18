@@ -7,13 +7,10 @@ import { PrimeNGConfig } from 'primeng/api';
     templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-    constructor(private primengConfig: PrimeNGConfig, public translate: TranslateService) {
-        /* translate.addLangs(['en', 'fr', 'ar', "hi", "de"]);
-        translate.setDefaultLang('ar');
-
-        let browserLang: any;
-        browserLang = translate.getBrowserLang();
-        translate.use(browserLang.match(/en|fr|ar|hi|de/) ? browserLang : 'ar'); */
+    constructor(private primengConfig: PrimeNGConfig, private translate: TranslateService) {
+        this.translate.addLangs(['ar', 'en']);
+        this.translate.setDefaultLang('ar');
+        this.translate.use('ar');
     }
 
     ngOnInit() {

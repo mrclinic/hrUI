@@ -6,7 +6,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { BloodGroup } from 'src/app/demo/models/constants/bloodgroup.model';
 import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.service';
-import { BloodGroupActions } from 'src/app/demo/stateManagement/constants/actions/bloodgroup.action';
 
 @Component({
   selector: 'app-bloodgroup',
@@ -15,17 +14,7 @@ import { BloodGroupActions } from 'src/app/demo/stateManagement/constants/action
 })
 export class BloodGroupComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  bloodGroups: BloodGroup[] = [];
   cols: any[];
-  bloodgroupDialog: boolean;
-  bloodGroup!: BloodGroup;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -35,19 +24,26 @@ export class BloodGroupComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  bloodgroupForm: FormGroup;
+  bloodGroupForm: FormGroup;
   name: string = '';
+  bloodGroupDialog: boolean = false;
+
+  deleteBloodGroupDialog: boolean = false;
+
+  deleteBloodGroupsDialog: boolean = false;
+
+  bloodGroups: BloodGroup[] = [];
+
+  bloodGroup: BloodGroup = {};
+
+  selectedBloodGroups: BloodGroup[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
     private confirmationService: ConfirmationService, private translate: TranslateService, private readonly bloodGroupService: BloodGroupService) {
-    this.bloodgroupForm = fb.group({
+    this.bloodGroupForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.bloodgroupDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
@@ -61,12 +57,6 @@ export class BloodGroupComponent implements OnInit {
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -76,24 +66,22 @@ export class BloodGroupComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' }
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.bloodGroup = {};
-    this.submitted = false;
-    this.bloodgroupDialog = true;
+    this.bloodGroupDialog = true;
   }
   editBloodGroup(bloodGroup: BloodGroup) {
     this.bloodGroup = { ...bloodGroup };
-    this.bloodgroupDialog = true;
+    this.bloodGroupDialog = true;
   }
   deleteSelectedBloodGroup(bloodGroup: BloodGroup) {
     this.bloodGroup = bloodGroup;
@@ -105,8 +93,8 @@ export class BloodGroupComponent implements OnInit {
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new BloodGroupActions.DeleteBloodGroup(this.bloodGroup.id as string)).subscribe(
-          data => {
+        this.bloodGroupService.DeleteBloodGroup(this.bloodGroup.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -118,15 +106,13 @@ export class BloodGroupComponent implements OnInit {
   }
 
   hideDialog() {
-    this.bloodgroupDialog = false;
-    this.submitted = false;
+    this.bloodGroupDialog = false;
   }
 
   saveBloodGroup() {
-    this.submitted = true;
-    if (this.bloodgroupForm.valid) {
+    if (this.bloodGroupForm.valid) {
       if (this.bloodGroup.id) {
-        this.store.dispatch(new BloodGroupActions.UpdateBloodGroup(this.bloodGroup)).subscribe(
+        this.bloodGroupService.UpdateBloodGroup(this.bloodGroup).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -134,14 +120,14 @@ export class BloodGroupComponent implements OnInit {
         )
       }
       else {
-        this.store.dispatch(new BloodGroupActions.AddBloodGroup(this.bloodGroup)).subscribe(
+        this.bloodGroupService.AddBloodGroup(this.bloodGroup).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
           }
         )
       }
-      this.bloodgroupDialog = false;
+      this.bloodGroupDialog = false;
       this.bloodGroup = {};
     }
   }
@@ -153,10 +139,7 @@ export class BloodGroupComponent implements OnInit {
       }
     )
   }
-
-
-
   get f() {
-    return this.bloodgroupForm.controls;
+    return this.bloodGroupForm.controls;
   }
 }

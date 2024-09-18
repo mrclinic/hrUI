@@ -1,79 +1,110 @@
-<p-toast dir="rtl"></p-toast>
-<div class="progress-spinner" *ngIf="isLoading$ | async;">
-  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
-    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
-</div>
-<div class="card" dir="rtl">
-  <p-toolbar styleClass="mb-4">
-    <ng-template pTemplate="left">
-    </ng-template>
-    <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
-        (click)="openNew()"></button>
-    </ng-template>
-  </p-toolbar>
-  <p-table responsiveLayout="stack" [value]="bloodGroups" selectionMode="single" [(selection)]="bloodGroup"
-    [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
-    <ng-template pTemplate="caption">
-      <div class="table-header">
-        {{'bloodGroups' | translate }}
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of cols" class="th">
-          {{col.header}}
-        </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-bloodgroup let-columns="columns">
-      <tr>
-        <td *ngFor="let col of cols" class="td" [ngSwitch]="col.field">
-          <ng-container *ngSwitchCase="'name'">
-            {{bloodgroup[col.field]}}
-          </ng-container>
-        </td>
-        <td class="td">
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editBloodGroup(bloodgroup)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedBloodGroup(bloodgroup)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
-<p-dialog [(visible)]="bloodgroupDialog" [style]="{width: '750px'}" header="{{'BloodGroupDialogHeader' | translate }}"
-  [modal]="true" styleClass="p-fluid" dir="rtl">
-  <ng-template pTemplate="content">
-    <form [formGroup]="bloodgroupForm" (ngSubmit)="saveBloodGroup()">
-      <div class="p-field col-sm">
-        <span class="p-float-label">
-          <input pInputText formControlName="name" id="name" name="name" [(ngModel)]="bloodGroup.name" />
-          <small class="p-invalid" [style]="{color: 'red'}"
-            *ngIf="submitted && f['name'].invalid && f['name'].errors && f['name'].errors['required']">{{'PlaceError'
-            |
-            translate }}</small>
-          <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['name'].errors?.['maxlength']">{{'PlaceLength'
-            |
-            translate }}</small>
-          <label for="name" dir="rtl">{{'name' | translate }}</label>
-        </span>
-      </div>
-    </form>
-  </ng-template>
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
+              (click)="openNew()"></button>
+            <button pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteSelectedBloodGroups()"
+              [disabled]="!selectedBloodGroups || !selectedBloodGroups.length"></button>
+          </div>
+        </ng-template>
 
-  <ng-template pTemplate="footer">
-    <div class="row">
-      <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
-        (click)="saveBloodGroup()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
-        class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
-      <div class="p-button-rounded col-sm"></div>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="bloodGroups" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="['name','country.name','representative.name','status']" [paginator]="true"
+        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [(selection)]="selectedBloodGroups" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">إدارة الزمر الدموية</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                class="w-full sm:w-auto" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="name">الاسم <p-sortIcon field="name"></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-bloodGroup>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="bloodGroup"></p-tableCheckbox>
+            </td>
+            <td style="width:14%; min-width:10rem;">
+              <span class="p-column-title">الاسم</span>
+              {{bloodGroup.name}}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                  (click)="editbloodGroup(bloodGroup)"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                  (click)="deletebloodGroup(bloodGroup)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
-  </ng-template>
-</p-dialog>
 
-<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    <p-dialog [(visible)]="bloodGroupDialog" [style]="{width: '450px'}" header="تفاصيل الزمرة الدموية" [modal]="true"
+      class="p-fluid">
+      <form [formGroup]="bloodGroupForm" (ngSubmit)="saveBloodGroup()">
+        <div class="field">
+          <label for="name">الاسم</label>
+          <input type="text" pInputText id="name" formControlName="name" required autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : bloodGroupForm.touched }" />
+          <small class="ng-dirty ng-invalid" *ngIf="bloodGroupForm.touched && f['name'].invalid">حقل الاسم مطلوب</small>
+        </div>
+      </form>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text"
+          (click)="saveBloodGroup()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteBloodGroupDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="bloodGroup">هل أنت متأكد من حذف <b>{{bloodGroup.name}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteBloodGroupDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" (click)="confirmDelete()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteBloodGroupsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>هل أنت متأكد من حذف الزمر المختارة؟</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteBloodGroupsDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDeleteSelected()"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>

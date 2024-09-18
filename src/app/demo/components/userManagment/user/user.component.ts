@@ -56,7 +56,8 @@ export class UserComponent implements OnInit {
       }
     );
     this.translate.get('AppTitle').subscribe(
-      () => {
+      (res) => {
+        console.log(res)
         this.FNameHeader = this.translate.instant('FNameHeader');;
         this.LNameHeader = this.translate.instant('LNameHeader');
         this.PhoneHeader = this.translate.instant('PhoneHeader');
@@ -75,6 +76,7 @@ export class UserComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
+        console.log(this.FNameHeader)
         this.initColumns();
       }
     )

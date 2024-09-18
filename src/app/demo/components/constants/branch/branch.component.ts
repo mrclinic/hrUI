@@ -4,10 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { Branch } from 'src/app/models/hr/branch.model';
-import { University } from 'src/app/models/hr/University';
-import { BranchActions } from 'src/app/stateManagement/hr/actions/Branch.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+
 
 @Component({
   selector: 'app-branch',

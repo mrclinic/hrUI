@@ -14,31 +14,35 @@ export class AppMenuComponent implements OnInit {
 
     ngOnInit() {
         this.model = [
-            {
+            /* {
                 label: 'Home',
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
                 ]
-            },
+            }, */
             {
-                label: 'User Management',
+                label: 'إدارة المستخدمين',
                 items: [
-                    { label: 'permissions', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions'] },
-                    { label: 'users', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users'] },
-                    { label: 'roles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles'] },
-                    { label: 'user Profiles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/userProfiles'] }
+                    { label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions'] },
+                    { label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users'] },
+                    { label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles'] },
+                    //{ label: 'user Profiles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/userProfiles'] }
 
                 ]
             },
 
             {
-                label: 'Constants Management',
+                label: 'إدارة الثوابت',
                 items: [
-                    { label: 'blood-group', icon: 'pi pi-fw pi-home', routerLink: ['/constants/blood-group'] }
+                    { label: 'الزمر الدموية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/blood-group'] },
+                    { label: 'حالات الطفل', icon: 'pi pi-fw pi-home', routerLink: ['/constants/child-status'] },
+                    { label: 'المدن', icon: 'pi pi-fw pi-home', routerLink: ['/constants/city'] },
+                    { label: 'البلدان', icon: 'pi pi-fw pi-home', routerLink: ['/constants/country'] },
+                    { label: 'جهات المنح', icon: 'pi pi-fw pi-home', routerLink: ['/constants/degrees-authority'] },
 
                 ]
             },
-            {
+            /* {
                 label: 'UI Components',
                 items: [
                     { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
@@ -152,7 +156,7 @@ export class AppMenuComponent implements OnInit {
                         ]
                     }
                 ]
-            }
+            } */
         ];
     }
 }

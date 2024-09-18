@@ -1254,7 +1254,7 @@
   }
 
   .p-input-icon-left > .p-inputtext {
-    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .p-input-icon-left.p-float-label > label {

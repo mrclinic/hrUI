@@ -4,29 +4,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { ChildStatus } from 'src/app/models/hr/childstatus.model';
-import { University } from 'src/app/models/hr/University';
-import { ChildStatusActions } from 'src/app/stateManagement/hr/actions/ChildStatus.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { ChildStatus } from 'src/app/demo/models/constants/childstatus.model';
+import { ChildStatusService } from 'src/app/demo/service/constants/childstatus.service';
 
 @Component({
   selector: 'app-childstatus',
   templateUrl: './childstatus.component.html',
   styleUrls: ['./childstatus.component.css']
 })
-export class ChildStatusComponent implements OnInit {
+export class ChildstatusComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  childstatuss: ChildStatus[] = [];
   cols: any[];
-  childstatusDialog: boolean;
-  ChildStatus!: ChildStatus;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class ChildStatusComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
-  childstatusForm: FormGroup;
+  childStatusForm: FormGroup;
+  name: string = '';
+  childStatusDialog: boolean = false;
+
+  deleteChildStatusDialog: boolean = false;
+
+  deleteChildStatussDialog: boolean = false;
+
+  childStatuss: ChildStatus[] = [];
+
+  childStatus: ChildStatus = {};
+
+  selectedChildstatuss: ChildStatus[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.childstatusForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly childStatusService: ChildStatusService) {
+    this.childStatusForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.childstatusDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new ChildStatusActions.GetChildStatussInfo('')).subscribe(
-      () => {
-        this.childstatuss = this.store.selectSnapshot<ChildStatus[]>((state) => state.users.childstatuss);
+    this.childStatusService.GetAllChildStatuss('').subscribe(
+      (res) => {
+        this.childStatuss = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,39 +66,35 @@ export class ChildStatusComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
-    this.ChildStatus = {};
-    this.submitted = false;
-    this.childstatusDialog = true;
+    this.childStatus = {};
+    this.childStatusDialog = true;
   }
-  editChildStatus(ChildStatus: ChildStatus) {
-    this.ChildStatus = { ...ChildStatus };
-    this.childstatusDialog = true;
+  editChildstatus(childStatus: ChildStatus) {
+    this.childStatus = { ...childStatus };
+    this.childStatusDialog = true;
   }
-  deleteSelectedChildStatus(ChildStatus: ChildStatus) {
-    this.ChildStatus = ChildStatus;
-    this.deleteChildStatus();
+  deleteSelectedChildstatus(childStatus: ChildStatus) {
+    this.childStatus = childStatus;
+    this.deleteChildstatus();
   }
-  deleteChildStatus() {
+  deleteChildstatus() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.ChildStatus.Place + '?',
+      message: this.ConfirmMsg + this.childStatus.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new ChildStatusActions.DeleteChildStatus(this.ChildStatus.Id as string)).subscribe(
-          data => {
+        this.childStatusService.DeleteChildStatus(this.childStatus.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -121,16 +106,13 @@ export class ChildStatusComponent implements OnInit {
   }
 
   hideDialog() {
-    this.childstatusDialog = false;
-    this.submitted = false;
+    this.childStatusDialog = false;
   }
 
   saveChildStatus() {
-    this.submitted = true;
-    if (this.childstatusForm.valid) {
-      if (this.ChildStatus.Id) {
-        delete this.ChildStatus.Request;
-        this.store.dispatch(new ChildStatusActions.UpdateChildStatus(this.ChildStatus)).subscribe(
+    if (this.childStatusForm.valid) {
+      if (this.childStatus.id) {
+        this.childStatusService.UpdateChildStatus(this.childStatus).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,41 +120,26 @@ export class ChildStatusComponent implements OnInit {
         )
       }
       else {
-        delete this.ChildStatus.Id;
-        this.store.dispatch(new ChildStatusActions.AddChildStatus(this.ChildStatus)).subscribe(
+        this.childStatusService.AddChildStatus(this.childStatus).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
           }
         )
       }
-      this.childstatusDialog = false;
-      this.ChildStatus = {};
+      this.childStatusDialog = false;
+      this.childStatus = {};
     }
   }
 
   reload() {
-    this.store.dispatch(new ChildStatusActions.GetChildStatussInfo('')).subscribe(
-      () => {
-        this.childstatuss = this.store.selectSnapshot<ChildStatus[]>((state) => state.users.childstatuss);
+    this.childStatusService.GetAllChildStatuss('').subscribe(
+      (res) => {
+        this.childStatuss = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.ChildStatus.RequestId = this.RequestId;
-  }
-
   get f() {
-    return this.childstatusForm.controls;
+    return this.childStatusForm.controls;
   }
 }
