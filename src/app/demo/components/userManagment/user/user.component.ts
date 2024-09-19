@@ -83,14 +83,14 @@ export class UserComponent implements OnInit {
   }
   initColumns() {
     this.cols = [
-      { field: 'fName', header: this.FNameHeader },
-      { field: 'lName', header: this.LNameHeader },
-      { field: 'userName', header: this.usernameLabel },
-      { field: 'phone', header: this.PhoneHeader },
-      { field: 'natNum', header: this.NatNumHeader },
-      { field: 'emailAddress', header: this.EmailAddressHeader },
-      { field: 'isActive', header: this.IsActiveHeader },
-      { field: 'roleID', header: this.RoleIDHeader }
+      { field: 'fName', header: "الاسم الأول" },
+      { field: 'lName', header: "الكنية" },
+      { field: 'userName', header: "اسم المستخدم" },
+      { field: 'phone', header: "رقم الهاتف" },
+      { field: 'natNum', header: "الرقم الوطني" },
+      { field: 'emailAddress', header: "البريد الالكتروني" },
+      { field: 'isActive', header: "فعّال" },
+      { field: 'roleID', header: "الدور" }
     ]
   }
   openNew() {

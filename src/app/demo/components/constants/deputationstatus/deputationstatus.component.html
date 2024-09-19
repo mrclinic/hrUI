@@ -1,122 +1,111 @@
-<p-toast dir="rtl"></p-toast>
-<div class="progress-spinner" *ngIf="isLoading$ | async;">
-  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
-    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
-</div>
-<div class="card" dir="rtl">
-  <p-toolbar styleClass="mb-4">
-    <ng-template pTemplate="left">
-    </ng-template>
-    <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
-        (click)="openNew()"></button>
-    </ng-template>
-  </p-toolbar>
-  <p-table responsiveLayout="stack" [value]="deputationstatus" selectionMode="single" [(selection)]="deputationstatus"
-    [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
-    <ng-template pTemplate="caption">
-      <div class="table-header">
-        {{'deputationstatuss' | translate }}
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of cols" class="th">
-          {{col.header}}
-        </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-deputationstatus let-columns="columns">
-      <tr>
-        <td *ngFor="let col of cols" class="td" [ngSwitch]="col.type">
-          <ng-container *ngSwitchCase="'Date'">
-            {{deputationstatus[col.field] |date :'yyyy-MM-dd'}}
-          </ng-container>
-          <ng-container *ngSwitchCase="'boolean'">
-            {{deputationstatus[col.field] ? 'نعم' : 'لا' }}
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            {{deputationstatus[col.field]}}
-          </ng-container>
-        </td>
-        <td class="td">
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editDeputationStatus(deputationstatus)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning"
-            (click)="deleteSelectedDeputationStatus(deputationstatus)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
-<p-dialog [(visible)]="deputationstatusDialog" [style]="{width: '750px'}"
-  header="{{'DeputationStatusDialogHeader' | translate }}" [modal]="true" styleClass="p-fluid" dir="rtl">
-  <ng-template pTemplate="content">
-    <form [formGroup]="deputationstatusForm" (ngSubmit)="saveDeputationStatus()">
-      <div class="row">
-        <div class="p-field col-sm">
-          <span class="p-float-label">
-            <p-calendar formControlName="Time" id="Time" name="Time" [(ngModel)]="deputationstatus.Time"
-              [timeOnly]="true" appendTo="body" hourFormat="24" inputId="timeonly" autofocus></p-calendar>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="submitted && f['Time'].invalid && f['Time'].errors && f['Time'].errors['required']">{{'TimeError'
-              |
-              translate }}</small>
-            <label for="Time" dir="rtl">{{'Time' | translate }}</label>
-          </span>
-        </div>
-        <div class="p-field col-sm">
-          <span class="p-float-label">
-            <input pInputText formControlName="Place" id="Place" name="Place" [(ngModel)]="deputationstatus.Place" />
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="submitted && f['Place'].invalid && f['Place'].errors && f['Place'].errors['required']">{{'PlaceError'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['Place'].errors?.['maxlength']">{{'PlaceLength'
-              |
-              translate }}</small>
-            <label for="Place" dir="rtl">{{'Place' | translate }}</label>
-          </span>
-        </div>
-      </div>
-      <p-divider></p-divider>
-      <div class="row">
-        <div class="p-field col-sm">
-          <span class="p-float-label">
-            <p-calendar formControlName="Date" id="Date" name="Date" [(ngModel)]="deputationstatus.Date"
-              dateFormat="yy-mm-dd" appendTo="body" [required]=true [showIcon]="true" dataType="string"></p-calendar>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="submitted && f['Date'].invalid && f['Date'].errors && f['Date'].errors['required']">{{'DateError'
-              |
-              translate }}</small>
-            <label for="Date">{{'Date' | translate }}</label>
-          </span>
-        </div>
-        <div class="p-field col-sm">
-          <span class="p-float-label">
-            <input formControlName="Note" id="Note" name="Note" pInputText [(ngModel)]="deputationstatus.Note" />
-            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['Note'].errors?.['Note']">{{'NoteLength'
-              |
-              translate }}</small>
-            <label for="Note">{{'Note' | translate }}</label>
-          </span>
-        </div>
-      </div>
-    </form>
-  </ng-template>
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
+              (click)="openNew()"></button>
+            <button pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteSelectedDeputationStatuss()"
+              [disabled]="!selectedDeputationStatuss || !selectedDeputationStatuss.length"></button>
+          </div>
+        </ng-template>
 
-  <ng-template pTemplate="footer">
-    <div class="row">
-      <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
-        (click)="saveDeputationStatus()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
-        class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
-      <div class="p-button-rounded col-sm"></div>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="deputationStatuss" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="['name','deputationStatus.name','representative.name','status']" [paginator]="true"
+        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [(selection)]="selectedDeputationStatuss" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">إدارة أوضاع الإيفاد وتغيراته</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                class="w-full sm:w-auto" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="name">الاسم <p-sortIcon field="name"></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-deputationStatus>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="deputationStatus"></p-tableCheckbox>
+            </td>
+            <td style="width:14%; min-width:10rem;">
+              <span class="p-column-title">الاسم</span>
+              {{deputationStatus?.name}}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                  (click)="editdeputationStatus(deputationStatus)"></button>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                  (click)="deletedeputationStatus(deputationStatus)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
-  </ng-template>
-</p-dialog>
 
-<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+    <p-dialog [(visible)]="deputationStatusDialog" [style]="{width: '450px'}" header="تفاصيل وضع الإيفاد وتغيراته "
+      [modal]="true" class="p-fluid">
+      <form [formGroup]="deputationStatusForm" (ngSubmit)="saveDeputationStatus()">
+        <div class="field">
+          <label for="name">الاسم</label>
+          <input type="text" pInputText id="name" formControlName="name" required autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : deputationStatusForm.touched }" />
+          <small class="ng-dirty ng-invalid" *ngIf="deputationStatusForm.touched && f['name'].invalid">حقل الاسم
+            مطلوب</small>
+        </div>
+      </form>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text"
+          (click)="saveDeputationStatus()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteDeputationStatusDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="deputationStatus">هل أنت متأكد من حذف <b>{{deputationStatus?.name}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteDeputationStatusDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" (click)="confirmDelete()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteDeputationStatussDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>هل أنت متأكد من حذف الأوضاع المختارة؟</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteDeputationStatussDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDeleteSelected()"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>

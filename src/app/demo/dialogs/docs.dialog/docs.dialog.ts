@@ -19,7 +19,7 @@ import { RequestDocActions } from "src/app/stateManagement/guild/actions/request
             [rows]="5" [responsive]="true" >
             <ng-template pTemplate="header">
               <tr>
-                <th class="th" pSortableColumn="price">{{'Name' | translate }}
+                <th class="th" pSortableColumn="price">الاسم
                 <p-sortIcon field="price"></p-sortIcon>
                 </th>
                 <th style="width: 2.25em">
@@ -31,7 +31,7 @@ import { RequestDocActions } from "src/app/stateManagement/guild/actions/request
                 <td class="td">{{file.name? file.name : file.Name}}</td>
                 <td>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-success p-mr-2"
-                (click)="delete(file)" title="{{'deleteTitle' | translate }}"></button>
+                (click)="delete(file)" title="حذف"></button>
                 </td>
               </tr>
             </ng-template>

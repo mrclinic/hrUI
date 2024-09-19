@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { University } from 'src/app/models/hr/university.model';
-import { University } from 'src/app/models/hr/University';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/University.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { University } from 'src/app/demo/models/constants/university.model';
+import { UniversityService } from 'src/app/demo/service/constants/university.service';
 
 @Component({
   selector: 'app-university',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class UniversityComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  universitys: University[] = [];
   cols: any[];
-  universityDialog: boolean;
-  University!: University;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class UniversityComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   universityForm: FormGroup;
+  name: string = '';
+  universityDialog: boolean = false;
+
+  deleteUniversityDialog: boolean = false;
+
+  deleteUniversitysDialog: boolean = false;
+
+  universitys: University[] = [];
+
+  University: University = {};
+
+  selectedUniversitys: University[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.universityForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly universityService: UniversityService) {
+    this.universityForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.universityDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new UniversityActions.GetUniversitysInfo('')).subscribe(
-      () => {
-        this.universitys = this.store.selectSnapshot<University[]>((state) => state.users.universitys);
+    this.universityService.GetAllUniversitys('').subscribe(
+      (res) => {
+        this.universitys = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class UniversityComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.University = {};
-    this.submitted = false;
     this.universityDialog = true;
   }
   editUniversity(University: University) {
@@ -104,12 +89,12 @@ export class UniversityComponent implements OnInit {
   }
   deleteUniversity() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.University.Place + '?',
+      message: this.ConfirmMsg + this.University.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new UniversityActions.DeleteUniversity(this.University.Id as string)).subscribe(
-          data => {
+        this.universityService.DeleteUniversity(this.University.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class UniversityComponent implements OnInit {
 
   hideDialog() {
     this.universityDialog = false;
-    this.submitted = false;
   }
 
   saveUniversity() {
-    this.submitted = true;
     if (this.universityForm.valid) {
-      if (this.University.Id) {
-        delete this.University.Request;
-        this.store.dispatch(new UniversityActions.UpdateUniversity(this.University)).subscribe(
+      if (this.University.id) {
+        this.universityService.UpdateUniversity(this.University).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class UniversityComponent implements OnInit {
         )
       }
       else {
-        delete this.University.Id;
-        this.store.dispatch(new UniversityActions.AddUniversity(this.University)).subscribe(
+        this.universityService.AddUniversity(this.University).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class UniversityComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new UniversityActions.GetUniversitysInfo('')).subscribe(
-      () => {
-        this.universitys = this.store.selectSnapshot<University[]>((state) => state.users.universitys);
+    this.universityService.GetAllUniversitys('').subscribe(
+      (res) => {
+        this.universitys = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.University.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.universityForm.controls;
   }

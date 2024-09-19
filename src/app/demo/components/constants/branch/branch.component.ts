@@ -4,6 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
+import { Branch } from 'src/app/demo/models/constants/branch.model';
+import { University } from 'src/app/demo/models/constants/university.model';
 
 
 @Component({

@@ -10,7 +10,7 @@
     </ng-template>
 
     <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
@@ -21,7 +21,7 @@
         <th *ngFor="let col of cols" class="th">
           {{col.header}}
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-role let-columns="columns">
@@ -31,44 +31,43 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editRole(role)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedRole(role)"></button>
-          <button pButton pRipple icon="pi pi-slack" title="{{'RolePermissionsLabel' | translate }}"
-            class="p-button-rounded p-button-Primary" (click)="setPermissions(role)"></button>
+            (click)="editRole(role)" title="تعديل"></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedRole(role)"></button>
+          <button pButton pRipple icon="pi pi-slack" title="صلاحيات الدور" class="p-button-rounded p-button-Primary"
+            (click)="setPermissions(role)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog [(visible)]="roleDialog" [style]="{width: '450px'}" header="{{'roleDialogHeader' | translate }}"
-  [modal]="true" styleClass="p-fluid" dir="rtl">
+<p-dialog [(visible)]="roleDialog" [style]="{width: '450px'}" header="تفاصيل الدور" [modal]="true" styleClass="p-fluid"
+  dir="rtl">
   <ng-template pTemplate="content">
     <div class="p-field">
       <span class="p-float-label">
         <input type="text" pInputText id="Name" [(ngModel)]="role.Name" required autofocus maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.Name">{{'NameError' | translate
-        }}</small>
-        <label for="Name" dir="rtl">{{'Name' | translate }}</label>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.Name">الاسم مطلوب</small>
+        <label for="Name" dir="rtl">الاسم</label>
       </span>
     </div>
     <p-divider></p-divider>
     <div class="p-field">
       <span class="p-float-label">
         <input id="DisplayName" pInputText [(ngModel)]="role.DisplayName" required maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.DisplayName">{{'DisplayNameError' |
-        translate }}</small>
-        <label for="DisplayName" dir="rtl">{{'DisplayName' | translate }}</label>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.DisplayName">الاسم العربي
+          مطلوب</small>
+        <label for="DisplayName" dir="rtl">الاسم العربي</label>
       </span>
     </div>
     <p-divider></p-divider>
     <div class="p-field">
       <span class="p-float-label">
         <input id="StatusCode" pInputText type="number" [(ngModel)]="role.StatusCode" required />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.StatusCode">{{'StatusCodeError'
-        | translate }}</small>
-        <label for="StatusCode" dir="rtl">{{'StatusCode' | translate }}</label>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.StatusCode">رمز الحالة الموافق للدور
+          مطلوب</small>
+        <label for="StatusCode" dir="rtl">رمز الحالة الموافق للدور</label>
       </span>
     </div>
   </ng-template>
@@ -76,9 +75,9 @@
   <ng-template pTemplate="footer">
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="saveRole()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
     </div>

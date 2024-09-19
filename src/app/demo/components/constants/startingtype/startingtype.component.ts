@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { StartingType } from 'src/app/models/hr/startingtype.model';
-import { University } from 'src/app/models/hr/University';
-import { StartingTypeActions } from 'src/app/stateManagement/hr/actions/StartingType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { StartingType } from 'src/app/demo/models/constants/startingtype.model';
+import { StartingTypeService } from 'src/app/demo/service/constants/startingtype.service';
 
 @Component({
   selector: 'app-startingtype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class StartingTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  startingtypes: StartingType[] = [];
   cols: any[];
-  startingtypeDialog: boolean;
-  StartingType!: StartingType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class StartingTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   startingtypeForm: FormGroup;
+  name: string = '';
+  startingtypeDialog: boolean = false;
+
+  deleteStartingTypeDialog: boolean = false;
+
+  deleteStartingTypesDialog: boolean = false;
+
+  startingtypes: StartingType[] = [];
+
+  StartingType: StartingType = {};
+
+  selectedStartingTypes: StartingType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.startingtypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly startingtypeService: StartingTypeService) {
+    this.startingtypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.startingtypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new StartingTypeActions.GetStartingTypesInfo('')).subscribe(
-      () => {
-        this.startingtypes = this.store.selectSnapshot<StartingType[]>((state) => state.users.startingtypes);
+    this.startingtypeService.GetAllStartingTypes('').subscribe(
+      (res) => {
+        this.startingtypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class StartingTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.StartingType = {};
-    this.submitted = false;
     this.startingtypeDialog = true;
   }
   editStartingType(StartingType: StartingType) {
@@ -104,12 +89,12 @@ export class StartingTypeComponent implements OnInit {
   }
   deleteStartingType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.StartingType.Place + '?',
+      message: this.ConfirmMsg + this.StartingType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new StartingTypeActions.DeleteStartingType(this.StartingType.Id as string)).subscribe(
-          data => {
+        this.startingtypeService.DeleteStartingType(this.StartingType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class StartingTypeComponent implements OnInit {
 
   hideDialog() {
     this.startingtypeDialog = false;
-    this.submitted = false;
   }
 
   saveStartingType() {
-    this.submitted = true;
     if (this.startingtypeForm.valid) {
-      if (this.StartingType.Id) {
-        delete this.StartingType.Request;
-        this.store.dispatch(new StartingTypeActions.UpdateStartingType(this.StartingType)).subscribe(
+      if (this.StartingType.id) {
+        this.startingtypeService.UpdateStartingType(this.StartingType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class StartingTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.StartingType.Id;
-        this.store.dispatch(new StartingTypeActions.AddStartingType(this.StartingType)).subscribe(
+        this.startingtypeService.AddStartingType(this.StartingType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class StartingTypeComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new StartingTypeActions.GetStartingTypesInfo('')).subscribe(
-      () => {
-        this.startingtypes = this.store.selectSnapshot<StartingType[]>((state) => state.users.startingtypes);
+    this.startingtypeService.GetAllStartingTypes('').subscribe(
+      (res) => {
+        this.startingtypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.StartingType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.startingtypeForm.controls;
   }

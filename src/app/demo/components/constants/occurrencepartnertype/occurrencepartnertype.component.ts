@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { OccurrencePartnerType } from 'src/app/models/hr/occurrencepartnertype.model';
-import { University } from 'src/app/models/hr/University';
-import { OccurrencePartnerTypeActions } from 'src/app/stateManagement/hr/actions/OccurrencePartnerType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { OccurrencePartnerType } from 'src/app/demo/models/constants/occurrencepartnertype.model';
+import { OccurrencePartnerTypeService } from 'src/app/demo/service/constants/occurrencepartnertype.service';
 
 @Component({
   selector: 'app-occurrencepartnertype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class OccurrencePartnerTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  occurrencepartnertypes: OccurrencePartnerType[] = [];
   cols: any[];
-  occurrencepartnertypeDialog: boolean;
-  OccurrencePartnerType!: OccurrencePartnerType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   occurrencepartnertypeForm: FormGroup;
+  name: string = '';
+  occurrencepartnertypeDialog: boolean = false;
+
+  deleteOccurrencePartnerTypeDialog: boolean = false;
+
+  deleteOccurrencePartnerTypesDialog: boolean = false;
+
+  occurrencepartnertypes: OccurrencePartnerType[] = [];
+
+  OccurrencePartnerType: OccurrencePartnerType = {};
+
+  selectedOccurrencePartnerTypes: OccurrencePartnerType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.occurrencepartnertypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) {
+    this.occurrencepartnertypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.occurrencepartnertypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new OccurrencePartnerTypeActions.GetOccurrencePartnerTypesInfo('')).subscribe(
-      () => {
-        this.occurrencepartnertypes = this.store.selectSnapshot<OccurrencePartnerType[]>((state) => state.users.occurrencepartnertypes);
+    this.occurrencepartnertypeService.GetAllOccurrencePartnerTypes('').subscribe(
+      (res) => {
+        this.occurrencepartnertypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class OccurrencePartnerTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.OccurrencePartnerType = {};
-    this.submitted = false;
     this.occurrencepartnertypeDialog = true;
   }
   editOccurrencePartnerType(OccurrencePartnerType: OccurrencePartnerType) {
@@ -104,12 +89,12 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   }
   deleteOccurrencePartnerType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.OccurrencePartnerType.Place + '?',
+      message: this.ConfirmMsg + this.OccurrencePartnerType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new OccurrencePartnerTypeActions.DeleteOccurrencePartnerType(this.OccurrencePartnerType.Id as string)).subscribe(
-          data => {
+        this.occurrencepartnertypeService.DeleteOccurrencePartnerType(this.OccurrencePartnerType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class OccurrencePartnerTypeComponent implements OnInit {
 
   hideDialog() {
     this.occurrencepartnertypeDialog = false;
-    this.submitted = false;
   }
 
   saveOccurrencePartnerType() {
-    this.submitted = true;
     if (this.occurrencepartnertypeForm.valid) {
-      if (this.OccurrencePartnerType.Id) {
-        delete this.OccurrencePartnerType.Request;
-        this.store.dispatch(new OccurrencePartnerTypeActions.UpdateOccurrencePartnerType(this.OccurrencePartnerType)).subscribe(
+      if (this.OccurrencePartnerType.id) {
+        this.occurrencepartnertypeService.UpdateOccurrencePartnerType(this.OccurrencePartnerType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class OccurrencePartnerTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.OccurrencePartnerType.Id;
-        this.store.dispatch(new OccurrencePartnerTypeActions.AddOccurrencePartnerType(this.OccurrencePartnerType)).subscribe(
+        this.occurrencepartnertypeService.AddOccurrencePartnerType(this.OccurrencePartnerType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new OccurrencePartnerTypeActions.GetOccurrencePartnerTypesInfo('')).subscribe(
-      () => {
-        this.occurrencepartnertypes = this.store.selectSnapshot<OccurrencePartnerType[]>((state) => state.users.occurrencepartnertypes);
+    this.occurrencepartnertypeService.GetAllOccurrencePartnerTypes('').subscribe(
+      (res) => {
+        this.occurrencepartnertypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.OccurrencePartnerType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.occurrencepartnertypeForm.controls;
   }

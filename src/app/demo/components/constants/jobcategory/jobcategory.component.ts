@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { JobCategory } from 'src/app/models/hr/jobcategory.model';
-import { University } from 'src/app/models/hr/University';
-import { JobCategoryActions } from 'src/app/stateManagement/hr/actions/JobCategory.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { JobCategory } from 'src/app/demo/models/constants/jobcategory.model';
+import { JobCategoryService } from 'src/app/demo/service/constants/jobcategory.service';
 
 @Component({
   selector: 'app-jobcategory',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class JobCategoryComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  jobcategorys: JobCategory[] = [];
   cols: any[];
-  jobcategoryDialog: boolean;
-  JobCategory!: JobCategory;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class JobCategoryComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   jobcategoryForm: FormGroup;
+  name: string = '';
+  jobcategoryDialog: boolean = false;
+
+  deleteJobCategoryDialog: boolean = false;
+
+  deleteJobCategorysDialog: boolean = false;
+
+  jobcategorys: JobCategory[] = [];
+
+  JobCategory: JobCategory = {};
+
+  selectedJobCategorys: JobCategory[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.jobcategoryForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly jobcategoryService: JobCategoryService) {
+    this.jobcategoryForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.jobcategoryDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new JobCategoryActions.GetJobCategorysInfo('')).subscribe(
-      () => {
-        this.jobcategorys = this.store.selectSnapshot<JobCategory[]>((state) => state.users.jobcategorys);
+    this.jobcategoryService.GetAllJobCategorys('').subscribe(
+      (res) => {
+        this.jobcategorys = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class JobCategoryComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.JobCategory = {};
-    this.submitted = false;
     this.jobcategoryDialog = true;
   }
   editJobCategory(JobCategory: JobCategory) {
@@ -104,12 +89,12 @@ export class JobCategoryComponent implements OnInit {
   }
   deleteJobCategory() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.JobCategory.Place + '?',
+      message: this.ConfirmMsg + this.JobCategory.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new JobCategoryActions.DeleteJobCategory(this.JobCategory.Id as string)).subscribe(
-          data => {
+        this.jobcategoryService.DeleteJobCategory(this.JobCategory.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class JobCategoryComponent implements OnInit {
 
   hideDialog() {
     this.jobcategoryDialog = false;
-    this.submitted = false;
   }
 
   saveJobCategory() {
-    this.submitted = true;
     if (this.jobcategoryForm.valid) {
-      if (this.JobCategory.Id) {
-        delete this.JobCategory.Request;
-        this.store.dispatch(new JobCategoryActions.UpdateJobCategory(this.JobCategory)).subscribe(
+      if (this.JobCategory.id) {
+        this.jobcategoryService.UpdateJobCategory(this.JobCategory).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class JobCategoryComponent implements OnInit {
         )
       }
       else {
-        delete this.JobCategory.Id;
-        this.store.dispatch(new JobCategoryActions.AddJobCategory(this.JobCategory)).subscribe(
+        this.jobcategoryService.AddJobCategory(this.JobCategory).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class JobCategoryComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new JobCategoryActions.GetJobCategorysInfo('')).subscribe(
-      () => {
-        this.jobcategorys = this.store.selectSnapshot<JobCategory[]>((state) => state.users.jobcategorys);
+    this.jobcategoryService.GetAllJobCategorys('').subscribe(
+      (res) => {
+        this.jobcategorys = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.JobCategory.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.jobcategoryForm.controls;
   }
