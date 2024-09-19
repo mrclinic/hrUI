@@ -9,7 +9,7 @@
     </ng-template>
 
     <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
@@ -17,7 +17,7 @@
     [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
     <ng-template pTemplate="caption">
       <div class="table-header">
-        {{'RolePermissionsLable' | translate }}
+        الأدوار والصلاحيات
       </div>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
@@ -25,7 +25,7 @@
         <th *ngFor="let col of cols" class="th">
           {{col.header}}
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rolePermission let-columns="columns">
@@ -35,26 +35,26 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editRolePermission(rolePermission)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedRolePermission(rolePermission)"></button>
+            (click)="editRolePermission(rolePermission)" title="تعديل"></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedRolePermission(rolePermission)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog [(visible)]="rolePermissionDialog" [style]="{width: '550px'}"
-  header="{{'RolePermissionDialogHeader' | translate }}" [modal]="true" styleClass="p-fluid" dir="rtl">
+<p-dialog [(visible)]="rolePermissionDialog" [style]="{width: '550px'}" header="تفاصيل الدور والصلاحية" [modal]="true"
+  styleClass="p-fluid" dir="rtl">
   <ng-template pTemplate="content">
   </ng-template>
 
   <ng-template pTemplate="footer">
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="saveRolePermission()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
     </div>

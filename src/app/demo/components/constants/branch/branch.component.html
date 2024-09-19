@@ -8,7 +8,7 @@
     <ng-template pTemplate="left">
     </ng-template>
     <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
@@ -24,7 +24,7 @@
         <th *ngFor="let col of cols" class="th">
           {{col.header}}
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-branch let-columns="columns">
@@ -42,9 +42,9 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editBranch(branch)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedBranch(branch)"></button>
+            (click)="editBranch(branch)" title="تعديل></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedBranch(branch)"></button>
         </td>
       </tr>
     </ng-template>
@@ -109,9 +109,9 @@
   <ng-template pTemplate="footer">
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="saveBranch()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
     </div>

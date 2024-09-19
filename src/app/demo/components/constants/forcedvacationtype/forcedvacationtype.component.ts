@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { ForcedVacationType } from 'src/app/models/hr/forcedvacationtype.model';
-import { University } from 'src/app/models/hr/University';
-import { ForcedVacationTypeActions } from 'src/app/stateManagement/hr/actions/ForcedVacationType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { ForcedVacationType } from 'src/app/demo/models/constants/forcedvacationtype.model';
+import { ForcedVacationTypeService } from 'src/app/demo/service/constants/forcedvacationtype.service';
 
 @Component({
   selector: 'app-forcedvacationtype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class ForcedVacationTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  forcedvacationtypes: ForcedVacationType[] = [];
   cols: any[];
-  forcedvacationtypeDialog: boolean;
-  ForcedVacationType!: ForcedVacationType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class ForcedVacationTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   forcedvacationtypeForm: FormGroup;
+  name: string = '';
+  forcedvacationtypeDialog: boolean = false;
+
+  deleteForcedVacationTypeDialog: boolean = false;
+
+  deleteForcedVacationTypesDialog: boolean = false;
+
+  forcedvacationtypes: ForcedVacationType[] = [];
+
+  ForcedVacationType: ForcedVacationType = {};
+
+  selectedForcedVacationTypes: ForcedVacationType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.forcedvacationtypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly forcedvacationtypeService: ForcedVacationTypeService) {
+    this.forcedvacationtypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.forcedvacationtypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new ForcedVacationTypeActions.GetForcedVacationTypesInfo('')).subscribe(
-      () => {
-        this.forcedvacationtypes = this.store.selectSnapshot<ForcedVacationType[]>((state) => state.users.forcedvacationtypes);
+    this.forcedvacationtypeService.GetAllForcedVacationTypes('').subscribe(
+      (res) => {
+        this.forcedvacationtypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class ForcedVacationTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.ForcedVacationType = {};
-    this.submitted = false;
     this.forcedvacationtypeDialog = true;
   }
   editForcedVacationType(ForcedVacationType: ForcedVacationType) {
@@ -104,12 +89,12 @@ export class ForcedVacationTypeComponent implements OnInit {
   }
   deleteForcedVacationType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.ForcedVacationType.Place + '?',
+      message: this.ConfirmMsg + this.ForcedVacationType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new ForcedVacationTypeActions.DeleteForcedVacationType(this.ForcedVacationType.Id as string)).subscribe(
-          data => {
+        this.forcedvacationtypeService.DeleteForcedVacationType(this.ForcedVacationType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class ForcedVacationTypeComponent implements OnInit {
 
   hideDialog() {
     this.forcedvacationtypeDialog = false;
-    this.submitted = false;
   }
 
   saveForcedVacationType() {
-    this.submitted = true;
     if (this.forcedvacationtypeForm.valid) {
-      if (this.ForcedVacationType.Id) {
-        delete this.ForcedVacationType.Request;
-        this.store.dispatch(new ForcedVacationTypeActions.UpdateForcedVacationType(this.ForcedVacationType)).subscribe(
+      if (this.ForcedVacationType.id) {
+        this.forcedvacationtypeService.UpdateForcedVacationType(this.ForcedVacationType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class ForcedVacationTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.ForcedVacationType.Id;
-        this.store.dispatch(new ForcedVacationTypeActions.AddForcedVacationType(this.ForcedVacationType)).subscribe(
+        this.forcedvacationtypeService.AddForcedVacationType(this.ForcedVacationType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class ForcedVacationTypeComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new ForcedVacationTypeActions.GetForcedVacationTypesInfo('')).subscribe(
-      () => {
-        this.forcedvacationtypes = this.store.selectSnapshot<ForcedVacationType[]>((state) => state.users.forcedvacationtypes);
+    this.forcedvacationtypeService.GetAllForcedVacationTypes('').subscribe(
+      (res) => {
+        this.forcedvacationtypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.ForcedVacationType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.forcedvacationtypeForm.controls;
   }

@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { VacationType } from 'src/app/models/hr/vacationtype.model';
-import { University } from 'src/app/models/hr/University';
-import { VacationTypeActions } from 'src/app/stateManagement/hr/actions/VacationType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { VacationType } from 'src/app/demo/models/constants/vacationtype.model';
+import { VacationTypeService } from 'src/app/demo/service/constants/vacationtype.service';
 
 @Component({
   selector: 'app-vacationtype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class VacationTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  vacationtypes: VacationType[] = [];
   cols: any[];
-  vacationtypeDialog: boolean;
-  VacationType!: VacationType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class VacationTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   vacationtypeForm: FormGroup;
+  name: string = '';
+  vacationtypeDialog: boolean = false;
+
+  deleteVacationTypeDialog: boolean = false;
+
+  deleteVacationTypesDialog: boolean = false;
+
+  vacationtypes: VacationType[] = [];
+
+  VacationType: VacationType = {};
+
+  selectedVacationTypes: VacationType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.vacationtypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly vacationtypeService: VacationTypeService) {
+    this.vacationtypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.vacationtypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new VacationTypeActions.GetVacationTypesInfo('')).subscribe(
-      () => {
-        this.vacationtypes = this.store.selectSnapshot<VacationType[]>((state) => state.users.vacationtypes);
+    this.vacationtypeService.GetAllVacationTypes('').subscribe(
+      (res) => {
+        this.vacationtypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class VacationTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.VacationType = {};
-    this.submitted = false;
     this.vacationtypeDialog = true;
   }
   editVacationType(VacationType: VacationType) {
@@ -104,12 +89,12 @@ export class VacationTypeComponent implements OnInit {
   }
   deleteVacationType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.VacationType.Place + '?',
+      message: this.ConfirmMsg + this.VacationType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new VacationTypeActions.DeleteVacationType(this.VacationType.Id as string)).subscribe(
-          data => {
+        this.vacationtypeService.DeleteVacationType(this.VacationType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class VacationTypeComponent implements OnInit {
 
   hideDialog() {
     this.vacationtypeDialog = false;
-    this.submitted = false;
   }
 
   saveVacationType() {
-    this.submitted = true;
     if (this.vacationtypeForm.valid) {
-      if (this.VacationType.Id) {
-        delete this.VacationType.Request;
-        this.store.dispatch(new VacationTypeActions.UpdateVacationType(this.VacationType)).subscribe(
+      if (this.VacationType.id) {
+        this.vacationtypeService.UpdateVacationType(this.VacationType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class VacationTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.VacationType.Id;
-        this.store.dispatch(new VacationTypeActions.AddVacationType(this.VacationType)).subscribe(
+        this.vacationtypeService.AddVacationType(this.VacationType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class VacationTypeComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new VacationTypeActions.GetVacationTypesInfo('')).subscribe(
-      () => {
-        this.vacationtypes = this.store.selectSnapshot<VacationType[]>((state) => state.users.vacationtypes);
+    this.vacationtypeService.GetAllVacationTypes('').subscribe(
+      (res) => {
+        this.vacationtypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.VacationType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.vacationtypeForm.controls;
   }

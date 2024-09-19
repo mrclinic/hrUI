@@ -5,31 +5,17 @@
     fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
 </div>
 <div class="card" dir="rtl">
-  <p-toolbar styleClass="mb-4">
-    <ng-template pTemplate="left">
-    </ng-template>
-
-    <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
-        (click)="openNew()"></button>
-    </ng-template>
-  </p-toolbar>
   <p-table #permissionsTable responsiveLayout="scroll" [value]="permissions" selectionMode="single"
     [(selection)]="permission" currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
     [rowHover]="true" [autoLayout]="true" [paginator]="true" [showCurrentPageReport]="true" [rows]="5"
     [rowsPerPageOptions]="[5,10,15,25,50]" dataKey="Id" [columns]="cols">
-    <!-- <ng-template pTemplate="caption">
-      <div class="table-header costum">
-        {{'permissionsLabel' | translate }}
-      </div>
-    </ng-template> -->
     <ng-template pTemplate="header" let-columns>
       <tr>
         <th *ngFor="let col of cols" class="th" pSortableColumn="{{col.field}}">{{col.header}} <p-sortIcon
             field="{{col.field}}">
           </p-sortIcon>
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
       <tr>
         <th *ngFor="let col of cols" class="th">
@@ -44,46 +30,44 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editPermission(permission)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedPermission(permission)"></button>
+            (click)="editPermission(permission)" title="تعديل"></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedPermission(permission)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog [(visible)]="permissionDialog" [style]="{width: '450px'}" header="{{'permissionDialogHeader' | translate }}"
-  [modal]="true" styleClass="p-fluid" dir="rtl">
+<p-dialog [(visible)]="permissionDialog" [style]="{width: '450px'}" header="تفاصيل الصلاحية" [modal]="true"
+  styleClass="p-fluid" dir="rtl">
   <ng-template pTemplate="content">
     <div class="p-field">
-      <label for="Name">{{'Name' | translate }}</label>
+      <label for="Name">الاسم</label>
       <input type="text" pInputText id="Name" readonly [(ngModel)]="permission.Name" required autofocus
         maxlength="100" />
-      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Name">{{'NameError' | translate
-        }}</small>
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Name">حقل الاسم مطلوب</small>
     </div>
     <div class="p-field">
-      <label for="DisplayName">{{'DisplayName' | translate }}</label>
+      <label for="DisplayName">الاسم العربي</label>
       <input id="DisplayName" pInputText [(ngModel)]="permission.DisplayName" required maxlength="100" />
-      <small class="p-invalid" [style]="{color: 'red'}"
-        *ngIf="submitted && !permission.DisplayName">{{'DisplayNameError' | translate }}</small>
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.DisplayName">حقل الاسم العربي
+        مطلوب</small>
     </div>
 
     <div class="p-field">
-      <label for="Order">{{'Order' | translate }}</label>
+      <label for="Order">الترتيب</label>
       <input id="Order" pInputText [(ngModel)]="permission.Order" required />
-      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Order">{{'OrderReq' | translate
-        }}</small>
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Order">حقل الترتيب مطلوب</small>
     </div>
   </ng-template>
 
   <ng-template pTemplate="footer">
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="savePermission()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
     </div>

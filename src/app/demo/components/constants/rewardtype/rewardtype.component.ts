@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { RewardType } from 'src/app/models/hr/rewardtype.model';
-import { University } from 'src/app/models/hr/University';
-import { RewardTypeActions } from 'src/app/stateManagement/hr/actions/RewardType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { RewardType } from 'src/app/demo/models/constants/rewardtype.model';
+import { RewardTypeService } from 'src/app/demo/service/constants/rewardtype.service';
 
 @Component({
   selector: 'app-rewardtype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class RewardTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  rewardtypes: RewardType[] = [];
   cols: any[];
-  rewardtypeDialog: boolean;
-  RewardType!: RewardType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class RewardTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   rewardtypeForm: FormGroup;
+  name: string = '';
+  rewardtypeDialog: boolean = false;
+
+  deleteRewardTypeDialog: boolean = false;
+
+  deleteRewardTypesDialog: boolean = false;
+
+  rewardtypes: RewardType[] = [];
+
+  RewardType: RewardType = {};
+
+  selectedRewardTypes: RewardType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.rewardtypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly rewardtypeService: RewardTypeService) {
+    this.rewardtypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.rewardtypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new RewardTypeActions.GetRewardTypesInfo('')).subscribe(
-      () => {
-        this.rewardtypes = this.store.selectSnapshot<RewardType[]>((state) => state.users.rewardtypes);
+    this.rewardtypeService.GetAllRewardTypes('').subscribe(
+      (res) => {
+        this.rewardtypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,21 +66,17 @@ export class RewardTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
     this.RewardType = {};
-    this.submitted = false;
     this.rewardtypeDialog = true;
   }
   editRewardType(RewardType: RewardType) {
@@ -104,12 +89,12 @@ export class RewardTypeComponent implements OnInit {
   }
   deleteRewardType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.RewardType.Place + '?',
+      message: this.ConfirmMsg + this.RewardType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new RewardTypeActions.DeleteRewardType(this.RewardType.Id as string)).subscribe(
-          data => {
+        this.rewardtypeService.DeleteRewardType(this.RewardType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class RewardTypeComponent implements OnInit {
 
   hideDialog() {
     this.rewardtypeDialog = false;
-    this.submitted = false;
   }
 
   saveRewardType() {
-    this.submitted = true;
     if (this.rewardtypeForm.valid) {
-      if (this.RewardType.Id) {
-        delete this.RewardType.Request;
-        this.store.dispatch(new RewardTypeActions.UpdateRewardType(this.RewardType)).subscribe(
+      if (this.RewardType.id) {
+        this.rewardtypeService.UpdateRewardType(this.RewardType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class RewardTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.RewardType.Id;
-        this.store.dispatch(new RewardTypeActions.AddRewardType(this.RewardType)).subscribe(
+        this.rewardtypeService.AddRewardType(this.RewardType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -152,26 +133,12 @@ export class RewardTypeComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new RewardTypeActions.GetRewardTypesInfo('')).subscribe(
-      () => {
-        this.rewardtypes = this.store.selectSnapshot<RewardType[]>((state) => state.users.rewardtypes);
+    this.rewardtypeService.GetAllRewardTypes('').subscribe(
+      (res) => {
+        this.rewardtypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.RewardType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.rewardtypeForm.controls;
   }

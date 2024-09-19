@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { EmploymentStatusType } from 'src/app/models/hr/employmentstatustype.model';
-import { University } from 'src/app/models/hr/University';
-import { EmploymentStatusTypeActions } from 'src/app/stateManagement/hr/actions/EmploymentStatusType.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { EmploymentStatusType } from 'src/app/demo/models/constants/employmentstatustype.model';
+import { EmploymentStatusTypeService } from 'src/app/demo/service/constants/employmentstatustype.service';
 
 @Component({
   selector: 'app-employmentstatustype',
@@ -16,17 +14,7 @@ import { UniversityActions } from 'src/app/stateManagement/hr/actions/university
 })
 export class EmploymentStatusTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  employmentstatustypes: EmploymentStatusType[] = [];
   cols: any[];
-  employmentstatustypeDialog: boolean;
-  EmploymentStatusType!: EmploymentStatusType;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class EmploymentStatusTypeComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   employmentstatustypeForm: FormGroup;
+  name: string = '';
+  employmentstatustypeDialog: boolean = false;
+
+  deleteEmploymentStatusTypeDialog: boolean = false;
+
+  deleteEmploymentStatusTypesDialog: boolean = false;
+
+  employmentstatustypes: EmploymentStatusType[] = [];
+
+  employmentStatusType: EmploymentStatusType = {};
+
+  selectedEmploymentStatusTypes: EmploymentStatusType[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.employmentstatustypeForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly employmentstatustypeService: EmploymentStatusTypeService) {
+    this.employmentstatustypeForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.employmentstatustypeDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new EmploymentStatusTypeActions.GetEmploymentStatusTypesInfo('')).subscribe(
-      () => {
-        this.employmentstatustypes = this.store.selectSnapshot<EmploymentStatusType[]>((state) => state.users.employmentstatustypes);
+    this.employmentstatustypeService.GetAllEmploymentStatusTypes('').subscribe(
+      (res) => {
+        this.employmentstatustypes = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,39 +66,35 @@ export class EmploymentStatusTypeComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
-    this.EmploymentStatusType = {};
-    this.submitted = false;
+    this.employmentStatusType = {};
     this.employmentstatustypeDialog = true;
   }
   editEmploymentStatusType(EmploymentStatusType: EmploymentStatusType) {
-    this.EmploymentStatusType = { ...EmploymentStatusType };
+    this.employmentStatusType = { ...EmploymentStatusType };
     this.employmentstatustypeDialog = true;
   }
   deleteSelectedEmploymentStatusType(EmploymentStatusType: EmploymentStatusType) {
-    this.EmploymentStatusType = EmploymentStatusType;
+    this.employmentStatusType = EmploymentStatusType;
     this.deleteEmploymentStatusType();
   }
   deleteEmploymentStatusType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.EmploymentStatusType.Place + '?',
+      message: this.ConfirmMsg + this.employmentStatusType.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new EmploymentStatusTypeActions.DeleteEmploymentStatusType(this.EmploymentStatusType.Id as string)).subscribe(
-          data => {
+        this.employmentstatustypeService.DeleteEmploymentStatusType(this.employmentStatusType.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class EmploymentStatusTypeComponent implements OnInit {
 
   hideDialog() {
     this.employmentstatustypeDialog = false;
-    this.submitted = false;
   }
 
   saveEmploymentStatusType() {
-    this.submitted = true;
     if (this.employmentstatustypeForm.valid) {
-      if (this.EmploymentStatusType.Id) {
-        delete this.EmploymentStatusType.Request;
-        this.store.dispatch(new EmploymentStatusTypeActions.UpdateEmploymentStatusType(this.EmploymentStatusType)).subscribe(
+      if (this.employmentStatusType.id) {
+        this.employmentstatustypeService.UpdateEmploymentStatusType(this.employmentStatusType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class EmploymentStatusTypeComponent implements OnInit {
         )
       }
       else {
-        delete this.EmploymentStatusType.Id;
-        this.store.dispatch(new EmploymentStatusTypeActions.AddEmploymentStatusType(this.EmploymentStatusType)).subscribe(
+        this.employmentstatustypeService.AddEmploymentStatusType(this.employmentStatusType).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -147,31 +128,17 @@ export class EmploymentStatusTypeComponent implements OnInit {
         )
       }
       this.employmentstatustypeDialog = false;
-      this.EmploymentStatusType = {};
+      this.employmentStatusType = {};
     }
   }
 
   reload() {
-    this.store.dispatch(new EmploymentStatusTypeActions.GetEmploymentStatusTypesInfo('')).subscribe(
-      () => {
-        this.employmentstatustypes = this.store.selectSnapshot<EmploymentStatusType[]>((state) => state.users.employmentstatustypes);
+    this.employmentstatustypeService.GetAllEmploymentStatusTypes('').subscribe(
+      (res) => {
+        this.employmentstatustypes = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.EmploymentStatusType.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.employmentstatustypeForm.controls;
   }

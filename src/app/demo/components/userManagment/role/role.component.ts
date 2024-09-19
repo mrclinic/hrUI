@@ -79,9 +79,9 @@ export class RoleComponent implements OnInit {
     )
   }
   initColumns() {
-    this.cols = [{ field: 'name', header: this.NameHearder },
-    { field: 'displayName', header: this.DisplayNameHeader },
-    { field: 'statusCode', header: this.StatusCode }]
+    this.cols = [{ field: 'name', header: "الاسم" },
+    { field: 'displayName', header: "الاسم العربي" },
+    { field: 'statusCode', header: "رمز الحالة الموافق للدور" }]
   }
   openNew() {
     this.role = {};

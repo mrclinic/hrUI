@@ -4,29 +4,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
-import { DeputationObjective } from 'src/app/models/hr/deputationobjective.model';
-import { University } from 'src/app/models/hr/University';
-import { DeputationObjectiveActions } from 'src/app/stateManagement/hr/actions/DeputationObjective.action';
-import { UniversityActions } from 'src/app/stateManagement/hr/actions/university.action';
+import { DeputationObjective } from 'src/app/demo/models/constants/deputationobjective.model';
+import { DeputationObjectiveService } from 'src/app/demo/service/constants/deputationobjective.service';
 
 @Component({
   selector: 'app-deputationobjective',
   templateUrl: './deputationobjective.component.html',
   styleUrls: ['./deputationobjective.component.css']
 })
-export class DeputationObjectiveComponent implements OnInit {
+export class DeputationobjectiveComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  deputationobjectives: DeputationObjective[] = [];
   cols: any[];
-  deputationobjectiveDialog: boolean;
-  DeputationObjective!: DeputationObjective;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
   CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
@@ -36,38 +24,39 @@ export class DeputationObjectiveComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   deputationobjectiveForm: FormGroup;
+  name: string = '';
+  deputationobjectiveDialog: boolean = false;
+
+  deleteDeputationobjectiveDialog: boolean = false;
+
+  deleteDeputationobjectivesDialog: boolean = false;
+
+  deputationobjectives: DeputationObjective[] = [];
+
+  deputationobjective: DeputationObjective = {};
+
+  selectedDeputationobjectives: DeputationObjective[] = [];
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.deputationobjectiveForm = fb.group({
+    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly deputationobjectiveService: DeputationObjectiveService) {
+    this.deputationobjectiveForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
     this.cols = [];
-    this.deputationobjectiveDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new DeputationObjectiveActions.GetDeputationObjectivesInfo('')).subscribe(
-      () => {
-        this.deputationobjectives = this.store.selectSnapshot<DeputationObjective[]>((state) => state.users.deputationobjectives);
+    this.deputationobjectiveService.GetAllDeputationObjectives('').subscribe(
+      (res) => {
+        this.deputationobjectives = res;
       }
     );
     this.translate.get('AppTitle').subscribe(
       () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
         this.CancelReason = this.translate.instant('CancelReason');
         this.ConfirmTitle = this.translate.instant('ConfirmTitle');
         this.ConfirmMsg = this.translate.instant('ConfirmMsg');
@@ -77,39 +66,35 @@ export class DeputationObjectiveComponent implements OnInit {
         this.No = this.translate.instant('No');
         this.editSuccess = this.translate.instant('editSuccess');
         this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
         this.initColumns();
       }
     )
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
-    this.DeputationObjective = {};
-    this.submitted = false;
+    this.deputationobjective = {};
     this.deputationobjectiveDialog = true;
   }
-  editDeputationObjective(DeputationObjective: DeputationObjective) {
-    this.DeputationObjective = { ...DeputationObjective };
+  editDeputationobjective(deputationobjective: DeputationObjective) {
+    this.deputationobjective = { ...deputationobjective };
     this.deputationobjectiveDialog = true;
   }
-  deleteSelectedDeputationObjective(DeputationObjective: DeputationObjective) {
-    this.DeputationObjective = DeputationObjective;
-    this.deleteDeputationObjective();
+  deleteSelectedDeputationobjective(deputationobjective: DeputationObjective) {
+    this.deputationobjective = deputationobjective;
+    this.deleteDeputationobjective();
   }
-  deleteDeputationObjective() {
+  deleteDeputationobjective() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.DeputationObjective.Place + '?',
+      message: this.ConfirmMsg + this.deputationobjective.name + '?',
       header: this.ConfirmTitle,
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new DeputationObjectiveActions.DeleteDeputationObjective(this.DeputationObjective.Id as string)).subscribe(
-          data => {
+        this.deputationobjectiveService.DeleteDeputationObjective(this.deputationobjective.id as string).subscribe(
+          (data) => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
             this.reload();
           }
@@ -122,15 +107,12 @@ export class DeputationObjectiveComponent implements OnInit {
 
   hideDialog() {
     this.deputationobjectiveDialog = false;
-    this.submitted = false;
   }
 
-  saveDeputationObjective() {
-    this.submitted = true;
+  saveDeputationobjective() {
     if (this.deputationobjectiveForm.valid) {
-      if (this.DeputationObjective.Id) {
-        delete this.DeputationObjective.Request;
-        this.store.dispatch(new DeputationObjectiveActions.UpdateDeputationObjective(this.DeputationObjective)).subscribe(
+      if (this.deputationobjective.id) {
+        this.deputationobjectiveService.UpdateDeputationObjective(this.deputationobjective).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
             this.reload();
@@ -138,8 +120,7 @@ export class DeputationObjectiveComponent implements OnInit {
         )
       }
       else {
-        delete this.DeputationObjective.Id;
-        this.store.dispatch(new DeputationObjectiveActions.AddDeputationObjective(this.DeputationObjective)).subscribe(
+        this.deputationobjectiveService.AddDeputationObjective(this.deputationobjective).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
             this.reload();
@@ -147,31 +128,17 @@ export class DeputationObjectiveComponent implements OnInit {
         )
       }
       this.deputationobjectiveDialog = false;
-      this.DeputationObjective = {};
+      this.deputationobjective = {};
     }
   }
 
   reload() {
-    this.store.dispatch(new DeputationObjectiveActions.GetDeputationObjectivesInfo('')).subscribe(
-      () => {
-        this.deputationobjectives = this.store.selectSnapshot<DeputationObjective[]>((state) => state.users.deputationobjectives);
+    this.deputationobjectiveService.GetAllDeputationObjectives('').subscribe(
+      (res) => {
+        this.deputationobjectives = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.DeputationObjective.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.deputationobjectiveForm.controls;
   }

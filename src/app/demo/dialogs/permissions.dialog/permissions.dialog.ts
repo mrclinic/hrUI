@@ -14,9 +14,9 @@ import { RolePermissionActions } from "../../stateManagement/userManagment/actio
   <ng-template pTemplate="left">
   </ng-template>
   <ng-template pTemplate="right">
-    <button pButton pRipple label="{{'addPermsToRole' | translate }}" icon="pi pi-check" class="p-button-success mr-2"
+    <button pButton pRipple label="منح جميع الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
       (click)="addPermsToRole()"></button>
-    <button pButton pRipple label="{{'addPermToRole' | translate }}" icon="pi pi-check" class="p-button-success mr-2"
+    <button pButton pRipple label="منح الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
       (click)="addPermToRole()"></button>
   </ng-template>
 </p-toolbar>
@@ -25,7 +25,7 @@ import { RolePermissionActions } from "../../stateManagement/userManagment/actio
   [rows]="5" [responsive]="true" [selectionPageOnly]="true">
   <ng-template pTemplate="header">
     <tr>
-      <th class="th" pSortableColumn="price">{{'DisplayName' | translate }} <p-sortIcon field="price"></p-sortIcon>
+      <th class="th" pSortableColumn="price">الاسم العربي <p-sortIcon field="price"></p-sortIcon>
       </th>
       <th style="width: 2.25em">
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>

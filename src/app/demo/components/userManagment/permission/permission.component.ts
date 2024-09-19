@@ -84,9 +84,9 @@ export class PermissionComponent implements OnInit {
     )
   }
   initColumns() {
-    this.cols = [{ field: 'name', header: this.NameHearder },
-    { field: 'displayName', header: this.DisplayNameHeader },
-    { field: 'order', header: this.OrderHearder }]
+    this.cols = [{ field: 'name', header: "الاسم" },
+    { field: 'displayName', header: "الاسم العربي" },
+    { field: 'order', header: "الترتيب" }]
   }
   openNew() {
     this.permission = {};

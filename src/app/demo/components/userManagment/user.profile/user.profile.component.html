@@ -9,7 +9,7 @@
     </ng-template>
 
     <ng-template pTemplate="right">
-      <button pButton pRipple label="{{'addTitle' | translate }}" icon="pi pi-plus" class="p-button-success mr-2"
+      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
         (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
@@ -17,7 +17,7 @@
     [rowHover]="true" [autoLayout]="true" [paginator]="true" [rows]="5" dataKey="Id" [columns]="cols">
     <ng-template pTemplate="caption">
       <div class="table-header">
-        {{'UserProfiles' | translate }}
+        بروفايلات المستخدمين
       </div>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
@@ -25,7 +25,7 @@
         <th *ngFor="let col of cols" class="th">
           {{col.header}}
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-userProfile let-columns="columns">
@@ -58,79 +58,72 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editUserProfile(userProfile)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedUserProfile(userProfile)"></button>
+            (click)="editUserProfile(userProfile)" title="تعديل"></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedUserProfile(userProfile)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog [(visible)]="userProfileDialog" [style]="{width: '750px'}" header="{{'UserProfileHeaderDialog' | translate }}"
-  [modal]="true" styleClass="p-fluid" dir="rtl">
+<p-dialog [(visible)]="userProfileDialog" [style]="{width: '750px'}" header="تفاصيل البروفايل" [modal]="true"
+  styleClass="p-fluid" dir="rtl">
   <ng-template pTemplate="content">
 
     <div class="row">
       <div class="p-field col-sm">
-        <label for="FatherName">{{'FatherName' | translate }}</label>
+        <label for="FatherName">اسم الأب</label>
         <input type="text" pInputText id="FatherName" [(ngModel)]="userProfile.FatherName" required autofocus
           maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.FatherName">{{'fnameReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.FatherName">الاسم الأول
+          مطلوب</small>
       </div>
       <div class="p-field col-sm">
-        <label for="MotherName">{{'MotherName' | translate }}</label>
+        <label for="MotherName">اسم الأم</label>
         <input id="MotherName" pInputText [(ngModel)]="userProfile.MotherName" required maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.MotherName">{{'lnameReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.MotherName">الكنية
+          مطلوبة</small>
       </div>
     </div>
     <div class="row">
       <div class="p-field col-sm">
-        <label for="BirthPlace">{{'BirthPlace' | translate }}</label>
+        <label for="BirthPlace">مكان الولادة</label>
         <input id="BirthPlace" pInputText [(ngModel)]="userProfile.BirthPlace" required maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthPlace">{{'usernameReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthPlace">اسم المستخدم
+          مطلوب</small>
       </div>
       <div class="p-field col-sm">
-        <label for="BirthDate">{{'BirthDate' | translate }}</label>
+        <label for="BirthDate">تاريخ الولادة</label>
         <p-calendar id="BirthDate" [(ngModel)]="userProfile.BirthDate" dateFormat="yy-mm-dd" appendTo="body"
           [required]=true [showIcon]="true" dataType="string"></p-calendar>
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthDate">{{'passwordReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.BirthDate">كلمة المرور
+          مطلوبة</small>
       </div>
     </div>
     <div class="row">
 
       <div class="p-field col-sm">
-        <label for="Gender">{{'Gender' | translate }}</label>
+        <label for="Gender">الجنس</label>
         <p-dropdown [options]="sexTypes" [showClear]="true" appendTo="body" name="Gender" [required]=true
           [required]="isGenderReq" onClear="onClear()" [(ngModel)]="userProfile.Gender" placeholder="اختر الجنس">
         </p-dropdown>
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Gender">{{'mobileReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Gender">حقل الجنس
+          مطلوب</small>
       </div>
       <div class="p-field col-sm">
-        <label for="Address">{{'Address' | translate }}</label>
+        <label for="Address">العنوان</label>
         <input id="Address" pInputText [(ngModel)]="userProfile.Address" required maxlength="11" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Address">{{'natNumReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.Address">الرقم الوطني
+          مطلوب</small>
       </div>
     </div>
     <div class="row">
       <div class="p-field col-sm">
-        <label for="CardNumber">{{'CardNumber' | translate }}</label>
+        <label for="CardNumber">رقم الهوية الشخصية</label>
         <input id="CardNumber" pInputText [(ngModel)]="userProfile.CardNumber" required maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.CardNumber">{{'emailReq' |
-          translate
-          }}</small>
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !userProfile.CardNumber">رقم الهوية
+          الشخصية مطلوب</small>
       </div>
     </div>
   </ng-template>
@@ -139,9 +132,9 @@
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="saveUserProfile()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
       <div class="p-button-rounded col-sm"></div>

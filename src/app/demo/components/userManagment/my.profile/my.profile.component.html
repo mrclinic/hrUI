@@ -8,7 +8,7 @@
     [autoLayout]="true" dataKey="Id" [columns]="cols">
     <ng-template pTemplate="caption">
       <div class="table-header">
-        {{'MyProfileDialogHeader' | translate }}
+        البروفايل الشخصي
       </div>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
@@ -16,7 +16,7 @@
         <th *ngFor="let col of cols" class="th">
           {{col.header}}
         </th>
-        <th class="th"> {{'controlTilte' | translate }}</th>
+        <th class="th"> أدوات التحكم</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-userProfile let-columns="columns">
@@ -46,17 +46,17 @@
         </td>
         <td class="td">
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editUserProfile(userProfile)" title="{{'editTitle' | translate }}"></button>
-          <button pButton pRipple icon="pi pi-trash" title="{{'deleteTitle' | translate }}"
-            class="p-button-rounded p-button-warning" (click)="deleteSelectedUserProfile(userProfile)"></button>
+            (click)="editUserProfile(userProfile)" title="تعديل"></button>
+          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+            (click)="deleteSelectedUserProfile(userProfile)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 
-<p-dialog [(visible)]="userProfileDialog" [style]="{width: '750px'}" header="{{'MyProfileDialogHeader' | translate }}"
-  [modal]="true" styleClass="p-fluid" dir="rtl">
+<p-dialog [(visible)]="userProfileDialog" [style]="{width: '750px'}" header=" تفاصيل البروفايل الشخصي" [modal]="true"
+  styleClass="p-fluid" dir="rtl">
   <ng-template pTemplate="content">
     <form [formGroup]="myProfileForm" (ngSubmit)="saveUserProfile()">
       <div class="row">
@@ -66,14 +66,10 @@
               [(ngModel)]="userProfile.FatherName" autofocus />
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['FatherName'].invalid && f['FatherName'].errors && f['FatherName'].errors['required']">
-              {{'FatherNameReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="f['FatherName'].errors?.['maxlength']">{{'FatherNameLength'
-              |
-              translate }}</small>
-            <label for="FatherName">{{'FatherName' | translate }}</label>
+              اسم الأب مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['FatherName'].errors?.['maxlength']">طول اسم الأب
+              لا يتجاوز 100 محرف</small>
+            <label for="FatherName">اسم الأب</label>
           </span>
         </div>
         <div class="p-field col-sm">
@@ -82,14 +78,10 @@
               name="MotherName" />
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['MotherName'].invalid && f['MotherName'].errors && f['MotherName'].errors['required']">
-              {{'MotherNameReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="f['MotherName'].errors?.['maxlength']">{{'MotherNameLength'
-              |
-              translate }}</small>
-            <label for="MotherName">{{'MotherName' | translate }}</label>
+              اسم الأم مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['MotherName'].errors?.['maxlength']">طول اسم الأم
+              لا يتجاوز 100 محرف</small>
+            <label for="MotherName">اسم الأم</label>
           </span>
         </div>
       </div>
@@ -101,14 +93,10 @@
               name="BirthPlace" />
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['BirthPlace'].invalid && f['BirthPlace'].errors && f['BirthPlace'].errors['required']">
-              {{'BirthPlaceReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="f['BirthPlace'].errors?.['maxlength']">{{'BirthPlaceLength'
-              |
-              translate }}</small>
-            <label for="BirthPlace">{{'BirthPlace' | translate }}</label>
+              مكان الولادة مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['BirthPlace'].errors?.['maxlength']">طول مكان
+              الولادة لا يتجاوز 100 محرف</small>
+            <label for="BirthPlace">مكان الولادة</label>
           </span>
         </div>
         <div class="p-field col-sm">
@@ -117,10 +105,8 @@
               dateFormat="yy-mm-dd" appendTo="body" [showIcon]="true" dataType="string"></p-calendar>
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['BirthDate'].invalid && f['BirthDate'].errors && f['BirthDate'].errors['required']">
-              {{'BirthDateReq'
-              |
-              translate }}</small>
-            <label for="BirthDate">{{'BirthDate' | translate }}</label>
+              تاريخ الولادة مطلوب</small>
+            <label for="BirthDate">تاريخ الولادة</label>
           </span>
         </div>
       </div>
@@ -133,13 +119,10 @@
             </p-dropdown>
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['Gender'].invalid && f['Gender'].errors && f['Gender'].errors['required']">
-              {{'GenderReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['Gender'].errors?.['maxlength']">{{'GenderLength'
-              |
-              translate }}</small>
-            <label for="Gender">{{'Gender' | translate }}</label>
+              حقل الجنس مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['Gender'].errors?.['maxlength']">طول حقل الجنس لا
+              يتجاوز 10 محارف</small>
+            <label for="Gender">الجنس</label>
           </span>
         </div>
         <div class="p-field col-sm">
@@ -147,14 +130,10 @@
             <input id="Address" pInputText [(ngModel)]="userProfile.Address" formControlName="Address" name="Address" />
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['Address'].invalid && f['Address'].errors && f['Address'].errors['required']">
-              {{'AddressReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="f['Address'].errors?.['maxlength']">{{'AddressLength'
-              |
-              translate }}</small>
-            <label for="Address">{{'Address' | translate }}</label>
+              العنوان مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['Address'].errors?.['maxlength']">حقل العنوان لا
+              يتجاوز 100 محرف</small>
+            <label for="Address">العنوان</label>
           </span>
         </div>
       </div>
@@ -166,14 +145,10 @@
               name="CardNumber" />
             <small class="p-invalid" [style]="{color: 'red'}"
               *ngIf="submitted && f['CardNumber'].invalid && f['CardNumber'].errors && f['CardNumber'].errors['required']">
-              {{'CardNumberReq'
-              |
-              translate }}</small>
-            <small class="p-invalid" [style]="{color: 'red'}"
-              *ngIf="f['CardNumber'].errors?.['maxlength']">{{'CardNumberLength'
-              |
-              translate }}</small>
-            <label for="CardNumber">{{'CardNumber' | translate }}</label>
+              رقم الهوية الشخصية مطلوب</small>
+            <small class="p-invalid" [style]="{color: 'red'}" *ngIf="f['CardNumber'].errors?.['maxlength']">طول رقم
+              الهوية الشخصية لا يتجاوز 20 محرف</small>
+            <label for="CardNumber">رقم الهوية الشخصية</label>
           </span>
         </div>
       </div>
@@ -184,9 +159,9 @@
     <div class="row">
       <div class="p-button-rounded col-sm"></div>
       <div class="p-button-rounded col-sm"></div>
-      <button pButton pRipple label="{{'saveTitle' | translate }}" icon="pi pi-check" class="p-button-rounded col-sm"
+      <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-rounded col-sm"
         (click)="saveUserProfile()"></button>
-      <button pButton pRipple type="button" label="{{'cancelTitle' | translate }}" icon="pi pi-times"
+      <button pButton pRipple type="button" label="إلغاء" icon="pi pi-times"
         class="p-button-rounded p-button-warning col-sm" (click)="hideDialog()"></button>
       <div class="p-button-rounded col-sm"></div>
       <div class="p-button-rounded col-sm"></div>

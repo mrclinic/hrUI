@@ -50,7 +50,7 @@
             </td>
             <td style="width:14%; min-width:10rem;">
               <span class="p-column-title">الاسم</span>
-              {{degreesAuthority.name}}
+              {{degreesAuthority?.name}}
             </td>
             <td>
               <div class="flex">
@@ -86,7 +86,7 @@
     <p-dialog [(visible)]="deleteDegreesAuthorityDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span *ngIf="degreesAuthority">هل أنت متأكد من حذف <b>{{degreesAuthority.name}}</b>?</span>
+        <span *ngIf="degreesAuthority">هل أنت متأكد من حذف <b>{{degreesAuthority?.name}}</b>?</span>
       </div>
       <ng-template pTemplate="footer">
         <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
