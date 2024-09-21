@@ -56,20 +56,6 @@ export class ModificationContractTypeComponent implements OnInit {
         this.modificationcontracttypes = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
   }
   initColumns() {
     this.cols = [
@@ -77,6 +63,7 @@ export class ModificationContractTypeComponent implements OnInit {
     ]
   }
   openNew() {
+    this.modificationcontracttypeForm.reset();
     this.ModificationContractType = {};
     this.modificationcontracttypeDialog = true;
   }
@@ -90,19 +77,19 @@ export class ModificationContractTypeComponent implements OnInit {
   }
   deleteModificationContractType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.ModificationContractType.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.ModificationContractType.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.modificationcontracttypeService.DeleteModificationContractType(this.ModificationContractType.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -115,7 +102,7 @@ export class ModificationContractTypeComponent implements OnInit {
       if (this.ModificationContractType.id) {
         this.modificationcontracttypeService.UpdateModificationContractType(this.ModificationContractType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -123,7 +110,7 @@ export class ModificationContractTypeComponent implements OnInit {
       else {
         this.modificationcontracttypeService.AddModificationContractType(this.ModificationContractType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

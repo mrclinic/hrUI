@@ -55,20 +55,6 @@ export class GenderComponent implements OnInit {
         this.genders = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
   }
   initColumns() {
     this.cols = [
@@ -76,6 +62,7 @@ export class GenderComponent implements OnInit {
     ]
   }
   openNew() {
+    this.genderForm.reset();
     this.Gender = {};
     this.genderDialog = true;
   }
@@ -89,19 +76,19 @@ export class GenderComponent implements OnInit {
   }
   deleteGender() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.Gender.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.Gender.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.genderService.DeleteGender(this.Gender.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -114,7 +101,7 @@ export class GenderComponent implements OnInit {
       if (this.Gender.id) {
         this.genderService.UpdateGender(this.Gender).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -122,7 +109,7 @@ export class GenderComponent implements OnInit {
       else {
         this.genderService.AddGender(this.Gender).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

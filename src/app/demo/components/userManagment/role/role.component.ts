@@ -58,25 +58,9 @@ export class RoleComponent implements OnInit {
     this.store.dispatch(new RoleActions.GetAllRoles('')).subscribe(
       () => {
         this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);
-      }
-    );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.NameHearder = this.translate.instant('Name');;
-        this.DisplayNameHeader = this.translate.instant('DisplayName');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.RolePermissionsLabel = this.translate.instant('RolePermissionsLabel');
-        this.StatusCode = this.translate.instant('StatusCode');
         this.initColumns();
       }
-    )
+    );
   }
   initColumns() {
     this.cols = [{ field: 'name', header: "الاسم" },
@@ -98,19 +82,19 @@ export class RoleComponent implements OnInit {
   }
   deleteRole() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.role.Name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.role.Name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(new RoleActions.DeleteRole(this.role?.id as string)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -125,7 +109,7 @@ export class RoleComponent implements OnInit {
       if (this.role.id) {
         this.store.dispatch(new RoleActions.UpdateRole(this.role)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -134,7 +118,7 @@ export class RoleComponent implements OnInit {
         delete this.role.id;
         this.store.dispatch(new RoleActions.AddRole(this.role)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -155,7 +139,7 @@ export class RoleComponent implements OnInit {
   setPermissions(role: Role) {
     this.role = { ...role }
     this.ref = this.dialogService.open(PermissionListComponent, {
-      header: this.RolePermissionsLabel,
+      header: 'صلاحيات الدور',
       width: '70%',
       contentStyle: { "max-height": "600px", "overflow": "auto" },
       baseZIndex: 10000,
@@ -165,7 +149,7 @@ export class RoleComponent implements OnInit {
     });
 
     this.ref.onClose.subscribe((selectedPermissions: Permission[]) => {
-      const newArr = selectedPermissions?.map(({ DisplayName, Name, Order, ...rest }) => {
+      const newArr = selectedPermissions?.map(({ displayName, name, order, ...rest }) => {
         return rest;
       });
       const mapped = newArr?.map((element) => ({

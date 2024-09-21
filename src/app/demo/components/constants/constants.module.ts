@@ -49,6 +49,7 @@ import { SubDepartmentComponent } from './subdepartment/subdepartment.component'
 import { TerminationReasonComponent } from './terminationreason/terminationreason.component';
 import { UniversityComponent } from './university/university.component';
 import { VacationTypeComponent } from './vacationtype/vacationtype.component';
+import { BranchComponent } from './branch/branch.component';
 
 @NgModule({
     imports: [
@@ -79,7 +80,7 @@ import { VacationTypeComponent } from './vacationtype/vacationtype.component';
         , PunishmentTypeComponent, QualificationComponent, RelinquishmentReasonComponent
         , RewardTypeComponent, SpecializationComponent,
         StartingTypeComponent, SubDepartmentComponent, TerminationReasonComponent
-        , UniversityComponent, VacationTypeComponent
+        , UniversityComponent, VacationTypeComponent, BranchComponent
     ]
 })
 export class ConstantsModule { }

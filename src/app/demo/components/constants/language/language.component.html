@@ -28,7 +28,7 @@
             <h5 class="m-0">إدارة اللغات</h5>
             <span class="block mt-2 md:mt-0 p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="بحث..."
                 class="w-full sm:w-auto" />
             </span>
           </div>
@@ -80,7 +80,7 @@
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteLanguageDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteLanguageDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span *ngIf="Language">هل أنت متأكد من حذف <b>{{language?.name}}</b>?</span>
@@ -92,7 +92,7 @@
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteLanguagesDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteLanguagesDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span>هل أنت متأكد من حذف اللغات المختارة؟</span>

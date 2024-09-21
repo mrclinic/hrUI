@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
+import { forkJoin, Observable } from 'rxjs';
 import { Branch } from 'src/app/demo/models/constants/branch.model';
-import { University } from 'src/app/demo/models/constants/university.model';
+import { BranchService } from 'src/app/demo/service/constants/branch.service';
+import { DepartmentService } from 'src/app/demo/service/constants/department.service';
+import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartment.service';
 
 
 @Component({
@@ -15,18 +17,7 @@ import { University } from 'src/app/demo/models/constants/university.model';
 })
 export class BranchComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  branchs: Branch[] = [];
   cols: any[];
-  branchDialog: boolean;
-  Branch!: Branch;
-  submitted: boolean;
-  Time: string = '';
-  Place: string = '';
-  DateLabel: string = '';
-  Note: string = '';
-  IsCancelled: string = '';
-  IsDone: string = '';
-  CancelReason: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
   Success: string = '';
@@ -35,75 +26,67 @@ export class BranchComponent implements OnInit {
   No: string = '';
   editSuccess: string = '';
   addSuccess: string = '';
-  RequestIdCol: string = '';
-  RequestId: string = '';
-  universities: University[] = [];
   branchForm: FormGroup;
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.branchForm = fb.group({
-      departmentid: new FormControl('', [Validators.required]),
-      department: new FormControl('', [Validators.required]),
-      subdepartmentid: new FormControl('', [Validators.required]),
-      subdepartment: new FormControl('', [Validators.required]),
-      name: new FormControl('', [Validators.required]),
+  branchDialog: boolean = false;
 
+  deleteBranchDialog: boolean = false;
+
+  deleteBranchsDialog: boolean = false;
+
+  branchs: Branch[] = [];
+
+  Branch: Branch = {};
+
+  selectedBranchs: Branch[] = [];
+
+  items: any[] | undefined;
+  filteredItems: any[] | undefined;
+
+  subItems: any[] | undefined;
+  filteredSubItems: any[] | undefined;
+  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
+    private confirmationService: ConfirmationService, private readonly branchService: BranchService,
+    private readonly departmentService: DepartmentService, private readonly subDepartmentService: SubDepartmentService) {
+    this.branchForm = this.fb.group({
+      departmentid: new FormControl('', [Validators.required]),
+      subdepartmentid: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required])
     });
     this.cols = [];
     this.branchDialog = false;
-    this.submitted = false;
   }
 
   ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
-    this.store.dispatch(new BranchActions.GetBranchsInfo('')).subscribe(
-      () => {
-        this.branchs = this.store.selectSnapshot<Branch[]>((state) => state.users.branchs);
-      }
-    );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.Time = this.translate.instant('Time');;
-        this.Place = this.translate.instant('Place');
-        this.DateLabel = this.translate.instant('Date');;
-        this.Note = this.translate.instant('Note');
-        this.IsCancelled = this.translate.instant('IsCancelled');
-        this.IsDone = this.translate.instant('IsDone');
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.RequestIdCol = this.translate.instant('RequestId');
-        this.initColumns();
-      }
-    )
+    forkJoin([this.branchService.GetAllBranchs(''), this.departmentService.GetAllDepartments(''), this.subDepartmentService.GetAllSubDepartments('')])
+      .subscribe(([branches, items, subItems]) => {
+        this.branchs = branches;
+        this.items = items;
+        this.subItems = subItems;
+      });
   }
   initColumns() {
     this.cols = [
-      { field: 'departmentid', header: this.departmentid, type: 'string' },
-      { field: 'department', header: this.department, type: 'hiastHRApi.Service.DTO.Constants.DepartmentDto' },
-      { field: 'subdepartmentid', header: this.subdepartmentid, type: 'string' },
-      { field: 'subdepartment', header: this.subdepartment, type: 'hiastHRApi.Service.DTO.Constants.SubDepartmentDto' },
-      { field: 'name', header: this.name, type: 'string' },
-      { field: 'id', header: this.id, type: 'string' },
-
+      { field: 'name', header: 'الاسم' },
+      { field: 'departmentid', header: 'الجهة المصدرة' },
+      { field: 'subdepartmentid', header: 'الفرعية الفعالية' }
     ]
   }
   openNew() {
+    this.branchForm.reset();
     this.Branch = {};
-    this.submitted = false;
     this.branchDialog = true;
   }
   editBranch(Branch: Branch) {
     this.Branch = { ...Branch };
     this.branchDialog = true;
+    this.branchForm.patchValue({
+      name: this.Branch?.name, departmentid: this.Branch?.departmentid
+      , subdepartmentid: this.Branch?.subdepartmentid
+    });
+
   }
   deleteSelectedBranch(Branch: Branch) {
     this.Branch = Branch;
@@ -111,44 +94,41 @@ export class BranchComponent implements OnInit {
   }
   deleteBranch() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.Branch.Place + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.Branch.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new BranchActions.DeleteBranch(this.Branch.Id as string)).subscribe(
+        this.branchService.DeleteBranch(this.Branch.id as string).subscribe(
           data => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
   hideDialog() {
     this.branchDialog = false;
-    this.submitted = false;
   }
 
   saveBranch() {
-    this.submitted = true;
     if (this.branchForm.valid) {
-      if (this.Branch.Id) {
-        delete this.Branch.Request;
-        this.store.dispatch(new BranchActions.UpdateBranch(this.Branch)).subscribe(
+      if (this.Branch.id) {
+        this.branchService.UpdateBranch(this.Branch).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
       }
       else {
-        delete this.Branch.Id;
-        this.store.dispatch(new BranchActions.AddBranch(this.Branch)).subscribe(
+        delete this.Branch.id;
+        this.branchService.AddBranch(this.Branch).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -159,27 +139,41 @@ export class BranchComponent implements OnInit {
   }
 
   reload() {
-    this.store.dispatch(new BranchActions.GetBranchsInfo('')).subscribe(
-      () => {
-        this.branchs = this.store.selectSnapshot<Branch[]>((state) => state.users.branchs);
+    this.branchService.GetAllBranchs('').subscribe(
+      (res) => {
+        this.branchs = res;
       }
     )
   }
-
-  searchUniversity(event: any) {
-    let filter = "Filters=Name@=" + event.query;
-    this.store.dispatch(new UniversityActions.GetAllUniversitys(filter)).subscribe(
-      () => {
-        this.universities = this.store.selectSnapshot<University[]>((state) => state.users.universities);
-      }
-    );
-  }
-  onSelectUniversity(event: any) {
-    this.RequestId = event.Id;
-    this.Branch.RequestId = this.RequestId;
-  }
-
   get f() {
     return this.branchForm.controls;
+  }
+
+  filterItems(event: AutoCompleteCompleteEvent) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    for (let i = 0; i < (this.items as any[])?.length; i++) {
+      let item = (this.items as any[])[i];
+      if (item.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(item);
+      }
+    }
+
+    this.filteredItems = filtered;
+  }
+
+  filterSubItems(event: AutoCompleteCompleteEvent) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    for (let i = 0; i < (this.subItems as any[])?.length; i++) {
+      let item = (this.subItems as any[])[i];
+      if (item.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(item);
+      }
+    }
+
+    this.filteredItems = filtered;
   }
 }

@@ -53,33 +53,10 @@ export class UserComponent implements OnInit {
     this.store.dispatch(new UserActions.GetUsersInfo('')).subscribe(
       () => {
         this.users = this.store.selectSnapshot<User[]>((state) => state.users.users);
-      }
-    );
-    this.translate.get('AppTitle').subscribe(
-      (res) => {
-        console.log(res)
-        this.FNameHeader = this.translate.instant('FNameHeader');;
-        this.LNameHeader = this.translate.instant('LNameHeader');
-        this.PhoneHeader = this.translate.instant('PhoneHeader');
-        this.NatNumHeader = this.translate.instant('NatNumHeader');
-        this.EmailAddressHeader = this.translate.instant('EmailAddressHeader');
-        this.UserTokenHeader = this.translate.instant('UserTokenHeader');
-        this.IsActiveHeader = this.translate.instant('IsActiveHeader');
-        this.RoleIDHeader = this.translate.instant('RoleIDHeader');
-        this.usernameLabel = this.translate.instant('usernameLabel');
-        this.passwordLabel = this.translate.instant('passwordLabel');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        console.log(this.FNameHeader)
         this.initColumns();
       }
-    )
+    );
+
   }
   initColumns() {
     this.cols = [
@@ -108,19 +85,19 @@ export class UserComponent implements OnInit {
   }
   deleteUser() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.user.FName + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.user.FName + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(new UserActions.DeleteUser(this.user.id as string)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -135,7 +112,7 @@ export class UserComponent implements OnInit {
       if (this.user.id) {
         this.store.dispatch(new UserActions.UpdateUser(this.user)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -144,7 +121,7 @@ export class UserComponent implements OnInit {
         delete this.user.id;
         this.store.dispatch(new UserActions.AddUser(this.user)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

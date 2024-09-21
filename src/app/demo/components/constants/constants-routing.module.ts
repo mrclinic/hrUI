@@ -44,12 +44,22 @@ import { SubDepartmentComponent } from './subdepartment/subdepartment.component'
 import { TerminationReasonComponent } from './terminationreason/terminationreason.component';
 import { UniversityComponent } from './university/university.component';
 import { VacationTypeComponent } from './vacationtype/vacationtype.component';
+import { BranchComponent } from './branch/branch.component';
 
 @NgModule({
     imports: [RouterModule.forChild([
         {
             path: 'blood-group',
             component: BloodGroupComponent,
+            data: {
+                ogTitle: environment.ogTitle,
+                ogDescription: environment.ogDescription,
+                ogImage: environment.appUrl + environment.ogImage
+            }
+        },
+        {
+            path: 'branch',
+            component: BranchComponent,
             data: {
                 ogTitle: environment.ogTitle,
                 ogDescription: environment.ogDescription,

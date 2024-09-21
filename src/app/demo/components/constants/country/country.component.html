@@ -28,7 +28,7 @@
             <h5 class="m-0">إدارة البلدان </h5>
             <span class="block mt-2 md:mt-0 p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="بحث..."
                 class="w-full sm:w-auto" />
             </span>
           </div>
@@ -54,9 +54,9 @@
             <td>
               <div class="flex">
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                  (click)="editcountry(country)"></button>
+                  (click)="editCountry(country)"></button>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                  (click)="deletecountry(country)"></button>
+                  (click)="deleteCountry(country)"></button>
               </div>
             </td>
           </tr>
@@ -80,7 +80,7 @@
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteCountryDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteCountryDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span *ngIf="country">هل أنت متأكد من حذف <b>{{country?.name}}</b>?</span>
@@ -92,7 +92,7 @@
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteCountrysDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteCountrysDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span>هل أنت متأكد من حذف البلدان المختارة؟</span>

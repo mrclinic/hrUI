@@ -72,29 +72,9 @@ export class MyProfileComponent implements OnInit {
     this.store.dispatch(new UserProfileActions.GetMyUserProfiles(this.filter)).subscribe(
       () => {
         this.userProfiles = this.store.selectSnapshot<UserProfile[]>((state) => state.users.userProfiles);
-      }
-    );
-    /* this.translate.get('AppTitle').subscribe(
-      () => {
-        this.FatherName = this.translate.instant('FatherName');;
-        this.MotherName = this.translate.instant('MotherName');
-        this.BirthPlace = this.translate.instant('BirthPlace');
-        this.BirthDate = this.translate.instant('BirthDate');
-        this.Gender = this.translate.instant('Gender');
-        this.CardNumber = this.translate.instant('CardNumber');
-        this.Address = this.translate.instant('Address');
-        this.UserId = this.translate.instant('UserId');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
         this.initColumns();
       }
-    ) */
+    );
   }
   initColumns() {
     this.cols = [
@@ -124,19 +104,19 @@ export class MyProfileComponent implements OnInit {
   }
   deleteUserProfile() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.userProfile.FatherName + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.userProfile.FatherName + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(new UserProfileActions.DeleteUserProfile(this.userProfile.Id as string)).subscribe(
           data => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -151,7 +131,7 @@ export class MyProfileComponent implements OnInit {
       if (this.userProfile.Id) {
         this.store.dispatch(new UserProfileActions.UpdateUserProfile(this.userProfile)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -160,7 +140,7 @@ export class MyProfileComponent implements OnInit {
         delete this.userProfile.Id;
         this.store.dispatch(new UserProfileActions.AddUserProfile(this.userProfile)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

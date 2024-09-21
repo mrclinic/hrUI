@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { BloodGroup } from 'src/app/demo/models/constants/bloodgroup.model';
 import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.service';
@@ -15,38 +14,26 @@ import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.ser
 export class BloodGroupComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
   bloodGroupForm: FormGroup;
-  name: string = '';
   bloodGroupDialog: boolean = false;
-
   deleteBloodGroupDialog: boolean = false;
-
   deleteBloodGroupsDialog: boolean = false;
-
   bloodGroups: BloodGroup[] = [];
-
   bloodGroup: BloodGroup = {};
-
   selectedBloodGroups: BloodGroup[] = [];
+  selectedBloodGroupId: string;
+
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly bloodGroupService: BloodGroupService) {
+    private readonly bloodGroupService: BloodGroupService) { }
+
+  ngOnInit(): void {
+
     this.bloodGroupForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
-    this.cols = [];
-  }
 
-  ngOnInit(): void {
+    this.cols = [];
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
@@ -55,74 +42,73 @@ export class BloodGroupComponent implements OnInit {
         this.bloodGroups = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
+    this.initColumns();
   }
+
   initColumns() {
     this.cols = [
       { field: 'name', header: "الاسم", type: 'string' }
     ]
   }
   openNew() {
+    this.bloodGroupForm.reset();
     this.bloodGroup = {};
+    this.selectedBloodGroupId = null;
     this.bloodGroupDialog = true;
   }
   editBloodGroup(bloodGroup: BloodGroup) {
     this.bloodGroup = { ...bloodGroup };
+    this.selectedBloodGroupId = this.bloodGroup?.id;
     this.bloodGroupDialog = true;
+    this.bloodGroupForm.patchValue({ name: this.bloodGroup.name });
   }
   deleteSelectedBloodGroup(bloodGroup: BloodGroup) {
     this.bloodGroup = bloodGroup;
-    this.deleteBloodGroup();
+    this.deleteBloodGroupDialog = true;
   }
-  deleteBloodGroup() {
-    this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.bloodGroup.name + '?',
-      header: this.ConfirmTitle,
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.bloodGroupService.DeleteBloodGroup(this.bloodGroup.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
-    });
+
+  deleteBloodGroup(bloodGroup: BloodGroup) {
+    this.deleteBloodGroupDialog = true;
+    this.bloodGroup = bloodGroup;
+    this.bloodGroupService.DeleteBloodGroup(bloodGroup.id as string).subscribe(
+      (data) => {
+        this.deleteBloodGroupDialog = false;
+        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   hideDialog() {
     this.bloodGroupDialog = false;
   }
+  confirmDelete(bloodGroup) {
+    this.deleteBloodGroup(bloodGroup);
+  }
 
+  deleteSelectedBloodGroups() {
+    this.deleteBloodGroupsDialog = true;
+  }
+  confirmDeleteSelected() {
+    this.deleteBloodGroupsDialog = false;
+    let itemIdsToDelete = this.selectedBloodGroups.map((item) => { return item?.id });
+  }
   saveBloodGroup() {
+    this.bloodGroup = { ...this.bloodGroupForm.value, id: this.selectedBloodGroupId };
     if (this.bloodGroupForm.valid) {
       if (this.bloodGroup.id) {
         this.bloodGroupService.UpdateBloodGroup(this.bloodGroup).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
       }
       else {
+        delete this.bloodGroup.id;
         this.bloodGroupService.AddBloodGroup(this.bloodGroup).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

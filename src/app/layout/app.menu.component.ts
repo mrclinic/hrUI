@@ -35,6 +35,7 @@ export class AppMenuComponent implements OnInit {
                 label: 'إدارة الثوابت',
                 items: [
                     { label: 'الزمر الدموية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/blood-group'] },
+                    { label: 'الفروع', icon: 'pi pi-fw pi-home', routerLink: ['/constants/branch'] },
                     { label: 'حالات الطفل', icon: 'pi pi-fw pi-home', routerLink: ['/constants/child-status'] },
                     { label: 'المدن', icon: 'pi pi-fw pi-home', routerLink: ['/constants/city'] },
                     { label: 'البلدان', icon: 'pi pi-fw pi-home', routerLink: ['/constants/country'] },

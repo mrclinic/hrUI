@@ -55,20 +55,6 @@ export class RewardTypeComponent implements OnInit {
         this.rewardtypes = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
   }
   initColumns() {
     this.cols = [
@@ -76,6 +62,7 @@ export class RewardTypeComponent implements OnInit {
     ]
   }
   openNew() {
+    this.rewardtypeForm.reset();
     this.RewardType = {};
     this.rewardtypeDialog = true;
   }
@@ -89,19 +76,19 @@ export class RewardTypeComponent implements OnInit {
   }
   deleteRewardType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.RewardType.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.RewardType.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.rewardtypeService.DeleteRewardType(this.RewardType.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -114,7 +101,7 @@ export class RewardTypeComponent implements OnInit {
       if (this.RewardType.id) {
         this.rewardtypeService.UpdateRewardType(this.RewardType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -122,7 +109,7 @@ export class RewardTypeComponent implements OnInit {
       else {
         this.rewardtypeService.AddRewardType(this.RewardType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )
