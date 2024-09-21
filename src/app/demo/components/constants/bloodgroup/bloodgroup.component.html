@@ -29,7 +29,7 @@
             <h5 class="m-0">إدارة الزمر الدموية</h5>
             <span class="block mt-2 md:mt-0 p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="بحث..."
                 class="w-full sm:w-auto" />
             </span>
           </div>
@@ -55,9 +55,9 @@
             <td>
               <div class="flex">
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                  (click)="editbloodGroup(bloodGroup)"></button>
+                  (click)="editBloodGroup(bloodGroup)"></button>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                  (click)="deletebloodGroup(bloodGroup)"></button>
+                  (click)="deleteSelectedBloodGroup(bloodGroup)"></button>
               </div>
             </td>
           </tr>
@@ -82,7 +82,7 @@
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteBloodGroupDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteBloodGroupDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span *ngIf="bloodGroup">هل أنت متأكد من حذف <b>{{bloodGroup?.name}}</b>?</span>
@@ -90,11 +90,12 @@
       <ng-template pTemplate="footer">
         <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
           (click)="deleteBloodGroupDialog = false"></button>
-        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" (click)="confirmDelete()"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDelete(bloodGroup)"></button>
       </ng-template>
     </p-dialog>
 
-    <p-dialog [(visible)]="deleteBloodGroupsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+    <p-dialog [(visible)]="deleteBloodGroupsDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span>هل أنت متأكد من حذف الزمر المختارة؟</span>
@@ -103,7 +104,7 @@
         <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
           (click)="deleteBloodGroupsDialog = false"></button>
         <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
-          (click)="confirmDeleteSelected()"></button>
+          (click)="confirmDeleteSelected(bloodGroup)"></button>
       </ng-template>
     </p-dialog>
   </div>

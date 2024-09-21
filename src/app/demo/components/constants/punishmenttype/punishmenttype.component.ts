@@ -63,20 +63,6 @@ export class PunishmentTypeComponent implements OnInit {
         this.punishmenttypes = punishmenttypes;
         this.items = items;
       });
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
   }
   initColumns() {
     this.cols = [
@@ -85,6 +71,7 @@ export class PunishmentTypeComponent implements OnInit {
     ]
   }
   openNew() {
+    this.punishmenttypeForm.reset();
     this.PunishmentType = {};
     this.punishmenttypeDialog = true;
   }
@@ -98,19 +85,19 @@ export class PunishmentTypeComponent implements OnInit {
   }
   deletePunishmentType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.PunishmentType.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.PunishmentType.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.punishmenttypeService.DeletePunishmentType(this.PunishmentType.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -123,7 +110,7 @@ export class PunishmentTypeComponent implements OnInit {
       if (this.PunishmentType.id) {
         this.punishmenttypeService.UpdatePunishmentType(this.PunishmentType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -131,7 +118,7 @@ export class PunishmentTypeComponent implements OnInit {
       else {
         this.punishmenttypeService.AddPunishmentType(this.PunishmentType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

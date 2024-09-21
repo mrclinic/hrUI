@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { count, Observable } from 'rxjs';
 import { Country } from 'src/app/demo/models/constants/country.model';
 import { CountryService } from 'src/app/demo/service/constants/country.service';
 
@@ -55,20 +55,6 @@ export class CountryComponent implements OnInit {
         this.countrys = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
   }
   initColumns() {
     this.cols = [
@@ -76,32 +62,35 @@ export class CountryComponent implements OnInit {
     ]
   }
   openNew() {
+    this.countryForm.reset();
     this.country = {};
     this.countryDialog = true;
   }
   editCountry(country: Country) {
     this.country = { ...country };
     this.countryDialog = true;
+    this.countryForm.patchValue({ name: this.country.name });
   }
   deleteSelectedCountry(country: Country) {
     this.country = country;
-    this.deleteCountry();
+    this.deleteCountry(this.country);
   }
-  deleteCountry() {
+  deleteCountry(country?: Country) {
+    console.log(country);
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.country.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + country.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.countryService.DeleteCountry(this.country.id as string).subscribe(
+        this.countryService.DeleteCountry(country.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -114,7 +103,7 @@ export class CountryComponent implements OnInit {
       if (this.country.id) {
         this.countryService.UpdateCountry(this.country).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -122,7 +111,7 @@ export class CountryComponent implements OnInit {
       else {
         this.countryService.AddCountry(this.country).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

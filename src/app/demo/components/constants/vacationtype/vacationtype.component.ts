@@ -55,20 +55,7 @@ export class VacationTypeComponent implements OnInit {
         this.vacationtypes = res;
       }
     );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.CancelReason = this.translate.instant('CancelReason');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
-        this.initColumns();
-      }
-    )
+
   }
   initColumns() {
     this.cols = [
@@ -76,6 +63,7 @@ export class VacationTypeComponent implements OnInit {
     ]
   }
   openNew() {
+    this.vacationtypeForm.reset();
     this.VacationType = {};
     this.vacationtypeDialog = true;
   }
@@ -89,19 +77,19 @@ export class VacationTypeComponent implements OnInit {
   }
   deleteVacationType() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.VacationType.name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.VacationType.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.vacationtypeService.DeleteVacationType(this.VacationType.id as string).subscribe(
           (data) => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -114,7 +102,7 @@ export class VacationTypeComponent implements OnInit {
       if (this.VacationType.id) {
         this.vacationtypeService.UpdateVacationType(this.VacationType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -122,7 +110,7 @@ export class VacationTypeComponent implements OnInit {
       else {
         this.vacationtypeService.AddVacationType(this.VacationType).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )

@@ -566,8 +566,8 @@ export class UserState {
       const result = await lastValueFrom(this.rolePermissionService
         .GetRolePermissionsInfo(action.payLoad));
       const res = result.map(data => ({
-        DisplayName: data?.Permission!.DisplayName, Id: data?.Permission!.id,
-        Name: data?.Permission!.Name, Order: data?.Permission!.Order
+        displayName: data?.Permission!.displayName, id: data?.Permission!.id,
+        name: data?.Permission!.name, order: data?.Permission!.order
       }));
       ctx.patchState({
         selectedPermissions: res!,

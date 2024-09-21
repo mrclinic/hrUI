@@ -64,27 +64,12 @@ export class PermissionComponent implements OnInit {
       () => {
         this.permissions = this.store.selectSnapshot<Permission[]>((state) => state.users.permissions).slice();
         this.totalRecords = this.permissions.length;
-      }
-    );
-    this.translate.get('AppTitle').subscribe(
-      () => {
-        this.NameHearder = this.translate.instant('Name');;
-        this.DisplayNameHeader = this.translate.instant('DisplayName');
-        this.OrderHearder = this.translate.instant('Order');
-        this.ConfirmTitle = this.translate.instant('ConfirmTitle');
-        this.ConfirmMsg = this.translate.instant('ConfirmMsg');
-        this.Success = this.translate.instant('Success');
-        this.deleteSuccess = this.translate.instant('deleteSuccess');
-        this.Yes = this.translate.instant('Yes');
-        this.No = this.translate.instant('No');
-        this.editSuccess = this.translate.instant('editSuccess');
-        this.addSuccess = this.translate.instant('addSuccess');
         this.initColumns();
       }
-    )
+    );
   }
   initColumns() {
-    this.cols = [{ field: 'name', header: "الاسم" },
+    this.cols = [{ field: 'name', header: 'الاسم' },
     { field: 'displayName', header: "الاسم العربي" },
     { field: 'order', header: "الترتيب" }]
   }
@@ -103,19 +88,19 @@ export class PermissionComponent implements OnInit {
   }
   deletePermission() {
     this.confirmationService.confirm({
-      message: this.ConfirmMsg + this.permission.Name + '?',
-      header: this.ConfirmTitle,
+      message: 'هل أنت متأكد من حذف' + this.permission.name + '?',
+      header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.store.dispatch(new PermissionActions.DeletePermission(this.permission?.id as string)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.deleteSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
           }
         );
       },
-      acceptLabel: this.Yes,
-      rejectLabel: this.No,
+      acceptLabel: 'نعم',
+      rejectLabel: 'لا',
     });
   }
 
@@ -126,11 +111,11 @@ export class PermissionComponent implements OnInit {
 
   savePermission() {
     this.submitted = true;
-    if (this.permission.Name?.trim()) {
+    if (this.permission.name?.trim()) {
       if (this.permission.id) {
         this.store.dispatch(new PermissionActions.UpdatePermission(this.permission)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.editSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
             this.reload();
           }
         )
@@ -139,7 +124,7 @@ export class PermissionComponent implements OnInit {
         delete this.permission.id;
         this.store.dispatch(new PermissionActions.AddPermission(this.permission)).subscribe(
           () => {
-            this.messageService.add({ severity: 'success', summary: this.Success, detail: this.addSuccess, life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
             this.reload();
           }
         )
