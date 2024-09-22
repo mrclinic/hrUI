@@ -17,17 +17,9 @@ import { PunishmentTypeService } from 'src/app/demo/service/constants/punishment
 export class PunishmentTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   punishmenttypeForm: FormGroup;
-  name: string = '';
+
   punishmenttypeDialog: boolean = false;
 
   deletePunishmentTypeDialog: boolean = false;

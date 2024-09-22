@@ -15,17 +15,9 @@ import { MilitarySpecializationService } from 'src/app/demo/service/constants/mi
 export class MilitarySpecializationComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   militaryspecializationForm: FormGroup;
-  name: string = '';
+
   militaryspecializationDialog: boolean = false;
 
   deleteMilitarySpecializationDialog: boolean = false;

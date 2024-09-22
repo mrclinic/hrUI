@@ -15,17 +15,9 @@ import { QualificationService } from 'src/app/demo/service/constants/qualificati
 export class QualificationComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   qualificationForm: FormGroup;
-  name: string = '';
+
   qualificationDialog: boolean = false;
 
   deleteQualificationDialog: boolean = false;

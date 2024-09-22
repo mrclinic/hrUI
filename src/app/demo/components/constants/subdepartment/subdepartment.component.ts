@@ -15,17 +15,9 @@ import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartme
 export class SubDepartmentComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   subdepartmentForm: FormGroup;
-  name: string = '';
+
   subdepartmentDialog: boolean = false;
 
   deleteSubDepartmentDialog: boolean = false;

@@ -15,17 +15,9 @@ import { JobCategoryService } from 'src/app/demo/service/constants/jobcategory.s
 export class JobCategoryComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   jobcategoryForm: FormGroup;
-  name: string = '';
+
   jobcategoryDialog: boolean = false;
 
   deleteJobCategoryDialog: boolean = false;

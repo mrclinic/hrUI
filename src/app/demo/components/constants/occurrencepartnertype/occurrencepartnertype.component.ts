@@ -15,17 +15,9 @@ import { OccurrencePartnerTypeService } from 'src/app/demo/service/constants/occ
 export class OccurrencePartnerTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   occurrencepartnertypeForm: FormGroup;
-  name: string = '';
+
   occurrencepartnertypeDialog: boolean = false;
 
   deleteOccurrencePartnerTypeDialog: boolean = false;

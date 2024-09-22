@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { forkJoin, Observable } from 'rxjs';
 import { Branch } from 'src/app/demo/models/constants/branch.model';
@@ -17,46 +17,33 @@ import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartme
 })
 export class BranchComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  cols: any[];
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+  cols: any[] = [];
   branchForm: FormGroup;
   branchDialog: boolean = false;
-
   deleteBranchDialog: boolean = false;
-
   deleteBranchsDialog: boolean = false;
-
   branchs: Branch[] = [];
-
   Branch: Branch = {};
-
   selectedBranchs: Branch[] = [];
-
+  selectedBranchId: string;
   items: any[] | undefined;
   filteredItems: any[] | undefined;
-
   subItems: any[] | undefined;
   filteredSubItems: any[] | undefined;
+
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private readonly branchService: BranchService,
+    private readonly branchService: BranchService,
     private readonly departmentService: DepartmentService, private readonly subDepartmentService: SubDepartmentService) {
+
+  }
+
+  ngOnInit(): void {
     this.branchForm = this.fb.group({
       departmentid: new FormControl('', [Validators.required]),
       subdepartmentid: new FormControl('', [Validators.required]),
       name: new FormControl('', [Validators.required])
     });
-    this.cols = [];
-    this.branchDialog = false;
-  }
 
-  ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
@@ -66,6 +53,7 @@ export class BranchComponent implements OnInit {
         this.items = items;
         this.subItems = subItems;
       });
+    this.initColumns();
   }
   initColumns() {
     this.cols = [
@@ -77,10 +65,12 @@ export class BranchComponent implements OnInit {
   openNew() {
     this.branchForm.reset();
     this.Branch = {};
+    this.selectedBranchId = null;
     this.branchDialog = true;
   }
   editBranch(Branch: Branch) {
     this.Branch = { ...Branch };
+    this.selectedBranchId = this.Branch?.id;
     this.branchDialog = true;
     this.branchForm.patchValue({
       name: this.Branch?.name, departmentid: this.Branch?.departmentid
@@ -90,31 +80,35 @@ export class BranchComponent implements OnInit {
   }
   deleteSelectedBranch(Branch: Branch) {
     this.Branch = Branch;
-    this.deleteBranch();
+    this.deleteBranchDialog = true;
   }
-  deleteBranch() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.Branch.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.branchService.DeleteBranch(this.Branch.id as string).subscribe(
-          data => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
+  deleteBranch(Branch: Branch) {
+    this.Branch = Branch;
+    this.deleteBranchDialog = true;
+    this.branchService.DeleteBranch(this.Branch.id as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   hideDialog() {
     this.branchDialog = false;
   }
+  confirmDelete(branch) {
+    this.deleteBranch(branch);
+  }
+  deleteSelectedBranchs() {
+    this.deleteBranchsDialog = true;
+  }
+  confirmDeleteSelected() {
+    this.deleteBranchsDialog = false;
+    let itemIdsToDelete = this.selectedBranchs.map((item) => { return item?.id });
+  }
 
   saveBranch() {
+    this.Branch = { ...this.branchForm.value, id: this.selectedBranchId };
     if (this.branchForm.valid) {
       if (this.Branch.id) {
         this.branchService.UpdateBranch(this.Branch).subscribe(

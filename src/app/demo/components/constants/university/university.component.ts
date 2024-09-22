@@ -15,17 +15,9 @@ import { UniversityService } from 'src/app/demo/service/constants/university.ser
 export class UniversityComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   universityForm: FormGroup;
-  name: string = '';
+
   universityDialog: boolean = false;
 
   deleteUniversityDialog: boolean = false;

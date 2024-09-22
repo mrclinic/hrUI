@@ -15,17 +15,9 @@ import { FinancialImpactService } from 'src/app/demo/service/constants/financial
 export class FinancialImpactComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   financialimpactForm: FormGroup;
-  name: string = '';
+
   financialimpactDialog: boolean = false;
 
   deleteFinancialImpactDialog: boolean = false;

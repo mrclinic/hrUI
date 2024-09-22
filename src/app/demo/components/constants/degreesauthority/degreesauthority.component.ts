@@ -16,17 +16,9 @@ import { DegreesAuthorityService } from 'src/app/demo/service/constants/degreesa
 export class DegreesAuthorityComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   degreesAuthorityForm: FormGroup;
-  name: string = '';
+
   degreesAuthorityDialog: boolean = false;
 
   deleteDegreesAuthorityDialog: boolean = false;

@@ -15,17 +15,9 @@ import { LanguageService } from 'src/app/demo/service/constants/language.service
 export class LanguageComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   languageForm: FormGroup;
-  name: string = '';
+
   languageDialog: boolean = false;
 
   deleteLanguageDialog: boolean = false;

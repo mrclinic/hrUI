@@ -15,17 +15,9 @@ import { NationalityService } from 'src/app/demo/service/constants/nationality.s
 export class NationalityComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   nationalityForm: FormGroup;
-  name: string = '';
+
   nationalityDialog: boolean = false;
 
   deleteNationalityDialog: boolean = false;

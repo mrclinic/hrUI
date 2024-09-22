@@ -15,17 +15,9 @@ import { LanguageLevelService } from 'src/app/demo/service/constants/languagelev
 export class LanguageLevelComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   languagelevelForm: FormGroup;
-  name: string = '';
+
   languagelevelDialog: boolean = false;
 
   deleteLanguageLevelDialog: boolean = false;

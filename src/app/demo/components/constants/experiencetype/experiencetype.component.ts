@@ -15,17 +15,9 @@ import { ExperienceTypeService } from 'src/app/demo/service/constants/experience
 export class ExperienceTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   experiencetypeForm: FormGroup;
-  name: string = '';
+
   experiencetypeDialog: boolean = false;
 
   deleteExperienceTypeDialog: boolean = false;

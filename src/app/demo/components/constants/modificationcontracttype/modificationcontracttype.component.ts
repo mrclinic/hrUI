@@ -15,17 +15,9 @@ import { ModificationContractTypeService } from 'src/app/demo/service/constants/
 export class ModificationContractTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   modificationcontracttypeForm: FormGroup;
-  name: string = '';
+
   modificationcontracttypeDialog: boolean = false;
 
   deleteModificationContractTypeDialog: boolean = false;

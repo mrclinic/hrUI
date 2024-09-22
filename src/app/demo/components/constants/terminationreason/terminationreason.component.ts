@@ -15,17 +15,9 @@ import { TerminationReasonService } from 'src/app/demo/service/constants/termina
 export class TerminationReasonComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   terminationreasonForm: FormGroup;
-  name: string = '';
+
   terminationreasonDialog: boolean = false;
 
   deleteTerminationReasonDialog: boolean = false;

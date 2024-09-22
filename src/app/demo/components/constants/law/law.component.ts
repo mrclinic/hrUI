@@ -15,17 +15,9 @@ import { LawService } from 'src/app/demo/service/constants/law.service';
 export class LawComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   lawForm: FormGroup;
-  name: string = '';
+
   lawDialog: boolean = false;
 
   deleteLawDialog: boolean = false;

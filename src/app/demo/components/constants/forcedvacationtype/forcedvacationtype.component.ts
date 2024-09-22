@@ -15,17 +15,9 @@ import { ForcedVacationTypeService } from 'src/app/demo/service/constants/forced
 export class ForcedVacationTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   forcedvacationtypeForm: FormGroup;
-  name: string = '';
+
   forcedvacationtypeDialog: boolean = false;
 
   deleteForcedVacationTypeDialog: boolean = false;

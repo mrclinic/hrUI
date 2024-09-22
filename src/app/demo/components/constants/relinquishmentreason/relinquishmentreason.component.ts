@@ -15,17 +15,9 @@ import { RelinquishmentReasonService } from 'src/app/demo/service/constants/reli
 export class RelinquishmentReasonComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   relinquishmentreasonForm: FormGroup;
-  name: string = '';
+
   relinquishmentreasonDialog: boolean = false;
 
   deleteRelinquishmentReasonDialog: boolean = false;

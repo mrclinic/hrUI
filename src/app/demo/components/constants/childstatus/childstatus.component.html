@@ -8,7 +8,7 @@
             <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
               (click)="openNew()"></button>
             <button pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
-              (click)="deleteSelectedChildstatus()"
+              (click)="deleteSelectedChildstatuss()"
               [disabled]="!selectedChildstatuss || !selectedChildstatuss.length"></button>
           </div>
         </ng-template>
@@ -57,7 +57,7 @@
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
                   (click)="editChildStatus(childStatus)"></button>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                  (click)="deleteChildStatus(childStatus)"></button>
+                  (click)="deleteSelectedChildstatus(childStatus)"></button>
               </div>
             </td>
           </tr>
@@ -91,7 +91,8 @@
       <ng-template pTemplate="footer">
         <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
           (click)="deleteChildStatusDialog = false"></button>
-        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" (click)="confirmDelete()"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDelete(childStatus)"></button>
       </ng-template>
     </p-dialog>
 
@@ -104,7 +105,7 @@
         <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
           (click)="deleteChildStatussDialog = false"></button>
         <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
-          (click)="confirmDeleteSelected()"></button>
+          (click)="confirmDeleteSelected(childStatus)"></button>
       </ng-template>
     </p-dialog>
   </div>

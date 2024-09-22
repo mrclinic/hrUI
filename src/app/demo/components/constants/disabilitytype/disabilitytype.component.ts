@@ -15,17 +15,9 @@ import { DisabilityTypeService } from 'src/app/demo/service/constants/disability
 export class DisabilityTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   disabilityTypeForm: FormGroup;
-  name: string = '';
+
   disabilityTypeDialog: boolean = false;
 
   deleteDisabilityTypeDialog: boolean = false;

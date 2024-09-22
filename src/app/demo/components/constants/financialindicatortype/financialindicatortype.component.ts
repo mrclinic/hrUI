@@ -15,17 +15,9 @@ import { FinancialIndicatorTypeService } from 'src/app/demo/service/constants/fi
 export class FinancialIndicatorTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   financialindicatortypeForm: FormGroup;
-  name: string = '';
+
   financialindicatortypeDialog: boolean = false;
 
   deleteFinancialIndicatorTypeDialog: boolean = false;

@@ -15,17 +15,9 @@ import { InsuranceSystemService } from 'src/app/demo/service/constants/insurance
 export class InsuranceSystemComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   insurancesystemForm: FormGroup;
-  name: string = '';
+
   insurancesystemDialog: boolean = false;
 
   deleteInsuranceSystemDialog: boolean = false;
