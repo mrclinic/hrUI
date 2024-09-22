@@ -1,3 +1,5 @@
+import { ModificationContractType } from "../constants/modificationcontracttype.model";
+
 export interface EmpTrainingCourse {
     startdate?: Date;
     enddate?: Date;
@@ -7,5 +9,6 @@ export interface EmpTrainingCourse {
     coursename?: string;
     coursesource?: string;
     contractnumber?: string;
+    contracttype?: ModificationContractType;
     id?: string;
 }
