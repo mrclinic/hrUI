@@ -7,6 +7,7 @@ import { ModificationContractType } from "../constants/modificationcontracttype.
 import { StartingType } from "../constants/startingtype.model";
 
 export interface EmpAppointmentStatus {
+
     dateofappointmentdecision?: Date;
     dateofappointmentvisa?: Date;
     dateofmodifiedappointmentvisadate?: Date;

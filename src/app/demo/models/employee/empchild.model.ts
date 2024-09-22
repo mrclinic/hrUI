@@ -2,6 +2,7 @@ import { ChildStatus } from "../constants/childstatus.model";
 import { Gender } from "../constants/gender.model";
 
 export interface EmpChild {
+
     birthdate?: Date;
     occurrencedate?: Date;
     childorder?: number;

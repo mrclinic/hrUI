@@ -1,3 +1,9 @@
+import { FinancialImpact } from "../constants/financialimpact.model";
+import { ForcedVacationType } from "../constants/forcedvacationtype.model";
+import { ModificationContractType } from "../constants/modificationcontracttype.model";
+import { VacationType } from "../constants/vacationtype.model";
+import { Person } from "./person.model";
+
 export interface EmpVacation {
     startdate?: Date;
     contractdate?: Date;
@@ -18,5 +24,11 @@ export interface EmpVacation {
     year?: number;
     contractnumber?: string;
     modificationcontractnumber?: string;
+    contracttype?: ModificationContractType;
+    employee?: Person;
+    financialimpact?: FinancialImpact;
+    forcedvacationtype?: ForcedVacationType;
+    modificationcontracttype?: ModificationContractType;
+    vacationtype?: VacationType;
     id?: string;
 }
