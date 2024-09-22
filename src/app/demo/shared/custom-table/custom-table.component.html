@@ -1,0 +1,109 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4" *ngIf="canAdd || canMultiDelete">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button *ngIf="canAdd" pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
+              (click)="openNew()"></button>
+            <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+        [globalFilterFields]="globalFilterFields" [paginator]="hasPaginator" [rowsPerPageOptions]="[10,20,30]"
+        [showCurrentPageReport]="showCurrentPageReport"
+        currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
+        [(selection)]="selectedItems" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">{{tableTitle}}</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="بحث..."
+                class="w-full sm:w-auto" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngIf="hasCheckBox" style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="{{col.dataKey}}" *ngFor="let col of columns">
+              {{col.header}}
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i let-item let-rowData let-columns="columns">
+          <tr>
+            <td *ngIf="hasCheckBox">
+              <p-tableCheckbox [value]="item"></p-tableCheckbox>
+            </td>
+            <td style="width:14%; min-width:10rem;" *ngFor="let col of columns">
+              <span class="p-column-title">{{col.header}}</span> {{rowData[col.dataKey]}}
+            </td>
+            <td *ngIf="canEdit || canSingleDelete">
+              <div class="flex">
+                <button *ngIf="canEdit" pButton pRipple icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2" (click)="editItem(item)"></button>
+                <button *ngIf="canSingleDelete" pButton pRipple icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning" (click)="deleteSelectedItem(item)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog [(visible)]="itemDialog" [style]="{width: '450px'}" header="التفاصيل" [modal]="true" class="p-fluid">
+      <form [formGroup]="itemForm" (ngSubmit)="saveItem()">
+        <div class="field">
+          <label for="name">الاسم</label>
+          <input type="text" pInputText id="name" formControlName="name" required autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : itemForm?.touched }" />
+          <small class="ng-dirty ng-invalid" *ngIf="itemForm.touched && f['name'].invalid">حقل الاسم مطلوب</small>
+        </div>
+      </form>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteItemDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="item">هل أنت متأكد من حذف <b>{{item?.name}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteItemDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDelete(item)"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteItemsDialog" header="تأكيد" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>هل أنت متأكد من حذف العناصر المختارة؟</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+          (click)="deleteItemsDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
+          (click)="confirmDeleteSelected(item)"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>
