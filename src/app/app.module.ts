@@ -19,9 +19,8 @@ import { BaseGuard } from './demo/guards/BaseGuard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { PrimengModule } from 'src/primeng/primeng.module';
-import { PermissionListComponent } from './demo/dialogs/permissions.dialog/permissions.dialog';
 @NgModule({
-    declarations: [AppComponent, NotfoundComponent, PermissionListComponent
+    declarations: [AppComponent, NotfoundComponent
     ],
     imports: [PrimengModule, AppRoutingModule, AppLayoutModule,
         NgxsModule.forRoot([UserState], { developmentMode: !environment.production }),

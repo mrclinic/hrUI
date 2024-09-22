@@ -49,7 +49,13 @@ export class BranchComponent implements OnInit {
     );
     forkJoin([this.branchService.GetAllBranchs(''), this.departmentService.GetAllDepartments(''), this.subDepartmentService.GetAllSubDepartments('')])
       .subscribe(([branches, items, subItems]) => {
-        this.branchs = branches;
+        this.branchs = branches.map((item) => {
+          return Object.assign(item, {
+            ...item,
+            departmentName: item?.department?.name,
+            subdepartmentName: item?.department?.name
+          });
+        })
         this.items = items;
         this.subItems = subItems;
       });
@@ -57,9 +63,11 @@ export class BranchComponent implements OnInit {
   }
   initColumns() {
     this.cols = [
-      { field: 'name', header: 'الاسم' },
-      { field: 'departmentid', header: 'الجهة المصدرة' },
-      { field: 'subdepartmentid', header: 'الفرعية الفعالية' }
+      { dataKey: 'name', header: 'الاسم' },
+      { dataKey: 'departmentid', header: 'الجهة المصدرة' },
+      { dataKey: 'subdepartmentid', header: 'الفرعية الفعالية' },
+      { dataKey: 'departmentName', header: 'الجهة المصدرة' },
+      { dataKey: 'subdepartmentName', header: 'الفرعية الفعالية' }
     ]
   }
   openNew() {

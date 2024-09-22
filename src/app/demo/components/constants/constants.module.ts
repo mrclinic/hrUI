@@ -50,9 +50,11 @@ import { TerminationReasonComponent } from './terminationreason/terminationreaso
 import { UniversityComponent } from './university/university.component';
 import { VacationTypeComponent } from './vacationtype/vacationtype.component';
 import { BranchComponent } from './branch/branch.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     imports: [
+        SharedModule,
         CommonModule,
         ConstantsRoutingModule,
         PrimengModule,
