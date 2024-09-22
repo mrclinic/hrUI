@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
@@ -14,39 +13,25 @@ import { ChildStatusService } from 'src/app/demo/service/constants/childstatus.s
 })
 export class ChildstatusComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+  cols: any[] = [];
   childStatusForm: FormGroup;
-  name: string = '';
   childStatusDialog: boolean = false;
-
   deleteChildStatusDialog: boolean = false;
-
   deleteChildStatussDialog: boolean = false;
-
   childStatuss: ChildStatus[] = [];
-
   childStatus: ChildStatus = {};
-
   selectedChildstatuss: ChildStatus[] = [];
+  selectedChildStatusId: string;
+
   constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly childStatusService: ChildStatusService) {
+    private confirmationService: ConfirmationService, private readonly childStatusService: ChildStatusService) {
+  }
+
+  ngOnInit(): void {
     this.childStatusForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
 
     });
-    this.cols = [];
-  }
-
-  ngOnInit(): void {
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );
@@ -55,7 +40,7 @@ export class ChildstatusComponent implements OnInit {
         this.childStatuss = res;
       }
     );
-
+    this.initColumns();
   }
   initColumns() {
     this.cols = [
@@ -65,41 +50,49 @@ export class ChildstatusComponent implements OnInit {
   openNew() {
     this.childStatusForm.reset();
     this.childStatus = {};
+    this.selectedChildStatusId = null;
     this.childStatusDialog = true;
   }
   editChildStatus(childStatus: ChildStatus) {
     this.childStatus = { ...childStatus };
+    this.selectedChildStatusId = this.childStatus?.id;
     this.childStatusDialog = true;
     this.childStatusForm.patchValue({ name: this.childStatus.name });
 
   }
   deleteSelectedChildstatus(childStatus: ChildStatus) {
     this.childStatus = childStatus;
-    this.deleteChildStatus();
+    this.deleteChildStatusDialog = true;
   }
-  deleteChildStatus() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.childStatus.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.childStatusService.DeleteChildStatus(this.childStatus.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
+  deleteChildStatus(childStatus: ChildStatus) {
+    this.deleteChildStatusDialog = true;
+    this.childStatus = childStatus;
+    this.childStatusService.DeleteChildStatus(this.childStatus.id as string).subscribe(
+      (data) => {
+        this.deleteChildStatusDialog = false;
+        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   hideDialog() {
     this.childStatusDialog = false;
   }
+  confirmDelete(childStatus) {
+    this.deleteChildStatus(childStatus);
+  }
+
+  deleteSelectedChildStatuss() {
+    this.deleteChildStatussDialog = true;
+  }
+  confirmDeleteSelected() {
+    this.deleteChildStatussDialog = false;
+    let itemIdsToDelete = this.selectedChildstatuss.map((item) => { return item?.id });
+  }
 
   saveChildStatus() {
+    this.childStatus = { ...this.childStatusForm.value, id: this.selectedChildStatusId }
     if (this.childStatusForm.valid) {
       if (this.childStatus.id) {
         this.childStatusService.UpdateChildStatus(this.childStatus).subscribe(
@@ -110,6 +103,7 @@ export class ChildstatusComponent implements OnInit {
         )
       }
       else {
+        delete this.childStatus.id;
         this.childStatusService.AddChildStatus(this.childStatus).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });

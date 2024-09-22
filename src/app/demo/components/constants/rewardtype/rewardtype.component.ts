@@ -15,17 +15,9 @@ import { RewardTypeService } from 'src/app/demo/service/constants/rewardtype.ser
 export class RewardTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   rewardtypeForm: FormGroup;
-  name: string = '';
+
   rewardtypeDialog: boolean = false;
 
   deleteRewardTypeDialog: boolean = false;

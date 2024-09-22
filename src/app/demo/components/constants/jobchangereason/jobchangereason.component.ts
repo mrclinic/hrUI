@@ -17,17 +17,9 @@ import { ModificationContractTypeService } from 'src/app/demo/service/constants/
 export class JobChangeReasonComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   jobchangereasonForm: FormGroup;
-  name: string = '';
+
   jobchangereasonDialog: boolean = false;
 
   deleteJobChangeReasonDialog: boolean = false;

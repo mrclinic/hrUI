@@ -15,17 +15,9 @@ import { DeputationTypeService } from 'src/app/demo/service/constants/deputation
 export class DeputationTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   departmentForm: FormGroup;
-  name: string = '';
+
   departmentDialog: boolean = false;
 
   deleteDeputationTypeDialog: boolean = false;

@@ -15,17 +15,9 @@ import { DeputationObjectiveService } from 'src/app/demo/service/constants/deput
 export class DeputationobjectiveComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   deputationobjectiveForm: FormGroup;
-  name: string = '';
+
   deputationobjectiveDialog: boolean = false;
 
   deleteDeputationobjectiveDialog: boolean = false;

@@ -15,17 +15,9 @@ import { SpecializationService } from 'src/app/demo/service/constants/specializa
 export class SpecializationComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   specializationForm: FormGroup;
-  name: string = '';
+
   specializationDialog: boolean = false;
 
   deleteSpecializationDialog: boolean = false;

@@ -17,17 +17,9 @@ import { CountryService } from 'src/app/demo/service/constants/country.service';
 export class CityComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   cityForm: FormGroup;
-  name: string = '';
+
   cityDialog: boolean = false;
   deleteCityDialog: boolean = false;
   deleteCitysDialog: boolean = false;

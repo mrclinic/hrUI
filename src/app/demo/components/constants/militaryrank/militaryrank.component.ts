@@ -15,17 +15,9 @@ import { MilitaryRankService } from 'src/app/demo/service/constants/militaryrank
 export class MilitaryRankComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   militaryrankForm: FormGroup;
-  name: string = '';
+
   militaryrankDialog: boolean = false;
 
   deleteMilitaryRankDialog: boolean = false;

@@ -15,17 +15,9 @@ import { DepartmentService } from 'src/app/demo/service/constants/department.ser
 export class DepartmentComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   departmentForm: FormGroup;
-  name: string = '';
+
   departmentDialog: boolean = false;
 
   deleteDepartmentDialog: boolean = false;

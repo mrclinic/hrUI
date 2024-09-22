@@ -15,17 +15,9 @@ import { GenderService } from 'src/app/demo/service/constants/gender.service';
 export class GenderComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   genderForm: FormGroup;
-  name: string = '';
+
   genderDialog: boolean = false;
 
   deleteGenderDialog: boolean = false;

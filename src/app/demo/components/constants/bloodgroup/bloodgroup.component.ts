@@ -13,7 +13,7 @@ import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.ser
 })
 export class BloodGroupComponent implements OnInit {
   isLoading$!: Observable<boolean>;
-  cols: any[];
+  cols: any[] = [];
   bloodGroupForm: FormGroup;
   bloodGroupDialog: boolean = false;
   deleteBloodGroupDialog: boolean = false;
@@ -33,7 +33,6 @@ export class BloodGroupComponent implements OnInit {
 
     });
 
-    this.cols = [];
     this.isLoading$ = this.store.select<boolean>(
       (state) => state.users.isLoading
     );

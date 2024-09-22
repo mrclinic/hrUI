@@ -15,17 +15,9 @@ import { StartingTypeService } from 'src/app/demo/service/constants/startingtype
 export class StartingTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   startingtypeForm: FormGroup;
-  name: string = '';
+
   startingtypeDialog: boolean = false;
 
   deleteStartingTypeDialog: boolean = false;

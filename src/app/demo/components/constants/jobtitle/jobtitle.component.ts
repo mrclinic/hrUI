@@ -15,17 +15,9 @@ import { JobTitleService } from 'src/app/demo/service/constants/jobtitle.service
 export class JobTitleComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   jobtitleForm: FormGroup;
-  name: string = '';
+
   jobtitleDialog: boolean = false;
 
   deleteJobTitleDialog: boolean = false;

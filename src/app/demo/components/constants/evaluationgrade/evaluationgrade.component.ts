@@ -15,17 +15,9 @@ import { EvaluationGradeService } from 'src/app/demo/service/constants/evaluatio
 export class EvaluationGradeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   evaluationgradeForm: FormGroup;
-  name: string = '';
+
   evaluationgradeDialog: boolean = false;
 
   deleteEvaluationGradeDialog: boolean = false;

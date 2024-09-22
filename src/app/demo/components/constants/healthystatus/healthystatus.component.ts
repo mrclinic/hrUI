@@ -15,17 +15,9 @@ import { HealthyStatusService } from 'src/app/demo/service/constants/healthystat
 export class HealthyStatusComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   healthystatusForm: FormGroup;
-  name: string = '';
+
   healthystatusDialog: boolean = false;
 
   deleteHealthyStatusDialog: boolean = false;

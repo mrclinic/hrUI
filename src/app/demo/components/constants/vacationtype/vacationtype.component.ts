@@ -15,17 +15,9 @@ import { VacationTypeService } from 'src/app/demo/service/constants/vacationtype
 export class VacationTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   vacationtypeForm: FormGroup;
-  name: string = '';
+
   vacationtypeDialog: boolean = false;
 
   deleteVacationTypeDialog: boolean = false;

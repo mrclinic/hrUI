@@ -15,17 +15,9 @@ import { EmploymentStatusTypeService } from 'src/app/demo/service/constants/empl
 export class EmploymentStatusTypeComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   employmentstatustypeForm: FormGroup;
-  name: string = '';
+
   employmentstatustypeDialog: boolean = false;
 
   deleteEmploymentStatusTypeDialog: boolean = false;

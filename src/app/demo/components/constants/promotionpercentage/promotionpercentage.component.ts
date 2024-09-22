@@ -15,17 +15,9 @@ import { PromotionPercentageService } from 'src/app/demo/service/constants/promo
 export class PromotionPercentageComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   promotionpercentageForm: FormGroup;
-  name: string = '';
+
   promotionpercentageDialog: boolean = false;
 
   deletePromotionPercentageDialog: boolean = false;

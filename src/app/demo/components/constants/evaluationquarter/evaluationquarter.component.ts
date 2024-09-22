@@ -15,17 +15,9 @@ import { EvaluationQuarterService } from 'src/app/demo/service/constants/evaluat
 export class EvaluationQuarterComponent implements OnInit {
   isLoading$!: Observable<boolean>;
   cols: any[];
-  CancelReason: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+
   evaluationquarterForm: FormGroup;
-  name: string = '';
+
   evaluationquarterDialog: boolean = false;
 
   deleteEvaluationQuarterDialog: boolean = false;
