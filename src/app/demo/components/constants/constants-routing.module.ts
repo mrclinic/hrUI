@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { BloodGroupComponent } from './bloodgroup/bloodgroup.component';
-import { ChildstatusComponent } from './childstatus/childstatus.component';
+import { ChildStatusComponent } from './childstatus/childstatus.component';
 import { CityComponent } from './city/city.component';
 import { CountryComponent } from './country/country.component';
 import { DegreesAuthorityComponent } from './degreesauthority/degreesauthority.component';
 import { DepartmentComponent } from './department/department.component';
-import { DeputationobjectiveComponent } from './deputationobjective/deputationobjective.component';
+import { DeputationObjectiveComponent } from './deputationobjective/deputationobjective.component';
 import { DeputationStatusComponent } from './deputationstatus/deputationstatus.component';
 import { DeputationTypeComponent } from './deputationtype/deputationtype.component';
 import { DisabilityTypeComponent } from './disabilitytype/disabilitytype.component';
@@ -68,7 +68,7 @@ import { BranchComponent } from './branch/branch.component';
         },
         {
             path: 'child-status',
-            component: ChildstatusComponent,
+            component: ChildStatusComponent,
             data: {
                 ogTitle: environment.ogTitle,
                 ogDescription: environment.ogDescription,
@@ -114,7 +114,7 @@ import { BranchComponent } from './branch/branch.component';
         ,
         {
             path: 'deputation-objective',
-            component: DeputationobjectiveComponent,
+            component: DeputationObjectiveComponent,
             data: {
                 ogTitle: environment.ogTitle,
                 ogDescription: environment.ogDescription,

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { TerminationReason } from 'src/app/demo/models/constants/terminationreason.model';
 import { TerminationReasonService } from 'src/app/demo/service/constants/terminationreason.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-terminationreason',
@@ -13,103 +11,74 @@ import { TerminationReasonService } from 'src/app/demo/service/constants/termina
   styleUrls: ['./terminationreason.component.css']
 })
 export class TerminationReasonComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  terminationreasonForm: FormGroup;
-
-  terminationreasonDialog: boolean = false;
-
-  deleteTerminationReasonDialog: boolean = false;
-
-  deleteTerminationReasonsDialog: boolean = false;
-
+  cols: any[] = [];
   terminationreasons: TerminationReason[] = [];
+  formStructure: IFormStructure[] = [];
 
-  TerminationReason: TerminationReason = {};
-
-  selectedTerminationReasons: TerminationReason[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly terminationreasonService: TerminationReasonService) {
-    this.terminationreasonForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly terminationreasonService: TerminationReasonService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.terminationreasonService.GetAllTerminationReasons('').subscribe(
       (res) => {
         this.terminationreasons = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.terminationreasonForm.reset();
-    this.TerminationReason = {};
-    this.terminationreasonDialog = true;
-  }
-  editTerminationReason(TerminationReason: TerminationReason) {
-    this.TerminationReason = { ...TerminationReason };
-    this.terminationreasonDialog = true;
-  }
-  deleteSelectedTerminationReason(TerminationReason: TerminationReason) {
-    this.TerminationReason = TerminationReason;
-    this.deleteTerminationReason();
-  }
-  deleteTerminationReason() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.TerminationReason.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.terminationreasonService.DeleteTerminationReason(this.TerminationReason.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.terminationreasonDialog = false;
-  }
-
-  saveTerminationReason() {
-    if (this.terminationreasonForm.valid) {
-      if (this.TerminationReason.id) {
-        this.terminationreasonService.UpdateTerminationReason(this.TerminationReason).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.terminationreasonService.AddTerminationReason(this.TerminationReason).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.terminationreasonDialog = false;
-      this.TerminationReason = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.terminationreasonService.UpdateTerminationReason(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.terminationreasonService.AddTerminationReason(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.terminationreasonService.DeleteTerminationReason(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -118,8 +87,5 @@ export class TerminationReasonComponent implements OnInit {
         this.terminationreasons = res;
       }
     )
-  }
-  get f() {
-    return this.terminationreasonForm.controls;
   }
 }

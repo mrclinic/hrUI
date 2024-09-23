@@ -66,14 +66,7 @@
     </div>
 
     <p-dialog [(visible)]="itemDialog" [style]="{width: '450px'}" header="التفاصيل" [modal]="true" class="p-fluid">
-      <form [formGroup]="itemForm" (ngSubmit)="saveItem()">
-        <div class="field">
-          <label for="name">الاسم</label>
-          <input type="text" pInputText id="name" formControlName="name" required autofocus
-            [ngClass]="{'ng-invalid ng-dirty' : itemForm?.touched }" />
-          <small class="ng-dirty ng-invalid" *ngIf="itemForm.touched && f['name'].invalid">حقل الاسم مطلوب</small>
-        </div>
-      </form>
+      <app-dynamic-form [formStructure]="formStructure"></app-dynamic-form>
       <ng-template pTemplate="footer">
         <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
         <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>

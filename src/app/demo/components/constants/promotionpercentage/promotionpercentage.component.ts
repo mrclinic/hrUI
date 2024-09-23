@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { PromotionPercentage } from 'src/app/demo/models/constants/promotionpercentage.model';
 import { PromotionPercentageService } from 'src/app/demo/service/constants/promotionpercentage.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-promotionpercentage',
@@ -13,102 +11,74 @@ import { PromotionPercentageService } from 'src/app/demo/service/constants/promo
   styleUrls: ['./promotionpercentage.component.css']
 })
 export class PromotionPercentageComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  promotionpercentageForm: FormGroup;
-
-  promotionpercentageDialog: boolean = false;
-
-  deletePromotionPercentageDialog: boolean = false;
-
-  deletePromotionPercentagesDialog: boolean = false;
-
+  cols: any[] = [];
   promotionpercentages: PromotionPercentage[] = [];
+  formStructure: IFormStructure[] = [];
 
-  PromotionPercentage: PromotionPercentage = {};
-
-  selectedPromotionPercentages: PromotionPercentage[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly promotionpercentageService: PromotionPercentageService) {
-    this.promotionpercentageForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly promotionpercentageService: PromotionPercentageService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.promotionpercentageService.GetAllPromotionPercentages('').subscribe(
       (res) => {
         this.promotionpercentages = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.promotionpercentageForm.reset();
-    this.PromotionPercentage = {};
-    this.promotionpercentageDialog = true;
-  }
-  editPromotionPercentage(PromotionPercentage: PromotionPercentage) {
-    this.PromotionPercentage = { ...PromotionPercentage };
-    this.promotionpercentageDialog = true;
-  }
-  deleteSelectedPromotionPercentage(PromotionPercentage: PromotionPercentage) {
-    this.PromotionPercentage = PromotionPercentage;
-    this.deletePromotionPercentage();
-  }
-  deletePromotionPercentage() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.PromotionPercentage.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.promotionpercentageService.DeletePromotionPercentage(this.PromotionPercentage.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.promotionpercentageDialog = false;
-  }
-
-  savePromotionPercentage() {
-    if (this.promotionpercentageForm.valid) {
-      if (this.PromotionPercentage.id) {
-        this.promotionpercentageService.UpdatePromotionPercentage(this.PromotionPercentage).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.promotionpercentageService.AddPromotionPercentage(this.PromotionPercentage).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.promotionpercentageDialog = false;
-      this.PromotionPercentage = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.promotionpercentageService.UpdatePromotionPercentage(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.promotionpercentageService.AddPromotionPercentage(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.promotionpercentageService.DeletePromotionPercentage(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -117,8 +87,5 @@ export class PromotionPercentageComponent implements OnInit {
         this.promotionpercentages = res;
       }
     )
-  }
-  get f() {
-    return this.promotionpercentageForm.controls;
   }
 }

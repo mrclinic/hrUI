@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { FinancialImpact } from 'src/app/demo/models/constants/financialimpact.model';
 import { FinancialImpactService } from 'src/app/demo/service/constants/financialimpact.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-financialimpact',
@@ -13,102 +11,74 @@ import { FinancialImpactService } from 'src/app/demo/service/constants/financial
   styleUrls: ['./financialimpact.component.css']
 })
 export class FinancialImpactComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  financialimpactForm: FormGroup;
-
-  financialimpactDialog: boolean = false;
-
-  deleteFinancialImpactDialog: boolean = false;
-
-  deleteFinancialImpactsDialog: boolean = false;
-
+  cols: any[] = [];
   financialimpacts: FinancialImpact[] = [];
+  formStructure: IFormStructure[] = [];
 
-  FinancialImpact: FinancialImpact = {};
-
-  selectedFinancialImpacts: FinancialImpact[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly financialimpactService: FinancialImpactService) {
-    this.financialimpactForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly financialimpactService: FinancialImpactService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.financialimpactService.GetAllFinancialImpacts('').subscribe(
       (res) => {
         this.financialimpacts = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.financialimpactForm.reset();
-    this.FinancialImpact = {};
-    this.financialimpactDialog = true;
-  }
-  editFinancialImpact(FinancialImpact: FinancialImpact) {
-    this.FinancialImpact = { ...FinancialImpact };
-    this.financialimpactDialog = true;
-  }
-  deleteSelectedFinancialImpact(FinancialImpact: FinancialImpact) {
-    this.FinancialImpact = FinancialImpact;
-    this.deleteFinancialImpact();
-  }
-  deleteFinancialImpact() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.FinancialImpact.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.financialimpactService.DeleteFinancialImpact(this.FinancialImpact.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.financialimpactDialog = false;
-  }
-
-  saveFinancialImpact() {
-    if (this.financialimpactForm.valid) {
-      if (this.FinancialImpact.id) {
-        this.financialimpactService.UpdateFinancialImpact(this.FinancialImpact).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.financialimpactService.AddFinancialImpact(this.FinancialImpact).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.financialimpactDialog = false;
-      this.FinancialImpact = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.financialimpactService.UpdateFinancialImpact(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.financialimpactService.AddFinancialImpact(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.financialimpactService.DeleteFinancialImpact(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -117,8 +87,5 @@ export class FinancialImpactComponent implements OnInit {
         this.financialimpacts = res;
       }
     )
-  }
-  get f() {
-    return this.financialimpactForm.controls;
   }
 }

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, input, Input, OnInit, Output, output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, EventEmitter, input, Input, OnInit, Output, output, ViewChild } from '@angular/core';
+import { IFormStructure } from '../dynamic-form/from-structure-model';
+import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.component';
 
 @Component({
   selector: 'app-custom-table',
@@ -20,13 +21,14 @@ export class CustomTableComponent implements OnInit {
   @Input() tableTitle: string = '';
   @Input() globalFilterFields: string[] = [];
   itemDialog: boolean = false;
-  @Input() itemForm: FormGroup;
+  @Input() formStructure: IFormStructure[] = [];
   deleteItemDialog: boolean = false;
   deleteItemsDialog: boolean = false;
   item: any = {};
   selectedItemId: string;
   @Output() submitEventHandler = new EventEmitter<any>();
   @Output() deleteEventHandler = new EventEmitter<string>();
+  @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
   constructor() { }
 
   ngOnInit(): void {
@@ -34,7 +36,7 @@ export class CustomTableComponent implements OnInit {
   }
 
   openNew() {
-    this.itemForm?.reset();
+    this.childComponent.dynamicForm?.reset();
     this.item = {};
     this.selectedItemId = null;
     this.itemDialog = true;
@@ -44,7 +46,7 @@ export class CustomTableComponent implements OnInit {
     this.item = { ...item };
     this.selectedItemId = this.item?.id;
     this.itemDialog = true;
-    this.itemForm.patchValue({ ...this.item });
+    this.childComponent.dynamicForm.patchValue({ ...this.item });
   }
   deleteSelectedItem(item) {
     this.item = item;
@@ -72,15 +74,12 @@ export class CustomTableComponent implements OnInit {
     let itemIdsToDelete = this.tableData.map((item) => { return item?.id });
   }
   saveItem() {
-    this.item = { ...this.itemForm.value, id: this.selectedItemId };
-    if (this.itemForm.valid) {
+    this.childComponent.dynamicForm.markAllAsTouched();
+    this.item = { ...this.childComponent.dynamicForm.value, id: this.selectedItemId };
+    if (this.childComponent.dynamicForm.valid) {
       this.submitEventHandler.emit(this.item);
       this.itemDialog = false;
       this.item = {};
     }
-  }
-
-  get f() {
-    return this.itemForm.controls;
   }
 }

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { Department } from 'src/app/demo/models/constants/department.model';
 import { DepartmentService } from 'src/app/demo/service/constants/department.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-department',
@@ -13,103 +11,74 @@ import { DepartmentService } from 'src/app/demo/service/constants/department.ser
   styleUrls: ['./department.component.css']
 })
 export class DepartmentComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  departmentForm: FormGroup;
-
-  departmentDialog: boolean = false;
-
-  deleteDepartmentDialog: boolean = false;
-
-  deleteDepartmentsDialog: boolean = false;
-
+  cols: any[] = [];
   departments: Department[] = [];
+  formStructure: IFormStructure[] = [];
 
-  department: Department = {};
-
-  selectedDepartments: Department[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly departmentService: DepartmentService) {
-    this.departmentForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly departmentService: DepartmentService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.departmentService.GetAllDepartments('').subscribe(
       (res) => {
         this.departments = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.departmentForm.reset();
-    this.department = {};
-    this.departmentDialog = true;
-  }
-  editDepartment(department: Department) {
-    this.department = { ...department };
-    this.departmentDialog = true;
-  }
-  deleteSelectedDepartment(department: Department) {
-    this.department = department;
-    this.deleteDepartment();
-  }
-  deleteDepartment() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.department.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.departmentService.DeleteDepartment(this.department.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.departmentDialog = false;
-  }
-
-  saveDepartment() {
-    if (this.departmentForm.valid) {
-      if (this.department.id) {
-        this.departmentService.UpdateDepartment(this.department).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.departmentService.AddDepartment(this.department).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.departmentDialog = false;
-      this.department = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.departmentService.UpdateDepartment(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.departmentService.AddDepartment(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.departmentService.DeleteDepartment(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -118,8 +87,5 @@ export class DepartmentComponent implements OnInit {
         this.departments = res;
       }
     )
-  }
-  get f() {
-    return this.departmentForm.controls;
   }
 }

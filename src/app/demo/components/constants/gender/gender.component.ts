@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { Gender } from 'src/app/demo/models/constants/gender.model';
 import { GenderService } from 'src/app/demo/service/constants/gender.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-gender',
@@ -13,102 +11,74 @@ import { GenderService } from 'src/app/demo/service/constants/gender.service';
   styleUrls: ['./gender.component.css']
 })
 export class GenderComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  genderForm: FormGroup;
-
-  genderDialog: boolean = false;
-
-  deleteGenderDialog: boolean = false;
-
-  deleteGendersDialog: boolean = false;
-
+  cols: any[] = [];
   genders: Gender[] = [];
+  formStructure: IFormStructure[] = [];
 
-  Gender: Gender = {};
-
-  selectedGenders: Gender[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly genderService: GenderService) {
-    this.genderForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly genderService: GenderService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.genderService.GetAllGenders('').subscribe(
       (res) => {
         this.genders = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.genderForm.reset();
-    this.Gender = {};
-    this.genderDialog = true;
-  }
-  editGender(Gender: Gender) {
-    this.Gender = { ...Gender };
-    this.genderDialog = true;
-  }
-  deleteSelectedGender(Gender: Gender) {
-    this.Gender = Gender;
-    this.deleteGender();
-  }
-  deleteGender() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.Gender.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.genderService.DeleteGender(this.Gender.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.genderDialog = false;
-  }
-
-  saveGender() {
-    if (this.genderForm.valid) {
-      if (this.Gender.id) {
-        this.genderService.UpdateGender(this.Gender).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.genderService.AddGender(this.Gender).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.genderDialog = false;
-      this.Gender = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.genderService.UpdateGender(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.genderService.AddGender(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.genderService.DeleteGender(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -117,8 +87,5 @@ export class GenderComponent implements OnInit {
         this.genders = res;
       }
     )
-  }
-  get f() {
-    return this.genderForm.controls;
   }
 }

@@ -1,125 +1,91 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { DeputationStatus } from 'src/app/demo/models/constants/deputationstatus.model';
 import { DeputationStatusService } from 'src/app/demo/service/constants/deputationstatus.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
-  selector: 'app-deputationStatus',
-  templateUrl: './deputationStatus.component.html',
-  styleUrls: ['./deputationStatus.component.css']
+  selector: 'app-deputationstatus',
+  templateUrl: './deputationstatus.component.html',
+  styleUrls: ['./deputationstatus.component.css']
 })
 export class DeputationStatusComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
+  cols: any[] = [];
+  deputationstatuss: DeputationStatus[] = [];
+  formStructure: IFormStructure[] = [];
 
-  deputationStatusForm: FormGroup;
-
-  deputationStatusDialog: boolean = false;
-
-  deleteDeputationStatusDialog: boolean = false;
-
-  deleteDeputationStatussDialog: boolean = false;
-
-  deputationStatuss: DeputationStatus[] = [];
-
-  deputationStatus: DeputationStatus = {};
-
-  selectedDeputationStatuss: DeputationStatus[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly deputationStatussService: DeputationStatusService) {
-    this.deputationStatusForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly deputationstatusService: DeputationStatusService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
-    this.deputationStatussService.GetAllDeputationStatuss('').subscribe(
+    this.deputationstatusService.GetAllDeputationStatuss('').subscribe(
       (res) => {
-        this.deputationStatuss = res;
+        this.deputationstatuss = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.deputationStatusForm.reset();
-    this.deputationStatus = {};
-    this.deputationStatusDialog = true;
-  }
-  editDeputationStatus(deputationStatus: DeputationStatus) {
-    this.deputationStatus = { ...deputationStatus };
-    this.deputationStatusDialog = true;
-  }
-  deleteSelectedDeputationStatus(deputationStatus: DeputationStatus) {
-    this.deputationStatus = deputationStatus;
-    this.deleteDeputationStatus();
-  }
-  deleteDeputationStatus() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.deputationStatus.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deputationStatussService.DeleteDeputationStatus(this.deputationStatus.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.deputationStatusDialog = false;
-  }
-
-  saveDeputationStatus() {
-    if (this.deputationStatusForm.valid) {
-      if (this.deputationStatus.id) {
-        this.deputationStatussService.UpdateDeputationStatus(this.deputationStatus).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.deputationStatussService.AddDeputationStatus(this.deputationStatus).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.deputationStatusDialog = false;
-      this.deputationStatus = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.deputationstatusService.UpdateDeputationStatus(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+    else {
+      delete eventData.id;
+      this.deputationstatusService.AddDeputationStatus(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
   }
 
+  deleteEventHandler(eventData) {
+    this.deputationstatusService.DeleteDeputationStatus(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
+  }
+
   reload() {
-    this.deputationStatussService.GetAllDeputationStatuss('').subscribe(
+    this.deputationstatusService.GetAllDeputationStatuss('').subscribe(
       (res) => {
-        this.deputationStatuss = res;
+        this.deputationstatuss = res;
       }
     )
-  }
-  get f() {
-    return this.deputationStatusForm.controls;
   }
 }

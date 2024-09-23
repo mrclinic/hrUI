@@ -1,4 +1,4 @@
-<app-custom-table [cols]="cols" [tableData]="bloodGroups" [tableTitle]="'إدارة الزمر الدموية'"
-    [itemForm]="bloodGroupForm" (submitEventHandler)="submitEventHandler($event)"
-    (deleteEventHandler)="deleteEventHandler($event)">
+<app-custom-table [cols]="cols" [tableData]="bloodgroups" [tableTitle]="'إدارة الزمر الدموية'"
+    (submitEventHandler)="submitEventHandler($event)" (deleteEventHandler)="deleteEventHandler($event)"
+    [formStructure]="formStructure">
 </app-custom-table>

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { LanguageLevel } from 'src/app/demo/models/constants/languagelevel.model';
 import { LanguageLevelService } from 'src/app/demo/service/constants/languagelevel.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-languagelevel',
@@ -13,102 +11,74 @@ import { LanguageLevelService } from 'src/app/demo/service/constants/languagelev
   styleUrls: ['./languagelevel.component.css']
 })
 export class LanguageLevelComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  languagelevelForm: FormGroup;
-
-  languagelevelDialog: boolean = false;
-
-  deleteLanguageLevelDialog: boolean = false;
-
-  deleteLanguageLevelsDialog: boolean = false;
-
+  cols: any[] = [];
   languagelevels: LanguageLevel[] = [];
+  formStructure: IFormStructure[] = [];
 
-  LanguageLevel: LanguageLevel = {};
-
-  selectedLanguageLevels: LanguageLevel[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly languagelevelService: LanguageLevelService) {
-    this.languagelevelForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly languagelevelService: LanguageLevelService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.languagelevelService.GetAllLanguageLevels('').subscribe(
       (res) => {
         this.languagelevels = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.languagelevelForm.reset();
-    this.LanguageLevel = {};
-    this.languagelevelDialog = true;
-  }
-  editLanguageLevel(LanguageLevel: LanguageLevel) {
-    this.LanguageLevel = { ...LanguageLevel };
-    this.languagelevelDialog = true;
-  }
-  deleteSelectedLanguageLevel(LanguageLevel: LanguageLevel) {
-    this.LanguageLevel = LanguageLevel;
-    this.deleteLanguageLevel();
-  }
-  deleteLanguageLevel() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.LanguageLevel.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.languagelevelService.DeleteLanguageLevel(this.LanguageLevel.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.languagelevelDialog = false;
-  }
-
-  saveLanguageLevel() {
-    if (this.languagelevelForm.valid) {
-      if (this.LanguageLevel.id) {
-        this.languagelevelService.UpdateLanguageLevel(this.LanguageLevel).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.languagelevelService.AddLanguageLevel(this.LanguageLevel).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.languagelevelDialog = false;
-      this.LanguageLevel = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.languagelevelService.UpdateLanguageLevel(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.languagelevelService.AddLanguageLevel(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.languagelevelService.DeleteLanguageLevel(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -117,8 +87,5 @@ export class LanguageLevelComponent implements OnInit {
         this.languagelevels = res;
       }
     )
-  }
-  get f() {
-    return this.languagelevelForm.controls;
   }
 }
