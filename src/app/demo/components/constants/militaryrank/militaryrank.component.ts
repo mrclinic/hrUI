@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { MilitaryRank } from 'src/app/demo/models/constants/militaryrank.model';
 import { MilitaryRankService } from 'src/app/demo/service/constants/militaryrank.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-militaryrank',
@@ -13,102 +11,74 @@ import { MilitaryRankService } from 'src/app/demo/service/constants/militaryrank
   styleUrls: ['./militaryrank.component.css']
 })
 export class MilitaryRankComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  militaryrankForm: FormGroup;
-
-  militaryrankDialog: boolean = false;
-
-  deleteMilitaryRankDialog: boolean = false;
-
-  deleteMilitaryRanksDialog: boolean = false;
-
+  cols: any[] = [];
   militaryranks: MilitaryRank[] = [];
+  formStructure: IFormStructure[] = [];
 
-  MilitaryRank: MilitaryRank = {};
-
-  selectedMilitaryRanks: MilitaryRank[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly militaryrankService: MilitaryRankService) {
-    this.militaryrankForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly militaryrankService: MilitaryRankService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.militaryrankService.GetAllMilitaryRanks('').subscribe(
       (res) => {
         this.militaryranks = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.militaryrankForm.reset();
-    this.MilitaryRank = {};
-    this.militaryrankDialog = true;
-  }
-  editMilitaryRank(MilitaryRank: MilitaryRank) {
-    this.MilitaryRank = { ...MilitaryRank };
-    this.militaryrankDialog = true;
-  }
-  deleteSelectedMilitaryRank(MilitaryRank: MilitaryRank) {
-    this.MilitaryRank = MilitaryRank;
-    this.deleteMilitaryRank();
-  }
-  deleteMilitaryRank() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.MilitaryRank.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.militaryrankService.DeleteMilitaryRank(this.MilitaryRank.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.militaryrankDialog = false;
-  }
-
-  saveMilitaryRank() {
-    if (this.militaryrankForm.valid) {
-      if (this.MilitaryRank.id) {
-        this.militaryrankService.UpdateMilitaryRank(this.MilitaryRank).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.militaryrankService.AddMilitaryRank(this.MilitaryRank).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.militaryrankDialog = false;
-      this.MilitaryRank = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.militaryrankService.UpdateMilitaryRank(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.militaryrankService.AddMilitaryRank(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.militaryrankService.DeleteMilitaryRank(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -117,8 +87,5 @@ export class MilitaryRankComponent implements OnInit {
         this.militaryranks = res;
       }
     )
-  }
-  get f() {
-    return this.militaryrankForm.controls;
   }
 }

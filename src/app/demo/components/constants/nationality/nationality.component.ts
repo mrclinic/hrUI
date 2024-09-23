@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { Nationality } from 'src/app/demo/models/constants/nationality.model';
 import { NationalityService } from 'src/app/demo/service/constants/nationality.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-nationality',
@@ -13,103 +11,74 @@ import { NationalityService } from 'src/app/demo/service/constants/nationality.s
   styleUrls: ['./nationality.component.css']
 })
 export class NationalityComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  nationalityForm: FormGroup;
-
-  nationalityDialog: boolean = false;
-
-  deleteNationalityDialog: boolean = false;
-
-  deleteNationalitysDialog: boolean = false;
-
+  cols: any[] = [];
   nationalitys: Nationality[] = [];
+  formStructure: IFormStructure[] = [];
 
-  Nationality: Nationality = {};
-
-  selectedNationalitys: Nationality[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly nationalityService: NationalityService) {
-    this.nationalityForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly nationalityService: NationalityService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.nationalityService.GetAllNationalitys('').subscribe(
       (res) => {
         this.nationalitys = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.nationalityForm.reset();
-    this.Nationality = {};
-    this.nationalityDialog = true;
-  }
-  editNationality(Nationality: Nationality) {
-    this.Nationality = { ...Nationality };
-    this.nationalityDialog = true;
-  }
-  deleteSelectedNationality(Nationality: Nationality) {
-    this.Nationality = Nationality;
-    this.deleteNationality();
-  }
-  deleteNationality() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.Nationality.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.nationalityService.DeleteNationality(this.Nationality.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.nationalityDialog = false;
-  }
-
-  saveNationality() {
-    if (this.nationalityForm.valid) {
-      if (this.Nationality.id) {
-        this.nationalityService.UpdateNationality(this.Nationality).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.nationalityService.AddNationality(this.Nationality).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.nationalityDialog = false;
-      this.Nationality = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.nationalityService.UpdateNationality(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.nationalityService.AddNationality(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.nationalityService.DeleteNationality(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -118,8 +87,5 @@ export class NationalityComponent implements OnInit {
         this.nationalitys = res;
       }
     )
-  }
-  get f() {
-    return this.nationalityForm.controls;
   }
 }

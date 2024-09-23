@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngxs/store';
 import { MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { BloodGroup } from 'src/app/demo/models/constants/bloodgroup.model';
 import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-bloodgroup',
@@ -12,73 +11,81 @@ import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.ser
   styleUrls: ['./bloodgroup.component.css']
 })
 export class BloodGroupComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
   cols: any[] = [];
-  bloodGroupForm: FormGroup;
-  bloodGroups: BloodGroup[] = [];
+  bloodgroups: BloodGroup[] = [];
+  formStructure: IFormStructure[] = [];
 
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private readonly bloodGroupService: BloodGroupService) { }
+  constructor(private messageService: MessageService,
+    private readonly bloodgroupService: BloodGroupService) { }
 
   ngOnInit(): void {
-
-    this.bloodGroupForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
-    this.bloodGroupService.GetAllBloodGroups('').subscribe(
+    this.bloodgroupService.GetAllBloodGroups('').subscribe(
       (res) => {
-        this.bloodGroups = res;
+        this.bloodgroups = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-    this.initColumns();
+  }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
   }
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
+
   submitEventHandler(eventData) {
     if (eventData.id) {
-      this.bloodGroupService.UpdateBloodGroup(eventData).subscribe(
+      this.bloodgroupService.UpdateBloodGroup(eventData).subscribe(
         () => {
-          this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
           this.reload();
         }
       )
     }
     else {
       delete eventData.id;
-      this.bloodGroupService.AddBloodGroup(eventData).subscribe(
+      this.bloodgroupService.AddBloodGroup(eventData).subscribe(
         () => {
-          this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
           this.reload();
         }
       )
     }
   }
+
   deleteEventHandler(eventData) {
-    this.bloodGroupService.DeleteBloodGroup(eventData as string).subscribe(
+    this.bloodgroupService.DeleteBloodGroup(eventData as string).subscribe(
       (data) => {
-        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
         this.reload();
       }
     );
   }
 
   reload() {
-    this.bloodGroupService.GetAllBloodGroups('').subscribe(
+    this.bloodgroupService.GetAllBloodGroups('').subscribe(
       (res) => {
-        this.bloodGroups = res;
+        this.bloodgroups = res;
       }
     )
-  }
-  get f() {
-    return this.bloodGroupForm.controls;
   }
 }

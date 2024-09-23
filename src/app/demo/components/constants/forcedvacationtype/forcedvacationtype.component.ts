@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { ForcedVacationType } from 'src/app/demo/models/constants/forcedvacationtype.model';
 import { ForcedVacationTypeService } from 'src/app/demo/service/constants/forcedvacationtype.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-forcedvacationtype',
@@ -13,103 +11,74 @@ import { ForcedVacationTypeService } from 'src/app/demo/service/constants/forced
   styleUrls: ['./forcedvacationtype.component.css']
 })
 export class ForcedVacationTypeComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  forcedvacationtypeForm: FormGroup;
-
-  forcedvacationtypeDialog: boolean = false;
-
-  deleteForcedVacationTypeDialog: boolean = false;
-
-  deleteForcedVacationTypesDialog: boolean = false;
-
+  cols: any[] = [];
   forcedvacationtypes: ForcedVacationType[] = [];
+  formStructure: IFormStructure[] = [];
 
-  ForcedVacationType: ForcedVacationType = {};
-
-  selectedForcedVacationTypes: ForcedVacationType[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly forcedvacationtypeService: ForcedVacationTypeService) {
-    this.forcedvacationtypeForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly forcedvacationtypeService: ForcedVacationTypeService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.forcedvacationtypeService.GetAllForcedVacationTypes('').subscribe(
       (res) => {
         this.forcedvacationtypes = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.forcedvacationtypeForm.reset();
-    this.ForcedVacationType = {};
-    this.forcedvacationtypeDialog = true;
-  }
-  editForcedVacationType(ForcedVacationType: ForcedVacationType) {
-    this.ForcedVacationType = { ...ForcedVacationType };
-    this.forcedvacationtypeDialog = true;
-  }
-  deleteSelectedForcedVacationType(ForcedVacationType: ForcedVacationType) {
-    this.ForcedVacationType = ForcedVacationType;
-    this.deleteForcedVacationType();
-  }
-  deleteForcedVacationType() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.ForcedVacationType.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.forcedvacationtypeService.DeleteForcedVacationType(this.ForcedVacationType.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.forcedvacationtypeDialog = false;
-  }
-
-  saveForcedVacationType() {
-    if (this.forcedvacationtypeForm.valid) {
-      if (this.ForcedVacationType.id) {
-        this.forcedvacationtypeService.UpdateForcedVacationType(this.ForcedVacationType).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.forcedvacationtypeService.AddForcedVacationType(this.ForcedVacationType).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.forcedvacationtypeDialog = false;
-      this.ForcedVacationType = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.forcedvacationtypeService.UpdateForcedVacationType(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.forcedvacationtypeService.AddForcedVacationType(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.forcedvacationtypeService.DeleteForcedVacationType(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -118,8 +87,5 @@ export class ForcedVacationTypeComponent implements OnInit {
         this.forcedvacationtypes = res;
       }
     )
-  }
-  get f() {
-    return this.forcedvacationtypeForm.controls;
   }
 }

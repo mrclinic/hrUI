@@ -7,12 +7,12 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BloodGroupComponent } from './bloodgroup/bloodgroup.component';
 import { ConstantsRoutingModule } from './constants-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ChildstatusComponent } from './childstatus/childstatus.component';
+import { ChildStatusComponent } from './childstatus/childstatus.component';
 import { CityComponent } from './city/city.component';
 import { CountryComponent } from './country/country.component';
 import { DegreesAuthorityComponent } from './degreesauthority/degreesauthority.component';
 import { DepartmentComponent } from './department/department.component';
-import { DeputationobjectiveComponent } from './deputationobjective/deputationobjective.component';
+import { DeputationObjectiveComponent } from './deputationobjective/deputationobjective.component';
 import { DeputationStatusComponent } from './deputationstatus/deputationstatus.component';
 import { DeputationTypeComponent } from './deputationtype/deputationtype.component';
 import { DisabilityTypeComponent } from './disabilitytype/disabilitytype.component';
@@ -67,8 +67,8 @@ import { SharedModule } from '../../shared/shared.module';
             }
         })
     ],
-    declarations: [BloodGroupComponent, ChildstatusComponent, CityComponent, CountryComponent
-        , DegreesAuthorityComponent, DepartmentComponent, DeputationobjectiveComponent, DeputationStatusComponent
+    declarations: [BloodGroupComponent, ChildStatusComponent, CityComponent, CountryComponent
+        , DegreesAuthorityComponent, DepartmentComponent, DeputationObjectiveComponent, DeputationStatusComponent
         , DeputationTypeComponent, DisabilityTypeComponent,
         EmploymentStatusTypeComponent, EvaluationGradeComponent
         , EvaluationQuarterComponent, ExperienceTypeComponent,

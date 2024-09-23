@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { JobTitle } from 'src/app/demo/models/constants/jobtitle.model';
 import { JobTitleService } from 'src/app/demo/service/constants/jobtitle.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
   selector: 'app-jobtitle',
@@ -13,103 +11,74 @@ import { JobTitleService } from 'src/app/demo/service/constants/jobtitle.service
   styleUrls: ['./jobtitle.component.css']
 })
 export class JobTitleComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  cols: any[];
-
-  jobtitleForm: FormGroup;
-
-  jobtitleDialog: boolean = false;
-
-  deleteJobTitleDialog: boolean = false;
-
-  deleteJobTitlesDialog: boolean = false;
-
+  cols: any[] = [];
   jobtitles: JobTitle[] = [];
+  formStructure: IFormStructure[] = [];
 
-  JobTitle: JobTitle = {};
-
-  selectedJobTitles: JobTitle[] = [];
-  constructor(private fb: FormBuilder, private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService, private readonly jobtitleService: JobTitleService) {
-    this.jobtitleForm = this.fb.group({
-      name: new FormControl('', [Validators.required]),
-
-    });
-    this.cols = [];
-  }
+  constructor(private messageService: MessageService,
+    private readonly jobtitleService: JobTitleService) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
     this.jobtitleService.GetAllJobTitles('').subscribe(
       (res) => {
         this.jobtitles = res;
+        this.initColumns();
+        this.initFormStructure();
       }
     );
-
   }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'name', header: "الاسم", type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
     ]
   }
-  openNew() {
-    this.jobtitleForm.reset();
-    this.JobTitle = {};
-    this.jobtitleDialog = true;
-  }
-  editJobTitle(JobTitle: JobTitle) {
-    this.JobTitle = { ...JobTitle };
-    this.jobtitleDialog = true;
-  }
-  deleteSelectedJobTitle(JobTitle: JobTitle) {
-    this.JobTitle = JobTitle;
-    this.deleteJobTitle();
-  }
-  deleteJobTitle() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.JobTitle.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.jobtitleService.DeleteJobTitle(this.JobTitle.id as string).subscribe(
-          (data) => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.jobtitleDialog = false;
-  }
-
-  saveJobTitle() {
-    if (this.jobtitleForm.valid) {
-      if (this.JobTitle.id) {
-        this.jobtitleService.UpdateJobTitle(this.JobTitle).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        this.jobtitleService.AddJobTitle(this.JobTitle).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.jobtitleDialog = false;
-      this.JobTitle = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.jobtitleService.UpdateJobTitle(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
+    else {
+      delete eventData.id;
+      this.jobtitleService.AddJobTitle(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.jobtitleService.DeleteJobTitle(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 
   reload() {
@@ -118,8 +87,5 @@ export class JobTitleComponent implements OnInit {
         this.jobtitles = res;
       }
     )
-  }
-  get f() {
-    return this.jobtitleForm.controls;
   }
 }
