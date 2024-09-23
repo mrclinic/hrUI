@@ -16,14 +16,15 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) { }
+    private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.occurrencepartnertypeService.GetAllOccurrencePartnerTypes('').subscribe(
       (res) => {
-        this.occurrencepartnertypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.occurrencepartnertypes = res
       }
     );
   }

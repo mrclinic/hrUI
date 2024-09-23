@@ -16,14 +16,15 @@ export class TerminationReasonComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly terminationreasonService: TerminationReasonService) { }
+    private readonly terminationreasonService: TerminationReasonService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.terminationreasonService.GetAllTerminationReasons('').subscribe(
       (res) => {
-        this.terminationreasons = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.terminationreasons = res
       }
     );
   }

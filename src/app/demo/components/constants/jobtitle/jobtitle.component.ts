@@ -16,14 +16,15 @@ export class JobTitleComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly jobtitleService: JobTitleService) { }
+    private readonly jobtitleService: JobTitleService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.jobtitleService.GetAllJobTitles('').subscribe(
       (res) => {
-        this.jobtitles = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.jobtitles = res
       }
     );
   }

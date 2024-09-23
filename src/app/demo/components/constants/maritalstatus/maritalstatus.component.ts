@@ -16,14 +16,15 @@ export class MaritalStatusComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly maritalstatusService: MaritalStatusService) { }
+    private readonly maritalstatusService: MaritalStatusService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.maritalstatusService.GetAllMaritalStatuss('').subscribe(
       (res) => {
-        this.maritalstatuss = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.maritalstatuss = res
       }
     );
   }

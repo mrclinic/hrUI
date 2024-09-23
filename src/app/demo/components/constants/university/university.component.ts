@@ -16,14 +16,15 @@ export class UniversityComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly universityService: UniversityService) { }
+    private readonly universityService: UniversityService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.universityService.GetAllUniversitys('').subscribe(
       (res) => {
-        this.universitys = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.universitys = res
       }
     );
   }

@@ -1,5 +1,4 @@
 export interface ExperienceType {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

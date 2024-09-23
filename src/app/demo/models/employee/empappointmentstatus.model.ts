@@ -26,8 +26,8 @@ export interface EmpAppointmentStatus {
     disabilitytype?: DisabilityType;
     jobcategoryid?: string;
     jobcategory?: JobCategory;
-    modificationcontracttypeid?: string;
-    modificationcontracttype?: ModificationContractType;
+    modificationContractTypeId?: string;
+    modificationContractType?: ModificationContractType;
     startingtypeid?: string;
     startingtype?: StartingType;
     insurancenumber?: string;

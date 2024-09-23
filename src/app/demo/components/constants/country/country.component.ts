@@ -16,14 +16,15 @@ export class CountryComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly countryService: CountryService) { }
+    private readonly countryService: CountryService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.countryService.GetAllCountrys('').subscribe(
       (res) => {
-        this.countrys = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.countrys = res
       }
     );
   }

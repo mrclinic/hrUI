@@ -9,4 +9,5 @@ export interface IFormStructure {
         validator: string;
         message: string;
     }[];
+    placeHolder?: string;
 }

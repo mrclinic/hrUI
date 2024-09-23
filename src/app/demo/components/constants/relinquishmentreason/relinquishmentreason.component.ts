@@ -16,14 +16,15 @@ export class RelinquishmentReasonComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly relinquishmentreasonService: RelinquishmentReasonService) { }
+    private readonly relinquishmentreasonService: RelinquishmentReasonService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.relinquishmentreasonService.GetAllRelinquishmentReasons('').subscribe(
       (res) => {
-        this.relinquishmentreasons = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.relinquishmentreasons = res
       }
     );
   }

@@ -16,14 +16,15 @@ export class JobCategoryComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly jobcategoryService: JobCategoryService) { }
+    private readonly jobcategoryService: JobCategoryService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.jobcategoryService.GetAllJobCategorys('').subscribe(
       (res) => {
-        this.jobcategorys = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.jobcategorys = res
       }
     );
   }

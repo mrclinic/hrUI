@@ -16,14 +16,15 @@ export class StartingTypeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly startingtypeService: StartingTypeService) { }
+    private readonly startingtypeService: StartingTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.startingtypeService.GetAllStartingTypes('').subscribe(
       (res) => {
-        this.startingtypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.startingtypes = res
       }
     );
   }

@@ -16,14 +16,15 @@ export class DepartmentComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly departmentService: DepartmentService) { }
+    private readonly departmentService: DepartmentService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.departmentService.GetAllDepartments('').subscribe(
       (res) => {
-        this.departments = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.departments = res
       }
     );
   }

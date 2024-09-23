@@ -16,14 +16,15 @@ export class FinancialIndicatorTypeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly financialindicatortypeService: FinancialIndicatorTypeService) { }
+    private readonly financialindicatortypeService: FinancialIndicatorTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.financialindicatortypeService.GetAllFinancialIndicatorTypes('').subscribe(
       (res) => {
-        this.financialindicatortypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.financialindicatortypes = res
       }
     );
   }

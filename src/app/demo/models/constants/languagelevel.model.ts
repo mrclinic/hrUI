@@ -1,5 +1,4 @@
 export interface LanguageLevel {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

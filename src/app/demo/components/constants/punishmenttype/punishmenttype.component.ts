@@ -16,14 +16,15 @@ export class PunishmentTypeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly punishmenttypeService: PunishmentTypeService) { }
+    private readonly punishmenttypeService: PunishmentTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.punishmenttypeService.GetAllPunishmentTypes('').subscribe(
       (res) => {
-        this.punishmenttypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.punishmenttypes = res
       }
     );
   }

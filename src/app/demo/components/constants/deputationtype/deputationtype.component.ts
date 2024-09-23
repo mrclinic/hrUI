@@ -16,14 +16,15 @@ export class DeputationTypeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly deputationtypeService: DeputationTypeService) { }
+    private readonly deputationtypeService: DeputationTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.deputationtypeService.GetAllDeputationTypes('').subscribe(
       (res) => {
-        this.deputationtypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.deputationtypes = res
       }
     );
   }

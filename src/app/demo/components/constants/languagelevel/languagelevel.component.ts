@@ -16,14 +16,15 @@ export class LanguageLevelComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly languagelevelService: LanguageLevelService) { }
+    private readonly languagelevelService: LanguageLevelService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.languagelevelService.GetAllLanguageLevels('').subscribe(
       (res) => {
-        this.languagelevels = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.languagelevels = res
       }
     );
   }

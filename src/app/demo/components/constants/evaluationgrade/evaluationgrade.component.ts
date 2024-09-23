@@ -16,14 +16,15 @@ export class EvaluationGradeComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly evaluationgradeService: EvaluationGradeService) { }
+    private readonly evaluationgradeService: EvaluationGradeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.evaluationgradeService.GetAllEvaluationGrades('').subscribe(
       (res) => {
-        this.evaluationgrades = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.evaluationgrades = res
       }
     );
   }

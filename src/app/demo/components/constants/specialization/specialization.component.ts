@@ -16,14 +16,15 @@ export class SpecializationComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly specializationService: SpecializationService) { }
+    private readonly specializationService: SpecializationService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.specializationService.GetAllSpecializations('').subscribe(
       (res) => {
-        this.specializations = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.specializations = res
       }
     );
   }

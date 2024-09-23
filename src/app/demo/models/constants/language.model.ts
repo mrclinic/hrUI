@@ -1,5 +1,4 @@
 export interface Language {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

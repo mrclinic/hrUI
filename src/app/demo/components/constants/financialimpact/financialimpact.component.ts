@@ -16,14 +16,15 @@ export class FinancialImpactComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly financialimpactService: FinancialImpactService) { }
+    private readonly financialimpactService: FinancialImpactService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.financialimpactService.GetAllFinancialImpacts('').subscribe(
       (res) => {
-        this.financialimpacts = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.financialimpacts = res
       }
     );
   }

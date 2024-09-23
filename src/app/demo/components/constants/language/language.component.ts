@@ -16,14 +16,15 @@ export class LanguageComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly languageService: LanguageService) { }
+    private readonly languageService: LanguageService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.languageService.GetAllLanguages('').subscribe(
       (res) => {
-        this.languages = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.languages = res
       }
     );
   }

@@ -16,14 +16,15 @@ export class SubDepartmentComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly subdepartmentService: SubDepartmentService) { }
+    private readonly subdepartmentService: SubDepartmentService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.subdepartmentService.GetAllSubDepartments('').subscribe(
       (res) => {
-        this.subdepartments = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.subdepartments = res
       }
     );
   }

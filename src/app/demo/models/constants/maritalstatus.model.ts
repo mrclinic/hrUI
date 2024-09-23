@@ -1,5 +1,4 @@
 export interface MaritalStatus {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

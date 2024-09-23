@@ -16,14 +16,15 @@ export class BloodGroupComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly bloodgroupService: BloodGroupService) { }
+    private readonly bloodgroupService: BloodGroupService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.bloodgroupService.GetAllBloodGroups('').subscribe(
       (res) => {
-        this.bloodgroups = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.bloodgroups = res
       }
     );
   }

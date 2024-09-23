@@ -16,14 +16,15 @@ export class PromotionPercentageComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly promotionpercentageService: PromotionPercentageService) { }
+    private readonly promotionpercentageService: PromotionPercentageService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.promotionpercentageService.GetAllPromotionPercentages('').subscribe(
       (res) => {
-        this.promotionpercentages = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.promotionpercentages = res
       }
     );
   }

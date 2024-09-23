@@ -1,5 +1,4 @@
 export interface DeputationObjective {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

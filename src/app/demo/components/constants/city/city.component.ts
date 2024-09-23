@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { City } from 'src/app/demo/models/constants/city.model';
 import { CityService } from 'src/app/demo/service/constants/city.service';
+import { CountryService } from 'src/app/demo/service/constants/country.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
@@ -13,19 +15,26 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 export class CityComponent implements OnInit {
   cols: any[] = [];
   citys: City[] = [];
+  countries: any[] = [];
   formStructure: IFormStructure[] = [];
-
+  fetched: boolean = false;
   constructor(private messageService: MessageService,
-    private readonly cityService: CityService) { }
+    private readonly cityService: CityService, private readonly countryService: CountryService) {
+    this.initColumns();
+  }
 
   ngOnInit(): void {
-    this.cityService.GetAllCitys('').subscribe(
-      (res) => {
-        this.citys = res;
-        this.initColumns();
-        this.initFormStructure();
-      }
-    );
+    forkJoin([this.cityService.GetCitysInfo(''), this.countryService.GetAllCountrys('')]).subscribe(([cities, countries]) => {
+      this.citys = this.mapCityList(cities);
+      this.countries = countries.map((item) => {
+        return Object.assign(item, {
+          label: item?.name,
+          value: item?.id
+        });
+      })
+      this.initFormStructure();
+      this.fetched = true;
+    })
   }
 
   initFormStructure() {
@@ -42,13 +51,29 @@ export class CityComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.COUNTRY_NAME,
+        name: 'countryId',
+        value: '',
+        options: [...this.countries],
+        placeHolder: APP_CONSTANTS.COUNTRY_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
       }
     ];
   }
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'countryName', header: APP_CONSTANTS.COUNTRY_NAME, type: 'string' }
     ]
   }
 
@@ -82,10 +107,18 @@ export class CityComponent implements OnInit {
   }
 
   reload() {
-    this.cityService.GetAllCitys('').subscribe(
-      (res) => {
-        this.citys = res;
+    this.cityService.GetCitysInfo('').subscribe(
+      (cities) => {
+        this.citys = this.mapCityList(cities);
       }
     )
+  }
+  mapCityList(cities) {
+    return cities.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        countryName: item?.country?.name
+      });
+    })
   }
 }

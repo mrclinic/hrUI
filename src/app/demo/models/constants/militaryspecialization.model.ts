@@ -1,5 +1,4 @@
 export interface MilitarySpecialization {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

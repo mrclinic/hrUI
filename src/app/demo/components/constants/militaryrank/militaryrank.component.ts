@@ -16,14 +16,15 @@ export class MilitaryRankComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly militaryrankService: MilitaryRankService) { }
+    private readonly militaryrankService: MilitaryRankService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.militaryrankService.GetAllMilitaryRanks('').subscribe(
       (res) => {
-        this.militaryranks = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.militaryranks = res
       }
     );
   }

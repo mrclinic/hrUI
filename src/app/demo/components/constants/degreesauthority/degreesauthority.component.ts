@@ -16,14 +16,15 @@ export class DegreesAuthorityComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly degreesauthorityService: DegreesAuthorityService) { }
+    private readonly degreesauthorityService: DegreesAuthorityService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.degreesauthorityService.GetAllDegreesAuthoritys('').subscribe(
       (res) => {
-        this.degreesauthoritys = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.degreesauthoritys = res
       }
     );
   }

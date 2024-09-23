@@ -16,14 +16,15 @@ export class GenderComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly genderService: GenderService) { }
+    private readonly genderService: GenderService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.genderService.GetAllGenders('').subscribe(
       (res) => {
-        this.genders = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.genders = res
       }
     );
   }

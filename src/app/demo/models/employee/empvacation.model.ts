@@ -18,7 +18,7 @@ export interface EmpVacation {
     financialimpactid?: string;
     forcedvacationtypeid?: string;
     isincludedinserviceduration?: boolean;
-    modificationcontracttypeid?: string;
+    modificationContractTypeId?: string;
     day?: number;
     month?: number;
     year?: number;
@@ -28,7 +28,7 @@ export interface EmpVacation {
     employee?: Person;
     financialimpact?: FinancialImpact;
     forcedvacationtype?: ForcedVacationType;
-    modificationcontracttype?: ModificationContractType;
+    modificationContractType?: ModificationContractType;
     vacationtype?: VacationType;
     id?: string;
 }

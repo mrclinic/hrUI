@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { JobChangeReason } from 'src/app/demo/models/constants/jobchangereason.model';
 import { JobChangeReasonService } from 'src/app/demo/service/constants/jobchangereason.service';
+import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
@@ -12,20 +13,29 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class JobChangeReasonComponent implements OnInit {
   cols: any[] = [];
-  jobchangereasons: JobChangeReason[] = [];
+  jobchangereasons: any[] = [];
   formStructure: IFormStructure[] = [];
-
+  fetched: boolean = false;
+  modificationContractTypes: any[] = [];
   constructor(private messageService: MessageService,
-    private readonly jobchangereasonService: JobChangeReasonService) { }
+    private readonly jobchangereasonService: JobChangeReasonService,
+    private readonly modificationContractTypeService: ModificationContractTypeService) {
+    this.initColumns();
+  }
 
   ngOnInit(): void {
-    this.jobchangereasonService.GetAllJobChangeReasons('').subscribe(
-      (res) => {
-        this.jobchangereasons = res;
-        this.initColumns();
-        this.initFormStructure();
-      }
-    );
+    forkJoin([this.jobchangereasonService.GetJobChangeReasonsInfo(''),
+    this.modificationContractTypeService.GetAllModificationContractTypes('')]).subscribe(([res, modificationContractTypes]) => {
+      this.jobchangereasons = this.mapItemList(res);
+      this.modificationContractTypes = modificationContractTypes.map((item) => {
+        return Object.assign(item, {
+          label: item?.name,
+          value: item?.id
+        });
+      })
+      this.initFormStructure();
+      this.fetched = true;
+    })
   }
 
   initFormStructure() {
@@ -41,6 +51,21 @@ export class JobChangeReasonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+        ]
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.ModificationContractType_NAME,
+        name: 'modificationContractTypeId',
+        value: '',
+        options: [...this.modificationContractTypes],
+        placeHolder: APP_CONSTANTS.ModificationContractType_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
         ],
       }
     ];
@@ -48,7 +73,8 @@ export class JobChangeReasonComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'modificationcontracttypeName', header: APP_CONSTANTS.ModificationContractType_NAME, type: 'string' }
     ]
   }
 
@@ -82,10 +108,18 @@ export class JobChangeReasonComponent implements OnInit {
   }
 
   reload() {
-    this.jobchangereasonService.GetAllJobChangeReasons('').subscribe(
+    this.jobchangereasonService.GetJobChangeReasonsInfo('').subscribe(
       (res) => {
-        this.jobchangereasons = res;
+        this.jobchangereasons = this.mapItemList(res);
       }
     )
+  }
+  mapItemList(items) {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        modificationcontracttypeName: item?.modificationContractType?.name
+      });
+    })
   }
 }

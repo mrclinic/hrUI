@@ -1,5 +1,4 @@
 export interface EmploymentStatusType {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

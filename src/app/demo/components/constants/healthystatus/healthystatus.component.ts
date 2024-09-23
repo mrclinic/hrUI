@@ -16,14 +16,15 @@ export class HealthyStatusComponent implements OnInit {
   formStructure: IFormStructure[] = [];
 
   constructor(private messageService: MessageService,
-    private readonly healthystatusService: HealthyStatusService) { }
+    private readonly healthystatusService: HealthyStatusService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.healthystatusService.GetAllHealthyStatuss('').subscribe(
       (res) => {
-        this.healthystatuss = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.healthystatuss = res
       }
     );
   }
