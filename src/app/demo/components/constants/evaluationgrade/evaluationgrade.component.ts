@@ -14,6 +14,9 @@ export class EvaluationGradeComponent implements OnInit {
   cols: any[] = [];
   evaluationgrades: EvaluationGrade[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly evaluationgradeService: EvaluationGradeService) {

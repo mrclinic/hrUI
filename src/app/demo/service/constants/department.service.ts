@@ -25,7 +25,7 @@ export class DepartmentService {
     return this.http.get<Department[]>(`${environment.backendUrl + environment.hrUrl}Department/GetDepartments?${payLoad}`);
   }
 
-  GetDepartmentsInfo(payLoad: string): Observable<Department[]> {
-    return this.http.get<Department[]>(`${environment.backendUrl + environment.hrUrl}Department/GetDepartmentsInfo?${payLoad}`);
+  GetDepartmentsInfo(payLoad: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.backendUrl + environment.hrUrl}Department/GetDepartmentsInfo?${payLoad}`);
   }
 }

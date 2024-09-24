@@ -14,6 +14,9 @@ export class PromotionPercentageComponent implements OnInit {
   cols: any[] = [];
   promotionpercentages: PromotionPercentage[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly promotionpercentageService: PromotionPercentageService) {

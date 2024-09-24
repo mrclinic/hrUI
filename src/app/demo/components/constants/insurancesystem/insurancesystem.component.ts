@@ -14,6 +14,9 @@ export class InsuranceSystemComponent implements OnInit {
   cols: any[] = [];
   insurancesystems: InsuranceSystem[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly insurancesystemService: InsuranceSystemService) {

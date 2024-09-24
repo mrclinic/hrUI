@@ -14,6 +14,9 @@ export class JobTitleComponent implements OnInit {
   cols: any[] = [];
   jobtitles: JobTitle[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly jobtitleService: JobTitleService) {

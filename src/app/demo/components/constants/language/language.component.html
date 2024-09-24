@@ -1,4 +1,4 @@
 <app-custom-table [cols]="cols" [tableData]="languages" [tableTitle]="'إدارة اللغات'"
   (submitEventHandler)="submitEventHandler($event)" (deleteEventHandler)="deleteEventHandler($event)"
-  [formStructure]="formStructure">
+  [formStructure]="formStructure" [canAdd]="canAdd" [canEdit]="canEdit" [canSingleDelete]="canSingleDelete">
 </app-custom-table>

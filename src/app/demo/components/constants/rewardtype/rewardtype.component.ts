@@ -14,6 +14,9 @@ export class RewardTypeComponent implements OnInit {
   cols: any[] = [];
   rewardtypes: RewardType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly rewardtypeService: RewardTypeService) {

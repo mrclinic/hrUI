@@ -26,20 +26,20 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     {
                         label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions']
-                        , visible: this.authServiceService.checkPermission('GetPermissions')
+                        , visible: this.authServiceService.checkPermission('UserManagment_Permission_GetPermissions')
                     },
                     {
                         label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users']
-                        , visible: this.authServiceService.checkPermission('GetUsersInfo')
+                        , visible: this.authServiceService.checkPermission('UserManagment_User_GetUsersInfo')
                     },
                     {
                         label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles']
-                        , visible: this.authServiceService.checkPermission('GetAllRoles')
+                        , visible: this.authServiceService.checkPermission('UserManagment_Role_GetRoles')
                     },
                     //{ label: 'user Profiles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/userProfiles'] }
 
                 ],
-                visible: this.authServiceService.checkPermissions(['GetPermissions', 'GetUsersInfo', 'GetAllRoles'])
+                visible: this.authServiceService.checkPermissions(['UserManagment_Permission_GetPermissions', 'UserManagment_User_GetUsersInfo', 'UserManagment_Role_GetRoles'])
             },
 
             {

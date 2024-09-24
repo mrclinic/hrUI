@@ -56,6 +56,8 @@ export class HasPermissionDirective implements OnInit {
   }
 
   private checkPermission() {
+    //just for development purpose
+    return true;
     let hasPermission = false;
     if (this.currentUserPermissions?.length > 0) {
       for (const checkPermission of this.permissions) {

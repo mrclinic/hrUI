@@ -15,6 +15,9 @@ export class PunishmentTypeComponent implements OnInit {
   cols: any[] = [];
   punishmenttypes: any[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
   fetched: boolean = false;
   financialImpacts: any[] = [];
   constructor(private messageService: MessageService,
@@ -118,7 +121,7 @@ export class PunishmentTypeComponent implements OnInit {
     return items.map((item) => {
       return Object.assign(item, {
         ...item,
-        financialimpactName: item?.financialimpact?.name
+        financialimpactName: item?.financialImpact?.name
       });
     })
   }

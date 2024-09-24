@@ -14,6 +14,9 @@ export class DegreesAuthorityComponent implements OnInit {
   cols: any[] = [];
   degreesauthoritys: DegreesAuthority[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly degreesauthorityService: DegreesAuthorityService) {

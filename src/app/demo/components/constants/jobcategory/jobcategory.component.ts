@@ -14,6 +14,9 @@ export class JobCategoryComponent implements OnInit {
   cols: any[] = [];
   jobcategorys: JobCategory[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly jobcategoryService: JobCategoryService) {

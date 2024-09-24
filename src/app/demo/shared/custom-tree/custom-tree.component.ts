@@ -11,6 +11,9 @@ export class CustomTreeComponent implements OnInit {
   @Input() treeItems: TreeNode[] = [];
   selectedITem!: TreeNode | null;
   menuItems: MenuItem[] = [];
+  @Input() canAdd: string = '';
+  @Input() canEdit: string = '';
+  @Input() canSingleDelete: string = '';
 
   constructor() { }
 
@@ -27,15 +30,16 @@ export class CustomTreeComponent implements OnInit {
   }
 
   deleteITem(selectedITem: any) {
-    throw new Error('Method not implemented.');
+    console.log(selectedITem);
   }
 
   editITem(selectedITem: any) {
-    throw new Error('Method not implemented.');
+    console.log(selectedITem);
   }
 
   addItem(selectedITem: any) {
-    throw new Error('Method not implemented.');
+    if (selectedITem?.leaf) return;
+    console.log(selectedITem);
   }
 
 

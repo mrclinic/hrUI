@@ -14,6 +14,9 @@ export class VacationTypeComponent implements OnInit {
   cols: any[] = [];
   vacationtypes: VacationType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly vacationtypeService: VacationTypeService) {

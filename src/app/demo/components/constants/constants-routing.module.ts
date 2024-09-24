@@ -45,6 +45,7 @@ import { TerminationReasonComponent } from './terminationreason/terminationreaso
 import { UniversityComponent } from './university/university.component';
 import { VacationTypeComponent } from './vacationtype/vacationtype.component';
 import { BranchComponent } from './branch/branch.component';
+import { DepartmentTreeComponent } from './department-tree/department-tree.component';
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -110,8 +111,16 @@ import { BranchComponent } from './branch/branch.component';
                 ogDescription: environment.ogDescription,
                 ogImage: environment.appUrl + environment.ogImage
             }
-        }
-        ,
+        },
+        {
+            path: 'department-tree',
+            component: DepartmentTreeComponent,
+            data: {
+                ogTitle: environment.ogTitle,
+                ogDescription: environment.ogDescription,
+                ogImage: environment.appUrl + environment.ogImage
+            }
+        },
         {
             path: 'deputation-objective',
             component: DeputationObjectiveComponent,

@@ -14,6 +14,9 @@ export class EmploymentStatusTypeComponent implements OnInit {
   cols: any[] = [];
   employmentstatustypes: EmploymentStatusType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly employmentstatustypeService: EmploymentStatusTypeService) {

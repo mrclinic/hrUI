@@ -14,6 +14,9 @@ export class ChildStatusComponent implements OnInit {
   cols: any[] = [];
   childstatuss: ChildStatus[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly childstatusService: ChildStatusService) {

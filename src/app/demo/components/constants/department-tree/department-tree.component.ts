@@ -1,59 +1,46 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { Department } from 'src/app/demo/models/constants/department.model';
 import { DepartmentService } from 'src/app/demo/service/constants/department.service';
-import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 @Component({
-  selector: 'app-department',
-  templateUrl: './department.component.html',
-  styleUrls: ['./department.component.css']
+  selector: 'app-department-tree',
+  templateUrl: './department-tree.component.html',
+  styleUrls: ['./department-tree.component.css']
 })
-export class DepartmentComponent implements OnInit {
-  cols: any[] = [];
-  departments: Department[] = [];
-  formStructure: IFormStructure[] = [];
+export class DepartmentTreeComponent implements OnInit {
+  departments: any[] = [];
   canAdd: string = '';
   canEdit: string = '';
   canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly departmentService: DepartmentService) {
-    this.initColumns();
-    this.initFormStructure();
   }
 
   ngOnInit(): void {
-    this.departmentService.GetAllDepartments('').subscribe(
+    this.departmentService.GetDepartmentsInfo('').subscribe(
       (res) => {
-        this.departments = res
+        this.departments = res.map((item) => {
+          return Object.assign(item, {
+            key: item?.id,
+            label: item?.name,
+            data: 'Documents Folder',
+            icon: 'pi pi-fw pi-inbox',
+            leaf: false,
+            children: item?.subDepartments.map((child) => {
+              return Object.assign(child, {
+                key: child?.id,
+                label: child?.name,
+                data: 'Documents Folder',
+                icon: 'pi pi-fw pi-inbox',
+                leaf: true
+              })
+            })
+          });
+        })
       }
     );
-  }
-
-  initFormStructure() {
-    this.formStructure = [
-      {
-        type: 'text',
-        label: APP_CONSTANTS.NAME,
-        name: 'name',
-        value: '',
-        validations: [
-          {
-            name: 'required',
-            validator: 'required',
-            message: APP_CONSTANTS.FIELD_REQUIRED,
-          },
-        ],
-      }
-    ];
-  }
-
-  initColumns() {
-    this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
-    ]
   }
 
   submitEventHandler(eventData) {
@@ -86,7 +73,7 @@ export class DepartmentComponent implements OnInit {
   }
 
   reload() {
-    this.departmentService.GetAllDepartments('').subscribe(
+    this.departmentService.GetDepartmentsInfo('').subscribe(
       (res) => {
         this.departments = res;
       }

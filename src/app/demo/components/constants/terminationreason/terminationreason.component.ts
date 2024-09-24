@@ -14,6 +14,9 @@ export class TerminationReasonComponent implements OnInit {
   cols: any[] = [];
   terminationreasons: TerminationReason[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly terminationreasonService: TerminationReasonService) {

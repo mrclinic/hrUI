@@ -17,6 +17,9 @@ export class CityComponent implements OnInit {
   citys: City[] = [];
   countries: any[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
   fetched: boolean = false;
   constructor(private messageService: MessageService,
     private readonly cityService: CityService, private readonly countryService: CountryService) {

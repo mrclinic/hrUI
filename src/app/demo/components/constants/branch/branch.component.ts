@@ -19,6 +19,9 @@ export class BranchComponent implements OnInit {
   departments: any[] | undefined;
   subdepartments: any[] | undefined;
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
   fetched: boolean = false;
   constructor(private messageService: MessageService,
     private readonly branchService: BranchService,
@@ -84,7 +87,7 @@ export class BranchComponent implements OnInit {
       {
         type: 'select',
         label: APP_CONSTANTS.subdepartment_NAME,
-        name: 'subdepartmentId',
+        name: 'subDepartmentId',
         value: '',
         options: [...this.subdepartments],
         placeHolder: APP_CONSTANTS.subdepartment_PLACE_HOLDER,
@@ -147,7 +150,7 @@ export class BranchComponent implements OnInit {
       return Object.assign(item, {
         ...item,
         departmentName: item?.department?.name,
-        subdepartmentName: item?.subdepartment?.name
+        subdepartmentName: item?.subDepartment?.name
       });
     })
   }

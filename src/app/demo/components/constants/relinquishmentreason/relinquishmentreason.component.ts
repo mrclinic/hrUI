@@ -14,6 +14,9 @@ export class RelinquishmentReasonComponent implements OnInit {
   cols: any[] = [];
   relinquishmentreasons: RelinquishmentReason[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly relinquishmentreasonService: RelinquishmentReasonService) {

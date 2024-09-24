@@ -14,6 +14,9 @@ export class ForcedVacationTypeComponent implements OnInit {
   cols: any[] = [];
   forcedvacationtypes: ForcedVacationType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly forcedvacationtypeService: ForcedVacationTypeService) {

@@ -14,6 +14,9 @@ export class NationalityComponent implements OnInit {
   cols: any[] = [];
   nationalitys: Nationality[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly nationalityService: NationalityService) {

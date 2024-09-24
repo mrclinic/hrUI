@@ -14,6 +14,9 @@ export class UniversityComponent implements OnInit {
   cols: any[] = [];
   universitys: University[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly universityService: UniversityService) {

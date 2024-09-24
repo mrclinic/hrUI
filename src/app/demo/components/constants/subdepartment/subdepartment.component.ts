@@ -16,6 +16,9 @@ export class SubDepartmentComponent implements OnInit {
   cols: any[] = [];
   subdepartments: SubDepartment[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
   departments: any[] = [];
   fetched: boolean = false;
   constructor(private messageService: MessageService,

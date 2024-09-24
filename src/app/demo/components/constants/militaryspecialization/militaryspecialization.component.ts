@@ -14,6 +14,9 @@ export class MilitarySpecializationComponent implements OnInit {
   cols: any[] = [];
   militaryspecializations: MilitarySpecialization[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly militaryspecializationService: MilitarySpecializationService) {

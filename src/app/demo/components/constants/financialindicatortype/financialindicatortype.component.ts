@@ -14,6 +14,9 @@ export class FinancialIndicatorTypeComponent implements OnInit {
   cols: any[] = [];
   financialindicatortypes: FinancialIndicatorType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly financialindicatortypeService: FinancialIndicatorTypeService) {

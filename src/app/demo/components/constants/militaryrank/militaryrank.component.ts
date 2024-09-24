@@ -14,6 +14,9 @@ export class MilitaryRankComponent implements OnInit {
   cols: any[] = [];
   militaryranks: MilitaryRank[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
     private readonly militaryrankService: MilitaryRankService) {
