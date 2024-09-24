@@ -1,0 +1,5 @@
+<div class="card flex justify-content-center">
+    <p-tree class="w-full md:w-30rem" [value]="treeItems" selectionMode="single" [(selection)]="selectedITem"
+        [contextMenu]="cm" />
+    <p-contextMenu #cm [model]="menuItems" />
+</div>

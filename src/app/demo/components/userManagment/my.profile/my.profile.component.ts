@@ -66,7 +66,6 @@ export class MyProfileComponent implements OnInit {
       (state) => state.users.isLoading
     );
     let user = JSON.parse(localStorage.getItem('users.loggedUser') || '') as User;
-    console.log(user)
     this.userId = user.id || '';
     this.filter = `Filters=UserId==${this.userId}`;
     this.store.dispatch(new UserProfileActions.GetMyUserProfiles(this.filter)).subscribe(

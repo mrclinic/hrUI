@@ -148,7 +148,6 @@ export class UserComponent implements OnInit {
     );
   }
   onSelectRole(event: any) {
-    console.log(this.user)
     this.user.roleID = event.Id;
   }
 }

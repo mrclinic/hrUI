@@ -1,6 +1,7 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { AuthServiceService } from '../demo/service/auth-service.service';
 
 @Component({
     selector: 'app-menu',
@@ -10,7 +11,7 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(public layoutService: LayoutService, private authServiceService: AuthServiceService) { }
 
     ngOnInit() {
         this.model = [
@@ -23,12 +24,22 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'إدارة المستخدمين',
                 items: [
-                    { label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions'] },
-                    { label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users'] },
-                    { label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles'] },
+                    {
+                        label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions']
+                        , visible: this.authServiceService.checkPermission('GetPermissions')
+                    },
+                    {
+                        label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users']
+                        , visible: this.authServiceService.checkPermission('GetUsersInfo')
+                    },
+                    {
+                        label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles']
+                        , visible: this.authServiceService.checkPermission('GetAllRoles')
+                    },
                     //{ label: 'user Profiles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/userProfiles'] }
 
-                ]
+                ],
+                visible: this.authServiceService.checkPermissions(['GetPermissions', 'GetUsersInfo', 'GetAllRoles'])
             },
 
             {

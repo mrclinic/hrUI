@@ -1,4 +1,4 @@
-import { Component, EventEmitter, input, Input, OnInit, Output, output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { IFormStructure } from '../dynamic-form/from-structure-model';
 import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.component';
 
@@ -9,9 +9,9 @@ import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.
 })
 export class CustomTableComponent implements OnInit {
   @Input() cols: any[] = [];
-  @Input() canAdd: boolean = true;
-  @Input() canEdit: boolean = true;
-  @Input() canSingleDelete: boolean = true;
+  @Input() canAdd: string = '';
+  @Input() canEdit: string = '';
+  @Input() canSingleDelete: string = '';
   @Input() canMultiDelete: boolean = true;
   @Input() hasCheckBox: boolean = true;
   selectedItems: any[] = [];

@@ -2,11 +2,11 @@
   <div class="col-12">
     <div class="card px-6 py-6">
       <p-toast></p-toast>
-      <p-toolbar styleClass="mb-4" *ngIf="canAdd || canMultiDelete">
+      <p-toolbar styleClass="mb-4" *hasPermission="[canAdd,canEdit]; op 'OR'">
         <ng-template pTemplate="left">
           <div class="my-2">
-            <button *ngIf="canAdd" pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
-              (click)="openNew()"></button>
+            <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus"
+              class="p-button-success mr-2" (click)="openNew()"></button>
             <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
               (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button>
           </div>
@@ -52,11 +52,11 @@
             <td style="width:14%; min-width:10rem;" *ngFor="let col of columns">
               <span class="p-column-title">{{col.header}}</span> {{rowData[col.dataKey]}}
             </td>
-            <td *ngIf="canEdit || canSingleDelete">
+            <td *hasPermission="[canEdit , canSingleDelete]">
               <div class="flex">
-                <button *ngIf="canEdit" pButton pRipple icon="pi pi-pencil"
+                <button *hasPermission="[canEdit]" pButton pRipple icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2" (click)="editItem(item)"></button>
-                <button *ngIf="canSingleDelete" pButton pRipple icon="pi pi-trash"
+                <button *hasPermission="[canSingleDelete]" pButton pRipple icon="pi pi-trash"
                   class="p-button-rounded p-button-warning" (click)="deleteSelectedItem(item)"></button>
               </div>
             </td>

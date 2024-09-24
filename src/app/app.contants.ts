@@ -17,4 +17,7 @@ export class APP_CONSTANTS {
     public static department_PLACE_HOLDER = 'يرجى اختيار الجهة المصدرة';
     public static subdepartment_NAME = 'الفعالية الفرعية';
     public static subdepartment_PLACE_HOLDER = 'يرجى اختيار الفعالية الفرعية';
+    public static ADD_NAME = 'جديد';
+    public static EDIT_NAME = 'تعديل';
+    public static DELETE_NAME = 'حذف';
 }
