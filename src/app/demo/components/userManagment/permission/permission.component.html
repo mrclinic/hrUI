@@ -1,9 +1,5 @@
 <p-toast dir="rtl"></p-toast>
 <p-breadcrumb [model]="items"></p-breadcrumb>
-<div class="progress-spinner" *ngIf="isLoading$ | async;">
-  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
-    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
-</div>
 <div class="card" dir="rtl">
   <p-table #permissionsTable responsiveLayout="scroll" [value]="permissions" selectionMode="single"
     [(selection)]="permission" currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
@@ -43,22 +39,22 @@
   styleClass="p-fluid" dir="rtl">
   <ng-template pTemplate="content">
     <div class="p-field">
-      <label for="Name">الاسم</label>
-      <input type="text" pInputText id="Name" readonly [(ngModel)]="permission.Name" required autofocus
+      <label for="name">الاسم</label>
+      <input type="text" pInputText id="name" readonly [(ngModel)]="permission.name" required autofocus
         maxlength="100" />
-      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Name">حقل الاسم مطلوب</small>
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.name">حقل الاسم مطلوب</small>
     </div>
     <div class="p-field">
-      <label for="DisplayName">الاسم العربي</label>
-      <input id="DisplayName" pInputText [(ngModel)]="permission.DisplayName" required maxlength="100" />
-      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.DisplayName">حقل الاسم العربي
+      <label for="displayName">الاسم العربي</label>
+      <input id="displayName" pInputText [(ngModel)]="permission.displayName" required maxlength="100" />
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.displayName">حقل الاسم العربي
         مطلوب</small>
     </div>
 
     <div class="p-field">
-      <label for="Order">الترتيب</label>
-      <input id="Order" pInputText [(ngModel)]="permission.Order" required />
-      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.Order">حقل الترتيب مطلوب</small>
+      <label for="order">الترتيب</label>
+      <input id="order" pInputText [(ngModel)]="permission.order" required />
+      <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !permission.order">حقل الترتيب مطلوب</small>
     </div>
   </ng-template>
 

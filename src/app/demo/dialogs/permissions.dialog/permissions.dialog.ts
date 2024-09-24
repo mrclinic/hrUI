@@ -58,7 +58,7 @@ export class PermissionListComponent {
     this.store.dispatch(new PermissionActions.GetAllPermissions('PageSize=500')).subscribe(
       () => {
         this.permissions = this.store.selectSnapshot<Permission[]>((state) => state.users.permissions);
-        this.filter = `Filters=RoleId==${this.roleId}&PageSize=500`;
+        this.filter = `Filters=roleId==${this.roleId}&PageSize=500`;
         this.getRolePermissions(this.filter);
       }
     );

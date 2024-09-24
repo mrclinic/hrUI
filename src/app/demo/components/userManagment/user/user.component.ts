@@ -140,7 +140,7 @@ export class UserComponent implements OnInit {
   }
 
   searchRole(event: any) {
-    let filter = "Filters=DisplayName@=" + event.query;
+    let filter = "filters=displayName@=" + event.query;
     this.store.dispatch(new RoleActions.GetAllRoles(filter)).subscribe(
       () => {
         this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);

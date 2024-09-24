@@ -466,7 +466,7 @@ export class UserState {
       let permissions = currentUser.Permissions || [];
       ctx.setState(
         patch({
-          hasPermission: permissions?.includes(action.permName) || currentUser.Role?.Name?.localeCompare('Admin') == 0,
+          hasPermission: permissions?.includes(action.permName) || currentUser.Role?.name?.localeCompare('Admin') == 0,
           LoadError: '',
           isLoading: false
         })
@@ -529,7 +529,7 @@ export class UserState {
         .UpdateRolePermission(action.payLoad));
       ctx.setState(
         patch({
-          rolePermissions: updateItem<RolePermission>(rolePermission => rolePermission?.Id === action.payLoad?.Id, action.payLoad),
+          rolePermissions: updateItem<RolePermission>(rolePermission => rolePermission?.id === action.payLoad?.id, action.payLoad),
           LoadError: '',
           isLoading: false
         })
@@ -566,8 +566,8 @@ export class UserState {
       const result = await lastValueFrom(this.rolePermissionService
         .GetRolePermissionsInfo(action.payLoad));
       const res = result.map(data => ({
-        displayName: data?.Permission!.displayName, id: data?.Permission!.id,
-        name: data?.Permission!.name, order: data?.Permission!.order
+        displayName: data?.permission!.displayName, id: data?.permission!.id,
+        name: data?.permission!.name, order: data?.permission!.order
       }));
       ctx.patchState({
         selectedPermissions: res!,
@@ -589,7 +589,7 @@ export class UserState {
         .DeleteRolePermission(action.Id));
       ctx.setState(
         patch({
-          rolePermissions: removeItem<RolePermission>(rolePermission => rolePermission?.Id === action?.Id),
+          rolePermissions: removeItem<RolePermission>(rolePermission => rolePermission?.id === action?.Id),
           LoadError: '',
           isLoading: false
         })

@@ -70,11 +70,11 @@ export class RolePermissionComponent implements OnInit {
   }
   deleteRolePermission() {
     this.confirmationService.confirm({
-      message: `${'هل أنت متأكد من حذف' + this.rolePermission.RoleId}?`,
+      message: `${'هل أنت متأكد من حذف' + this.rolePermission.roleId}?`,
       header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new RolePermissionActions.DeleteRolePermission(this.rolePermission.Id as string)).subscribe(
+        this.store.dispatch(new RolePermissionActions.DeleteRolePermission(this.rolePermission.id as string)).subscribe(
           data => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
@@ -93,8 +93,8 @@ export class RolePermissionComponent implements OnInit {
 
   saveRolePermission() {
     this.submitted = true;
-    if (this.rolePermission.RoleId?.trim()) {
-      if (this.rolePermission.Id) {
+    if (this.rolePermission.roleId?.trim()) {
+      if (this.rolePermission.id) {
         this.store.dispatch(new RolePermissionActions.UpdateRolePermission(this.rolePermission)).subscribe(
           data => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
@@ -103,7 +103,7 @@ export class RolePermissionComponent implements OnInit {
         )
       }
       else {
-        delete this.rolePermission.Id;
+        delete this.rolePermission.id;
         this.store.dispatch(new RolePermissionActions.AddRolePermission(this.rolePermission)).subscribe(
           data => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });

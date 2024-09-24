@@ -82,7 +82,7 @@ export class RoleComponent implements OnInit {
   }
   deleteRole() {
     this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.role.Name + '?',
+      message: 'هل أنت متأكد من حذف' + this.role.name + '?',
       header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -105,7 +105,7 @@ export class RoleComponent implements OnInit {
 
   saveRole() {
     this.submitted = true;
-    if (this.role.Name?.trim()) {
+    if (this.role.name?.trim()) {
       if (this.role.id) {
         this.store.dispatch(new RoleActions.UpdateRole(this.role)).subscribe(
           () => {
@@ -153,8 +153,8 @@ export class RoleComponent implements OnInit {
         return rest;
       });
       const mapped = newArr?.map((element) => ({
-        RoleId: this.role.id,
-        PermissionId: element.id
+        roleId: this.role.id,
+        permissionId: element.id
       }));
       this.store.dispatch(new RolePermissionActions.SetRolePermission(mapped, this.role?.id!)).subscribe(data => {
       })

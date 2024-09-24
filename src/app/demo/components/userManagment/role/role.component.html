@@ -1,9 +1,5 @@
 <p-toast dir="rtl"></p-toast>
 <p-breadcrumb [model]="items"></p-breadcrumb>
-<div class="progress-spinner" *ngIf="isLoading$ | async;">
-  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
-    fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
-</div>
 <div class="card" dir="rtl">
   <p-toolbar styleClass="mb-4">
     <ng-template pTemplate="left">
@@ -47,27 +43,27 @@
   <ng-template pTemplate="content">
     <div class="p-field">
       <span class="p-float-label">
-        <input type="text" pInputText id="Name" [(ngModel)]="role.Name" required autofocus maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.Name">الاسم مطلوب</small>
-        <label for="Name" dir="rtl">الاسم</label>
+        <input type="text" pInputText id="name" [(ngModel)]="role.name" required autofocus maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.name">الاسم مطلوب</small>
+        <label for="name" dir="rtl">الاسم</label>
       </span>
     </div>
     <p-divider></p-divider>
     <div class="p-field">
       <span class="p-float-label">
-        <input id="DisplayName" pInputText [(ngModel)]="role.DisplayName" required maxlength="100" />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.DisplayName">الاسم العربي
+        <input id="displayName" pInputText [(ngModel)]="role.displayName" required maxlength="100" />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.displayName">الاسم العربي
           مطلوب</small>
-        <label for="DisplayName" dir="rtl">الاسم العربي</label>
+        <label for="displayName" dir="rtl">الاسم العربي</label>
       </span>
     </div>
     <p-divider></p-divider>
     <div class="p-field">
       <span class="p-float-label">
-        <input id="StatusCode" pInputText type="number" [(ngModel)]="role.StatusCode" required />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.StatusCode">رمز الحالة الموافق للدور
+        <input id="statusCode" pInputText type="number" [(ngModel)]="role.statusCode" required />
+        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.statusCode">رمز الحالة الموافق للدور
           مطلوب</small>
-        <label for="StatusCode" dir="rtl">رمز الحالة الموافق للدور</label>
+        <label for="statusCode" dir="rtl">رمز الحالة الموافق للدور</label>
       </span>
     </div>
   </ng-template>
