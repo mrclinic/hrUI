@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { PunishmentType } from 'src/app/demo/models/constants/punishmenttype.model';
+import { FinancialImpactService } from 'src/app/demo/service/constants/financialimpact.service';
 import { PunishmentTypeService } from 'src/app/demo/service/constants/punishmenttype.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,21 +13,29 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class PunishmentTypeComponent implements OnInit {
   cols: any[] = [];
-  punishmenttypes: PunishmentType[] = [];
+  punishmenttypes: any[] = [];
   formStructure: IFormStructure[] = [];
-
+  fetched: boolean = false;
+  financialImpacts: any[] = [];
   constructor(private messageService: MessageService,
-    private readonly punishmenttypeService: PunishmentTypeService) {
+    private readonly punishmenttypeService: PunishmentTypeService,
+    private readonly financialImpactService: FinancialImpactService) {
     this.initColumns();
-    this.initFormStructure();
   }
 
   ngOnInit(): void {
-    this.punishmenttypeService.GetAllPunishmentTypes('').subscribe(
-      (res) => {
-        this.punishmenttypes = res
-      }
-    );
+    forkJoin([this.punishmenttypeService.GetPunishmentTypesInfo(''),
+    this.financialImpactService.GetAllFinancialImpacts('')]).subscribe(([res, financialImpacts]) => {
+      this.punishmenttypes = this.mapItemList(res);
+      this.financialImpacts = financialImpacts.map((item) => {
+        return Object.assign(item, {
+          label: item?.name,
+          value: item?.id
+        });
+      })
+      this.initFormStructure();
+      this.fetched = true;
+    })
   }
 
   initFormStructure() {
@@ -43,13 +52,29 @@ export class PunishmentTypeComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.financialImpact_NAME,
+        name: 'financialImpactId',
+        value: '',
+        options: [...this.financialImpacts],
+        placeHolder: APP_CONSTANTS.financialImpact_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
       }
     ];
   }
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'financialimpactName', header: APP_CONSTANTS.financialImpact_NAME, type: 'string' }
     ]
   }
 
@@ -83,10 +108,18 @@ export class PunishmentTypeComponent implements OnInit {
   }
 
   reload() {
-    this.punishmenttypeService.GetAllPunishmentTypes('').subscribe(
+    this.punishmenttypeService.GetPunishmentTypesInfo('').subscribe(
       (res) => {
-        this.punishmenttypes = res;
+        this.punishmenttypes = this.mapItemList(res);
       }
     )
+  }
+  mapItemList(items) {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        financialimpactName: item?.financialimpact?.name
+      });
+    })
   }
 }

@@ -25,7 +25,7 @@ export class CityComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin([this.cityService.GetCitysInfo(''), this.countryService.GetAllCountrys('')]).subscribe(([cities, countries]) => {
-      this.citys = this.mapCityList(cities);
+      this.citys = this.mapItemList(cities);
       this.countries = countries.map((item) => {
         return Object.assign(item, {
           label: item?.name,
@@ -109,12 +109,12 @@ export class CityComponent implements OnInit {
   reload() {
     this.cityService.GetCitysInfo('').subscribe(
       (cities) => {
-        this.citys = this.mapCityList(cities);
+        this.citys = this.mapItemList(cities);
       }
     )
   }
-  mapCityList(cities) {
-    return cities.map((item) => {
+  mapItemList(items) {
+    return items.map((item) => {
       return Object.assign(item, {
         ...item,
         countryName: item?.country?.name

@@ -1,4 +1,4 @@
-<app-custom-table [cols]="cols" [tableData]="specializations" [tableTitle]="'إدارة الاختصاصات العلمية'"
+<app-custom-table *ngIf="fetched" [cols]="cols" [tableData]="specializations" [tableTitle]="'إدارة الاختصاصات العلمية'"
   (submitEventHandler)="submitEventHandler($event)" (deleteEventHandler)="deleteEventHandler($event)"
   [formStructure]="formStructure">
 </app-custom-table>

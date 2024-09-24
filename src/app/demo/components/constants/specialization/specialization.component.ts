@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { Specialization } from 'src/app/demo/models/constants/specialization.model';
+import { QualificationService } from 'src/app/demo/service/constants/qualification.service';
 import { SpecializationService } from 'src/app/demo/service/constants/specialization.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,21 +13,28 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class SpecializationComponent implements OnInit {
   cols: any[] = [];
-  specializations: Specialization[] = [];
+  specializations: any[] = [];
   formStructure: IFormStructure[] = [];
-
+  qualifications: any[] = [];
+  fetched: boolean = false;
   constructor(private messageService: MessageService,
-    private readonly specializationService: SpecializationService) {
+    private readonly specializationService: SpecializationService, private readonly qualificationService: QualificationService) {
     this.initColumns();
-    this.initFormStructure();
   }
 
   ngOnInit(): void {
-    this.specializationService.GetAllSpecializations('').subscribe(
-      (res) => {
-        this.specializations = res
-      }
-    );
+    forkJoin([this.specializationService.GetSpecializationsInfo(''),
+    this.qualificationService.GetAllQualifications('')]).subscribe(([res, qualifications]) => {
+      this.specializations = this.mapItemList(res);
+      this.qualifications = qualifications.map((item) => {
+        return Object.assign(item, {
+          label: item?.name,
+          value: item?.id
+        });
+      })
+      this.initFormStructure();
+      this.fetched = true;
+    })
   }
 
   initFormStructure() {
@@ -43,13 +51,29 @@ export class SpecializationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.qualification_NAME,
+        name: 'qualificationId',
+        value: '',
+        options: [...this.qualifications],
+        placeHolder: APP_CONSTANTS.qualification_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
       }
     ];
   }
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'qualificationName', header: APP_CONSTANTS.qualification_NAME, type: 'string' }
     ]
   }
 
@@ -83,10 +107,18 @@ export class SpecializationComponent implements OnInit {
   }
 
   reload() {
-    this.specializationService.GetAllSpecializations('').subscribe(
+    this.specializationService.GetSpecializationsInfo('').subscribe(
       (res) => {
-        this.specializations = res;
+        this.specializations = this.mapItemList(res);
       }
     )
+  }
+  mapItemList(items) {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        qualificationName: item?.qualification?.name
+      });
+    })
   }
 }

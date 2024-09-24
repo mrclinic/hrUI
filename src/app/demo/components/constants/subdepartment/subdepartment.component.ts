@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { SubDepartment } from 'src/app/demo/models/constants/subdepartment.model';
+import { DepartmentService } from 'src/app/demo/service/constants/department.service';
 import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -14,19 +16,27 @@ export class SubDepartmentComponent implements OnInit {
   cols: any[] = [];
   subdepartments: SubDepartment[] = [];
   formStructure: IFormStructure[] = [];
-
+  departments: any[] = [];
+  fetched: boolean = false;
   constructor(private messageService: MessageService,
-    private readonly subdepartmentService: SubDepartmentService) {
+    private readonly subdepartmentService: SubDepartmentService,
+    private readonly departmentService: DepartmentService) {
     this.initColumns();
-    this.initFormStructure();
   }
 
   ngOnInit(): void {
-    this.subdepartmentService.GetAllSubDepartments('').subscribe(
-      (res) => {
-        this.subdepartments = res
-      }
-    );
+    forkJoin([this.subdepartmentService.GetSubDepartmentsInfo(''),
+    this.departmentService.GetAllDepartments('')]).subscribe(([res, departments]) => {
+      this.subdepartments = this.mapItemList(res);
+      this.departments = departments.map((item) => {
+        return Object.assign(item, {
+          label: item?.name,
+          value: item?.id
+        });
+      })
+      this.initFormStructure();
+      this.fetched = true;
+    })
   }
 
   initFormStructure() {
@@ -43,13 +53,29 @@ export class SubDepartmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.department_NAME,
+        name: 'departmentId',
+        value: '',
+        options: [...this.departments],
+        placeHolder: APP_CONSTANTS.department_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
       }
     ];
   }
 
   initColumns() {
     this.cols = [
-      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' }
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'departmentName', header: APP_CONSTANTS.department_NAME, type: 'string' }
     ]
   }
 
@@ -83,10 +109,18 @@ export class SubDepartmentComponent implements OnInit {
   }
 
   reload() {
-    this.subdepartmentService.GetAllSubDepartments('').subscribe(
+    this.subdepartmentService.GetSubDepartmentsInfo('').subscribe(
       (res) => {
-        this.subdepartments = res;
+        this.subdepartments = this.mapItemList(res);
       }
     )
+  }
+  mapItemList(items) {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        departmentName: item?.department?.name
+      });
+    })
   }
 }
