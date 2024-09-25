@@ -20,4 +20,29 @@ export class APP_CONSTANTS {
     public static ADD_NAME = 'جديد';
     public static EDIT_NAME = 'تعديل';
     public static DELETE_NAME = 'حذف';
+    public static DATEOFAPPOINTMENTDECISION = 'تاريخ قرار التعيين';
+    public static DATEOFAPPOINTMENTVISA = 'تاريخ تأشيرة التعيين';
+    public static DATEOFMODIFIEDAPPOINTMENTVISADATE = 'تاريخ تأشيرة قرار التعيين المعدل';
+    public static DATEOFINSURANCESTART = 'تاريخ المباشرة بالتامينات';
+    public static GENERALREGISTRYNUMBER = 'رقم السجل العام';
+    public static INSURANCESYSTEM_NAME = 'النظام التأميني';
+    public static INSURANCESYSTEM_PLACE_HOLDER = 'يرجى اختيار النظام التأميني';
+    public static ENGINEERSSYNDICATENUMBER = 'رقم نقابة المهندسين';
+    public static APPOINTMENTCONTRACTTYPE_NAME = 'نوع صك التعيين';
+    public static APPOINTMENTCONTRACTTYPE_PLACE_HOLDER = 'يرجى اختيار نوع صك التعيين';
+    public static LAW_NAME = 'القانون';
+    public static LAW_PLACE_HOLDER = 'يرجى اختيار القانون';
+    public static HEALTHYSTATUS_NAME = 'الحالة الصحة';
+    public static HEALTHYSTATUS_PLACE_HOLDER = 'يرجى اختيار الحالة الصحية';
+    public static DISABILITYTYPE_NAME = 'نوع الإعاقة';
+    public static DISABILITYTYPE_PLACE_HOLDER = 'يرجى اختيار نوع الإعاقة';
+    public static JOBCATEGORY_NAME = 'الفئة';
+    public static JOBCATEGORY_PLACE_HOLDER = 'يرجى اختيار الفئة';
+    public static STARTINGTYPE_NAME = 'نوع المباشرة';
+    public static STARTINGTYPE_PLACE_HOLDER = 'يرجى اختيار نوع المباشرة';
+    public static INSURANCENUMBER = 'الرقم التأميني';
+    public static APPOINTMENCONTRACTNUMBER = 'رقم صك التعيين';
+    public static APPOINTMENTCONTRACTVISANUMBER = 'رقم تأشيرة صك التعيين';
+    public static MODIFIEDAPPOINTMENTCONTRACTNUMBER = 'رقم صك التعيين المعدل';
+
 }

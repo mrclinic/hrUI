@@ -65,8 +65,8 @@
       </p-table>
     </div>
 
-    <p-dialog [(visible)]="itemDialog" [style]="{width: '450px'}" header="التفاصيل" [modal]="true" class="p-fluid">
-      <app-dynamic-form [formStructure]="formStructure"></app-dynamic-form>
+    <p-dialog [(visible)]="itemDialog" [style]="{width: 'auto'}" header="التفاصيل" [modal]="true" class="p-fluid">
+      <app-dynamic-form [formStructure]="formStructure" [hasCustomCssClass]="hasCustomCssClass"></app-dynamic-form>
       <ng-template pTemplate="footer">
         <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
         <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>

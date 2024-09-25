@@ -29,6 +29,7 @@ export class CustomTableComponent implements OnInit {
   @Output() submitEventHandler = new EventEmitter<any>();
   @Output() deleteEventHandler = new EventEmitter<string>();
   @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
+  @Input() hasCustomCssClass: boolean = false;
   constructor() { }
 
   ngOnInit(): void {
