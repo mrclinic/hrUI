@@ -22,6 +22,12 @@ export class AppMenuComponent implements OnInit {
                 ]
             }, */
             {
+                label: 'الذاتية',
+                items: [
+                    { label: 'الوضع الوظيفي', icon: 'pi pi-fw pi-home', routerLink: ['/employees/emp-appointment-status'] }
+                ]
+            },
+            {
                 label: 'إدارة المستخدمين',
                 items: [
                     {
@@ -45,13 +51,14 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'إدارة الثوابت',
                 items: [
+                    { label: 'المديريات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department-tree'] },
                     { label: 'الزمر الدموية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/blood-group'] },
                     { label: 'الفروع', icon: 'pi pi-fw pi-home', routerLink: ['/constants/branch'] },
                     { label: 'حالات الطفل', icon: 'pi pi-fw pi-home', routerLink: ['/constants/child-status'] },
                     { label: 'المدن', icon: 'pi pi-fw pi-home', routerLink: ['/constants/city'] },
                     { label: 'البلدان', icon: 'pi pi-fw pi-home', routerLink: ['/constants/country'] },
                     { label: 'جهات المنح', icon: 'pi pi-fw pi-home', routerLink: ['/constants/degrees-authority'] },
-                    { label: 'الجهات المصدرة', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department'] },
+                    //{ label: 'الجهات المصدرة', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department'] },
                     { label: 'أهداف الايفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-objective'] },
                     { label: 'أوضاع الإيفاد وتغيراته', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-status'] },
                     { label: 'أنواع الإيفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-type'] },
@@ -85,7 +92,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'أنواع المكافآت', icon: 'pi pi-fw pi-home', routerLink: ['/constants/reward-type'] },
                     { label: 'الاختصاصات العلمية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/specialization'] },
                     { label: 'أنواع البدء', icon: 'pi pi-fw pi-home', routerLink: ['/constants/starting-type'] },
-                    { label: 'الفعاليات الفرعية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/sub-department'] },
+                    //{ label: 'الفعاليات الفرعية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/sub-department'] },
                     { label: 'أسباب الطرد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/termination-reason'] },
                     { label: 'الجامعات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/university'] },
                     { label: 'أنواع الإجازات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/vacation-type'] }

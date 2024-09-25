@@ -3,8 +3,7 @@ import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { BranchService } from 'src/app/demo/service/constants/branch.service';
-import { DepartmentService } from 'src/app/demo/service/constants/department.service';
-import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartment.service';
+import { OrgDepartmentService } from 'src/app/demo/service/constants/org-department.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
 
@@ -17,7 +16,6 @@ export class BranchComponent implements OnInit {
   cols: any[] = [];
   branchs: any[] = [];
   departments: any[] | undefined;
-  subdepartments: any[] | undefined;
   formStructure: IFormStructure[] = [];
   canAdd: string = '';
   canEdit: string = '';
@@ -25,15 +23,13 @@ export class BranchComponent implements OnInit {
   fetched: boolean = false;
   constructor(private messageService: MessageService,
     private readonly branchService: BranchService,
-    private readonly departmentService: DepartmentService,
-    private readonly subDepartmentService: SubDepartmentService) {
+    private readonly departmentService: OrgDepartmentService) {
     this.initColumns();
   }
 
   ngOnInit(): void {
-    forkJoin([this.branchService.GetBranchsInfo(''), this.departmentService.GetAllDepartments(''),
-    this.subDepartmentService.GetAllSubDepartments('')])
-      .subscribe(([branches, departments, subdepartments]) => {
+    forkJoin([this.branchService.GetBranchsInfo(''), this.departmentService.GetAllOrgDepartments('')])
+      .subscribe(([branches, departments]) => {
         this.branchs = this.mapItemList(branches);
         this.departments = departments.map((item) => {
           return Object.assign(item, {
@@ -41,14 +37,6 @@ export class BranchComponent implements OnInit {
             value: item?.id
           });
         });
-
-        this.subdepartments = subdepartments.map((item) => {
-          return Object.assign(item, {
-            label: item?.name,
-            value: item?.id
-          });
-        });
-
         this.initFormStructure();
         this.fetched = true;
       });
@@ -72,25 +60,10 @@ export class BranchComponent implements OnInit {
       {
         type: 'select',
         label: APP_CONSTANTS.department_NAME,
-        name: 'departmentId',
+        name: 'orgDepartmentId',
         value: '',
         options: [...this.departments],
         placeHolder: APP_CONSTANTS.department_PLACE_HOLDER,
-        validations: [
-          {
-            name: 'required',
-            validator: 'required',
-            message: APP_CONSTANTS.FIELD_REQUIRED,
-          },
-        ],
-      },
-      {
-        type: 'select',
-        label: APP_CONSTANTS.subdepartment_NAME,
-        name: 'subDepartmentId',
-        value: '',
-        options: [...this.subdepartments],
-        placeHolder: APP_CONSTANTS.subdepartment_PLACE_HOLDER,
         validations: [
           {
             name: 'required',
@@ -105,8 +78,7 @@ export class BranchComponent implements OnInit {
   initColumns() {
     this.cols = [
       { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
-      { dataKey: 'departmentName', header: APP_CONSTANTS.department_NAME, type: 'string' },
-      { dataKey: 'subdepartmentName', header: APP_CONSTANTS.subdepartment_NAME, type: 'string' }
+      { dataKey: 'departmentName', header: APP_CONSTANTS.department_NAME, type: 'string' }
     ]
   }
   submitEventHandler(eventData) {
@@ -149,8 +121,7 @@ export class BranchComponent implements OnInit {
     return items.map((item) => {
       return Object.assign(item, {
         ...item,
-        departmentName: item?.department?.name,
-        subdepartmentName: item?.subDepartment?.name
+        departmentName: item?.orgDepartment?.name
       });
     })
   }

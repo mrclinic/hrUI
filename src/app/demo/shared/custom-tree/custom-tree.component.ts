@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuItem, TreeNode } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 
@@ -14,7 +14,9 @@ export class CustomTreeComponent implements OnInit {
   @Input() canAdd: string = '';
   @Input() canEdit: string = '';
   @Input() canSingleDelete: string = '';
-
+  @Output() deleteEventHandler = new EventEmitter<string>();
+  @Output() submitEventHandler = new EventEmitter<any>();
+  deleteItemDialog: boolean = false;
   constructor() { }
 
   ngOnInit(): void {
@@ -30,17 +32,21 @@ export class CustomTreeComponent implements OnInit {
   }
 
   deleteITem(selectedITem: any) {
-    console.log(selectedITem);
+    this.deleteItemDialog = true;
   }
 
   editITem(selectedITem: any) {
-    console.log(selectedITem);
+    this.submitEventHandler.emit(selectedITem)
   }
 
   addItem(selectedITem: any) {
-    if (selectedITem?.leaf) return;
-    console.log(selectedITem);
+    this.submitEventHandler.emit(selectedITem?.id);
   }
-
-
+  openNew() {
+    this.submitEventHandler.emit(null);
+  }
+  confirmDelete(selectedITem) {
+    this.deleteEventHandler.emit(selectedITem?.id);
+    this.deleteItemDialog = false;
+  }
 }

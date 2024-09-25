@@ -1,5 +1,5 @@
-import { Department } from "../constants/department.model";
 import { ModificationContractType } from "../constants/modificationcontracttype.model";
+import { OrgDepartment } from "../constants/org-department.model";
 import { PunishmentType } from "../constants/punishmenttype.model";
 
 export interface EmpPunishment {
@@ -7,10 +7,10 @@ export interface EmpPunishment {
     orderdate?: Date;
     contractdate?: Date;
     issuingdepartmentid?: string;
-    issuingdepartment?: Department;
+    issuingdepartment?: OrgDepartment;
     durationindays?: number;
     orderdepartmentid?: string;
-    orderdepartment?: Department;
+    orderdepartment?: OrgDepartment;
     isappearinginrecordcard?: boolean;
     contracttypeid?: string;
     contracttype?: ModificationContractType;
