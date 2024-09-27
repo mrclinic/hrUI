@@ -19,6 +19,15 @@ import { RoleComponent } from './role/role.component';
             }
         },
         {
+            path: 'userProfiles/:id',
+            component: UserProfileComponent,
+            data: {
+                ogTitle: environment.ogTitle,
+                ogDescription: environment.ogDescription,
+                ogImage: environment.appUrl + environment.ogImage
+            }
+        },
+        {
             path: 'userProfiles',
             component: UserProfileComponent,
             data: {

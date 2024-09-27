@@ -35,7 +35,6 @@ export class DepartmentTreeComponent implements OnInit {
         this.fetched = true;
         this.treeNodes = this.buildTreeArray(this.orgDepartments);
       }
-
     );
   }
 
@@ -58,13 +57,10 @@ export class DepartmentTreeComponent implements OnInit {
   }
 
   buildTreeArray(flatArray) {
-
     // Store references to nodes by their IDs
     const nodeMap = {};
-
     // Store the root nodes of the tree
     const result = [];
-
     // Create a reference object
     flatArray.forEach(item => {
       nodeMap[item.id] = {
@@ -96,12 +92,14 @@ export class DepartmentTreeComponent implements OnInit {
   submitEventHandler(eventData) {
     this.itemDialog = true;
     if (!eventData) {
-      this.itemDialog = true;
+      {
+        this.itemDialog = true;
+        this.childComponent.dynamicForm.reset();
+      }
     } else if (eventData?.id) {
       this.parentId = eventData?.parentId;
       this.itemToEdit = eventData?.id;
       this.childComponent.dynamicForm.patchValue({ name: eventData?.name });
-
     } else this.parentId = eventData;
   }
 

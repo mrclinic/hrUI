@@ -632,7 +632,7 @@ export class UserState {
         .UpdateUserProfile(action.payLoad));
       ctx.setState(
         patch({
-          userProfiles: updateItem<UserProfile>(userProfile => userProfile?.Id === action.payLoad?.Id, action.payLoad),
+          userProfiles: updateItem<UserProfile>(userProfile => userProfile?.id === action.payLoad?.id, action.payLoad),
           LoadError: '',
           isLoading: false
         })
@@ -709,7 +709,7 @@ export class UserState {
         .DeleteUserProfile(action.Id));
       ctx.setState(
         patch({
-          userProfiles: removeItem<UserProfile>(userProfile => userProfile?.Id === action.Id),
+          userProfiles: removeItem<UserProfile>(userProfile => userProfile?.id === action.Id),
           LoadError: '',
           isLoading: false
         })

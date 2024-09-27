@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
@@ -33,6 +34,8 @@ export class EmpAppointmentStatusComponent implements OnInit {
   canAdd: string = '';
   canEdit: string = '';
   canSingleDelete: string = '';
+  @Input() personId: string;
+  filter: string = '';
   constructor(private messageService: MessageService,
     private readonly empappointmentstatusService: EmpAppointmentStatusService,
     private readonly insuranceSystemService: InsuranceSystemService,
@@ -40,13 +43,17 @@ export class EmpAppointmentStatusComponent implements OnInit {
     private readonly lawService: LawService,
     private readonly healthyStatusService: HealthyStatusService,
     private readonly disabilityTypeService: DisabilityTypeService,
-    private readonly jobCategoryService: JobCategoryService, private readonly startingTypeService: StartingTypeService
+    private readonly jobCategoryService: JobCategoryService, private readonly startingTypeService: StartingTypeService,
+    private datePipe: DatePipe
   ) {
     this.initColumns();
   }
-
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
   ngOnInit(): void {
-    forkJoin([this.empappointmentstatusService.GetAllEmpAppointmentStatuss(''), this.insuranceSystemService.GetAllInsuranceSystems(''),
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empappointmentstatusService.GetEmpAppointmentStatussInfo(this.filter), this.insuranceSystemService.GetAllInsuranceSystems(''),
     this.modificationContractTypeService.GetAllModificationContractTypes(''),
     this.lawService.GetAllLaws(''), this.healthyStatusService.GetAllHealthyStatuss(''),
     this.disabilityTypeService.GetAllDisabilityTypes(''), this.jobCategoryService.GetAllJobCategorys(''),
@@ -104,7 +111,6 @@ export class EmpAppointmentStatusComponent implements OnInit {
         this.initFormStructure();
         this.fetched = true;
       });
-    this.initFormStructure();
   }
 
   mapItemList(items: any[]): any[] {
@@ -118,7 +124,11 @@ export class EmpAppointmentStatusComponent implements OnInit {
         jobCategoryName: item?.jobCategory?.name,
         modificationContractTypeName: item?.modificationContractType?.name,
         appointmentContractTypeName: item?.appointmentContractType?.name,
-        startingTypeName: item?.startingType?.name
+        startingTypeName: item?.startingType?.name,
+        dateOfAppointmentDecision: this.transformDate(item?.dateOfAppointmentDecision),
+        dateOfAppointmentVisa: this.transformDate(item?.dateOfAppointmentVisa),
+        dateOfInsuranceStart: this.transformDate(item?.dateOfInsuranceStart),
+        dateOfModifiedAppointmentVisaDate: this.transformDate(item?.dateOfModifiedAppointmentVisaDate)
       });
     })
   }
@@ -137,6 +147,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
       {
         type: 'Date',
@@ -150,6 +161,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
       {
         type: 'Date',
@@ -163,6 +175,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
       {
         type: 'Date',
@@ -176,6 +189,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
       {
         type: 'number',
@@ -375,6 +389,19 @@ export class EmpAppointmentStatusComponent implements OnInit {
           },
         ],
       },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
     ];
   }
 
@@ -398,10 +425,12 @@ export class EmpAppointmentStatusComponent implements OnInit {
       { dataKey: 'appointmenContractNumber', header: APP_CONSTANTS.APPOINTMENCONTRACTNUMBER },
       { dataKey: 'appointmentContractVisaNumber', header: APP_CONSTANTS.APPOINTMENTCONTRACTVISANUMBER },
       { dataKey: 'modifiedAppointmentContractNumber', header: APP_CONSTANTS.MODIFIEDAPPOINTMENTCONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empappointmentstatusService.UpdateEmpAppointmentStatus(eventData).subscribe(
         () => {
@@ -431,9 +460,10 @@ export class EmpAppointmentStatusComponent implements OnInit {
   }
 
   reload() {
-    this.empappointmentstatusService.GetAllEmpAppointmentStatuss('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empappointmentstatusService.GetEmpAppointmentStatussInfo(this.filter).subscribe(
       (res) => {
-        this.empappointmentstatuss = res;
+        this.empappointmentstatuss = this.mapItemList(res);
       }
     )
   }

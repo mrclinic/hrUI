@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpExperience } from 'src/app/demo/models/employee/empexperience.model';
+import { ExperienceTypeService } from 'src/app/demo/service/constants/experiencetype.service';
 import { EmpExperienceService } from 'src/app/demo/service/employee/empexperience.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -14,23 +16,50 @@ export class EmpExperienceComponent implements OnInit {
   cols: any[] = [];
   empexperiences: EmpExperience[] = [];
   formStructure: IFormStructure[] = [];
+  experienceTypes: any[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
 
   constructor(private messageService: MessageService,
-    private readonly empexperienceService: EmpExperienceService) { }
+    private readonly empexperienceService: EmpExperienceService, private readonly experienceTypeService: ExperienceTypeService) {
+    this.initColumns();
+  }
 
   ngOnInit(): void {
-    this.empexperienceService.GetAllEmpExperiences('').subscribe(
-      (res) => {
-        this.empexperiences = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empexperienceService.GetEmpExperiencesInfo(this.filter),
+    this.experienceTypeService.GetAllExperienceTypes('')
+    ])
+      .subscribe(([empexperiences, experienceTypes
+      ]) => {
+        this.empexperiences = this.mapItemList(empexperiences);
+
+        this.experienceTypes = experienceTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        experienceTypeName: item?.experienceType?.name
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.EXPERIENCETYPE_NAME,
         name: 'experienceTypeId',
@@ -45,7 +74,7 @@ export class EmpExperienceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.SOURCE,
         name: 'source',
@@ -58,7 +87,7 @@ export class EmpExperienceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.DURATION,
         name: 'duration',
@@ -76,14 +105,14 @@ export class EmpExperienceComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'experienceTypeId', header: APP_CONSTANTS.EXPERIENCETYPEID},
-{ dataKey: 'experienceTypeName', header: APP_CONSTANTS.EXPERIENCETYPENAME},
-{ dataKey: 'source', header: APP_CONSTANTS.SOURCE},
-{ dataKey: 'duration', header: APP_CONSTANTS.DURATION},
+      { dataKey: 'experienceTypeName', header: APP_CONSTANTS.EXPERIENCETYPE_NAME },
+      { dataKey: 'source', header: APP_CONSTANTS.SOURCE },
+      { dataKey: 'duration', header: APP_CONSTANTS.DURATION },
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empexperienceService.UpdateEmpExperience(eventData).subscribe(
         () => {
@@ -113,7 +142,8 @@ export class EmpExperienceComponent implements OnInit {
   }
 
   reload() {
-    this.empexperienceService.GetAllEmpExperiences('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empexperienceService.GetEmpExperiencesInfo(this.filter).subscribe(
       (res) => {
         this.empexperiences = res;
       }

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpAssignment } from 'src/app/demo/models/employee/empassignment.model';
+import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { EmpAssignmentService } from 'src/app/demo/service/employee/empassignment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +14,60 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpAssignmentComponent implements OnInit {
   cols: any[] = [];
-  empassignments: EmpAssignment[] = [];
+  empassignments: any[] = [];
   formStructure: IFormStructure[] = [];
+  contractTypes: any[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  filter: string = '';
+  fetched: boolean = false;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly empassignmentService: EmpAssignmentService,
+    private readonly modificationContractTypeService: ModificationContractTypeService) {
+    this.initColumns();
+  }
 
-  constructor(private messageService: MessageService,
-    private readonly empassignmentService: EmpAssignmentService) { }
-
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
   ngOnInit(): void {
-    this.empassignmentService.GetAllEmpAssignments('').subscribe(
-      (res) => {
-        this.empassignments = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empassignmentService.GetEmpAssignmentsInfo(this.filter),
+    this.modificationContractTypeService.GetAllModificationContractTypes('')
+    ])
+      .subscribe(([empassignments, contractTypes
+      ]) => {
+        this.empassignments = this.mapItemList(empassignments);
+
+        this.contractTypes = contractTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+    this.initFormStructure();
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        contractTypeName: item?.contractType?.name,
+        contractDate: this.transformDate(item?.contractDate),
+        startDate: this.transformDate(item?.startDate),
+        endDate: this.transformDate(item?.endDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.CONTRACTDATE,
         name: 'contractDate',
@@ -42,8 +79,9 @@ export class EmpAssignmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.STARTDATE,
         name: 'startDate',
@@ -55,8 +93,9 @@ export class EmpAssignmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.ENDDATE,
         name: 'endDate',
@@ -68,8 +107,9 @@ export class EmpAssignmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.CONTRACTTYPE_NAME,
         name: 'contractTypeId',
@@ -84,7 +124,7 @@ export class EmpAssignmentComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.ASSIGNEDWORK,
         name: 'assignedWork',
@@ -97,10 +137,23 @@ export class EmpAssignmentComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.CONTRACTNUMBER,
         name: 'contractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -115,17 +168,18 @@ export class EmpAssignmentComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE},
-{ dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE},
-{ dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE},
-{ dataKey: 'contractTypeId', header: APP_CONSTANTS.CONTRACTTYPEID},
-{ dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPENAME},
-{ dataKey: 'assignedWork', header: APP_CONSTANTS.ASSIGNEDWORK},
-{ dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER},
+      { dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE },
+      { dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE },
+      { dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE },
+      { dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPE_NAME },
+      { dataKey: 'assignedWork', header: APP_CONSTANTS.ASSIGNEDWORK },
+      { dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empassignmentService.UpdateEmpAssignment(eventData).subscribe(
         () => {
@@ -155,9 +209,10 @@ export class EmpAssignmentComponent implements OnInit {
   }
 
   reload() {
-    this.empassignmentService.GetAllEmpAssignments('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empassignmentService.GetEmpAssignmentsInfo(this.filter).subscribe(
       (res) => {
-        this.empassignments = res;
+        this.empassignments = this.mapItemList(res);
       }
     )
   }

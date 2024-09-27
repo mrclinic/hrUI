@@ -1,9 +1,9 @@
 <div class="card">
     <p-toolbar styleClass="mb-4" *hasPermission="[canAdd];">
-        <ng-template pTemplate="left" *ngIf="treeItems.length == 0">
+        <ng-template pTemplate="left">
             <div class="my-2">
-                <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus"
-                    class="p-button-success mr-2" (click)="openNew()"></button>
+                <button *hasPermission="[canAdd]" [disabled]="treeItems.length" pButton pRipple label="إضافة"
+                    icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
             </div>
         </ng-template>
     </p-toolbar>

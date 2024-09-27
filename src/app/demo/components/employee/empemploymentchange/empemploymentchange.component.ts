@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpEmploymentChange } from 'src/app/demo/models/employee/empemploymentchange.model';
+import { JobChangeReasonService } from 'src/app/demo/service/constants/jobchangereason.service';
+import { JobTitleService } from 'src/app/demo/service/constants/jobtitle.service';
+import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { EmpEmploymentChangeService } from 'src/app/demo/service/employee/empemploymentchange.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +16,83 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpEmploymentChangeComponent implements OnInit {
   cols: any[] = [];
-  empemploymentchanges: EmpEmploymentChange[] = [];
+  empemploymentchanges: any[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  filter: string = '';
+  fetched: boolean = false;
+  jobChangeReasons: any[] = [];
+  modificationContractTypes: any[] = [];
+  jobTitles: any[] = [];
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly empemploymentchangeService: EmpEmploymentChangeService,
+    private readonly jobChangeReasonService: JobChangeReasonService,
+    private readonly modificationContractTypeService: ModificationContractTypeService,
+    private readonly jobTitleService: JobTitleService) {
+    this.initColumns();
+  }
 
-  constructor(private messageService: MessageService,
-    private readonly empemploymentchangeService: EmpEmploymentChangeService) { }
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.empemploymentchangeService.GetAllEmpEmploymentChanges('').subscribe(
-      (res) => {
-        this.empemploymentchanges = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empemploymentchangeService.GetEmpEmploymentChangesInfo(this.filter),
+    this.jobChangeReasonService.GetAllJobChangeReasons(''),
+    this.modificationContractTypeService.GetAllModificationContractTypes(''),
+    this.jobTitleService.GetAllJobTitles('')
+    ])
+      .subscribe(([empemploymentchanges, jobChangeReasons, modificationContractTypes, jobTitles
+      ]) => {
+        this.empemploymentchanges = this.mapItemList(empemploymentchanges);
+
+        this.jobChangeReasons = jobChangeReasons.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.modificationContractTypes = modificationContractTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.jobTitles = jobTitles.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        jobChangeReasonName: item?.jobChangeReason?.name,
+        modificationContractTypeName: item?.modificationContractType?.name,
+        jobTitleName: item?.jobTitle?.name,
+        dateOfAppointmentVisa: this.transformDate(item?.dateOfAppointmentVisa),
+        dateOfStart: this.transformDate(item?.dateOfStart),
+        dateOfChange: this.transformDate(item?.dateOfChange),
+        dateOfContract: this.transformDate(item?.dateOfContract)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.DATEOFAPPOINTMENTVISA,
         name: 'dateOfAppointmentVisa',
@@ -42,8 +104,9 @@ export class EmpEmploymentChangeComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.DATEOFSTART,
         name: 'dateOfStart',
@@ -55,8 +118,9 @@ export class EmpEmploymentChangeComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.DATEOFCHANGE,
         name: 'dateOfChange',
@@ -68,8 +132,9 @@ export class EmpEmploymentChangeComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.DATEOFCONTRACT,
         name: 'dateOfContract',
@@ -81,8 +146,9 @@ export class EmpEmploymentChangeComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.SALARY,
         name: 'salary',
@@ -95,7 +161,7 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.INSURANCESALARY,
         name: 'insuranceSalary',
@@ -108,7 +174,7 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.JOBCHANGEREASON_NAME,
         name: 'jobChangeReasonId',
@@ -123,13 +189,13 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
-        label: APP_CONSTANTS.MODIFICATIONCONTRACTTYPE_NAME,
+        label: APP_CONSTANTS.ModificationContractType_NAME,
         name: 'modificationContractTypeId',
         value: '',
         options: [...this.modificationContractTypes],
-        placeHolder: APP_CONSTANTS.MODIFICATIONCONTRACTTYPE_PLACE_HOLDER,
+        placeHolder: APP_CONSTANTS.ModificationContractType_PLACE_HOLDER,
         validations: [
           {
             name: 'required',
@@ -138,7 +204,7 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.JOBTITLE_NAME,
         name: 'jobTitleId',
@@ -153,7 +219,7 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.WORKPLACE,
         name: 'workplace',
@@ -166,7 +232,7 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.VISANUMBER,
         name: 'visaNumber',
@@ -179,10 +245,23 @@ export class EmpEmploymentChangeComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.CONTRACTNUMBER,
         name: 'contractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -197,25 +276,24 @@ export class EmpEmploymentChangeComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'dateOfAppointmentVisa', header: APP_CONSTANTS.DATEOFAPPOINTMENTVISA},
-{ dataKey: 'dateOfStart', header: APP_CONSTANTS.DATEOFSTART},
-{ dataKey: 'dateOfChange', header: APP_CONSTANTS.DATEOFCHANGE},
-{ dataKey: 'dateOfContract', header: APP_CONSTANTS.DATEOFCONTRACT},
-{ dataKey: 'salary', header: APP_CONSTANTS.SALARY},
-{ dataKey: 'insuranceSalary', header: APP_CONSTANTS.INSURANCESALARY},
-{ dataKey: 'jobChangeReasonId', header: APP_CONSTANTS.JOBCHANGEREASONID},
-{ dataKey: 'jobChangeReasonName', header: APP_CONSTANTS.JOBCHANGEREASONNAME},
-{ dataKey: 'modificationContractTypeId', header: APP_CONSTANTS.MODIFICATIONCONTRACTTYPEID},
-{ dataKey: 'modificationContractTypeName', header: APP_CONSTANTS.MODIFICATIONCONTRACTTYPENAME},
-{ dataKey: 'jobTitleId', header: APP_CONSTANTS.JOBTITLEID},
-{ dataKey: 'jobTitleName', header: APP_CONSTANTS.JOBTITLENAME},
-{ dataKey: 'workplace', header: APP_CONSTANTS.WORKPLACE},
-{ dataKey: 'visaNumber', header: APP_CONSTANTS.VISANUMBER},
-{ dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER},
+      { dataKey: 'dateOfAppointmentVisa', header: APP_CONSTANTS.DATEOFAPPOINTMENTVISA },
+      { dataKey: 'dateOfStart', header: APP_CONSTANTS.DATEOFSTART },
+      { dataKey: 'dateOfChange', header: APP_CONSTANTS.DATEOFCHANGE },
+      { dataKey: 'dateOfContract', header: APP_CONSTANTS.DATEOFCONTRACT },
+      { dataKey: 'salary', header: APP_CONSTANTS.SALARY },
+      { dataKey: 'insuranceSalary', header: APP_CONSTANTS.INSURANCESALARY },
+      { dataKey: 'jobChangeReasonName', header: APP_CONSTANTS.JOBCHANGEREASON_NAME },
+      { dataKey: 'modificationContractTypeName', header: APP_CONSTANTS.ModificationContractType_NAME },
+      { dataKey: 'jobTitleName', header: APP_CONSTANTS.JOBTITLE_NAME },
+      { dataKey: 'workplace', header: APP_CONSTANTS.WORKPLACE },
+      { dataKey: 'visaNumber', header: APP_CONSTANTS.VISANUMBER },
+      { dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empemploymentchangeService.UpdateEmpEmploymentChange(eventData).subscribe(
         () => {
@@ -245,9 +323,10 @@ export class EmpEmploymentChangeComponent implements OnInit {
   }
 
   reload() {
-    this.empemploymentchangeService.GetAllEmpEmploymentChanges('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empemploymentchangeService.GetEmpEmploymentChangesInfo('').subscribe(
       (res) => {
-        this.empemploymentchanges = res;
+        this.empemploymentchanges = this.mapItemList(res);
       }
     )
   }

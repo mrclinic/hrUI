@@ -6,9 +6,8 @@ import { MaritalStatus } from "../constants/maritalstatus.model";
 import { Nationality } from "../constants/nationality.model";
 
 export interface Person {
-    identityuserid?: string;
-    birthdate?: Date;
-    familybookdate?: Date;
+    birthDate?: Date;
+    familyBookDate?: Date;
     imagepath?: string;
     employmentstatustypeid?: string;
     employmentstatustype?: EmploymentStatusType;

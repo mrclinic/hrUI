@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { IFormStructure } from '../dynamic-form/from-structure-model';
 import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-custom-table',
@@ -30,12 +31,23 @@ export class CustomTableComponent implements OnInit {
   @Output() deleteEventHandler = new EventEmitter<string>();
   @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
   @Input() hasCustomCssClass: boolean = false;
-  constructor() { }
+
+  @Input() hasClickAbleRow: boolean = false;
+  @Input() redirectUrlUpOnClick: string;
+  @Input() queryParamName: string;
+  selectedItem: any;
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
 
   }
+  onRowSelect(event: any) {
+    if (!this.hasClickAbleRow) return;
+    this.router.navigate([this.redirectUrlUpOnClick, event.data.id], {
+      queryParams: { [this.queryParamName]: event.data.id },
+    });
 
+  }
   openNew() {
     this.childComponent.dynamicForm?.reset();
     this.item = {};

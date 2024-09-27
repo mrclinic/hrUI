@@ -1,0 +1,42 @@
+<p-tabView [(activeIndex)]="activeIndex" [scrollable]="true">
+    <p-tabPanel header="الوضع الوظيفي">
+        <ng-template pTemplate="content">
+            <app-empappointmentstatus [personId]="personId"></app-empappointmentstatus>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="الأعمال والتكاليف">
+        <ng-template pTemplate="content">
+            <app-empassignment [personId]="personId"></app-empassignment>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="الابناء">
+        <ng-template pTemplate="content">
+            <app-empchild [personId]="personId"></app-empchild>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="الإيفادات">
+        <ng-template pTemplate="content">
+            <app-empdeputation [personId]="personId"></app-empdeputation>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="التبدلات الوظيفية">
+        <ng-template pTemplate="content">
+            <app-empemploymentchange [personId]="personId"></app-empemploymentchange>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="الاوضاع الوظيفية">
+        <ng-template pTemplate="content">
+            <app-empemploymentstatus [personId]="personId"></app-empemploymentstatus>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="الخبرات">
+        <ng-template pTemplate="content">
+            <app-empexperience [personId]="personId"></app-empexperience>
+        </ng-template>
+    </p-tabPanel>
+    <p-tabPanel header="اللغات">
+        <ng-template pTemplate="content">
+            <app-emplanguage [personId]="personId"></app-emplanguage>
+        </ng-template>
+    </p-tabPanel>
+</p-tabView>

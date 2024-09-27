@@ -24,7 +24,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'الذاتية',
                 items: [
-                    { label: 'الوضع الوظيفي', icon: 'pi pi-fw pi-home', routerLink: ['/employees/emp-appointment-status'] }
+                    { label: 'الموظفين', icon: 'pi pi-fw pi-home', routerLink: ['/employees/employees'] }
                 ]
             },
             {

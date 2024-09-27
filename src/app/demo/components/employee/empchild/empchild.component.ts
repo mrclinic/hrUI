@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpChild } from 'src/app/demo/models/employee/empchild.model';
+import { ChildStatusService } from 'src/app/demo/service/constants/childstatus.service';
+import { GenderService } from 'src/app/demo/service/constants/gender.service';
 import { EmpChildService } from 'src/app/demo/service/employee/empchild.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -14,23 +18,68 @@ export class EmpChildComponent implements OnInit {
   cols: any[] = [];
   empchilds: EmpChild[] = [];
   formStructure: IFormStructure[] = [];
-
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  filter: string = '';
+  fetched: boolean = false;
+  genders: any[] = [];
+  statuss: any[] = [];
   constructor(private messageService: MessageService,
-    private readonly empchildService: EmpChildService) { }
+    private readonly empchildService: EmpChildService, private datePipe: DatePipe,
+    private readonly childStatusService: ChildStatusService,
+    private readonly genderService: GenderService) {
+    this.initColumns();
+  }
+
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.empchildService.GetAllEmpChilds('').subscribe(
-      (res) => {
-        this.empchilds = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empchildService.GetEmpChildsInfo(this.filter),
+    this.childStatusService.GetAllChildStatuss(''),
+    this.genderService.GetAllGenders('')
+    ])
+      .subscribe(([empchilds, statuss, genders
+      ]) => {
+        this.empchilds = this.mapItemList(empchilds);
+
+        this.statuss = statuss.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.genders = genders.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        genderName: item?.gender?.name,
+        childStatusName: item?.childStatus?.name,
+        birthDate: this.transformDate(item?.birthDate),
+        occurrenceDate: this.transformDate(item?.occurrenceDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.BIRTHDATE,
         name: 'birthDate',
@@ -42,8 +91,9 @@ export class EmpChildComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.OCCURRENCEDATE,
         name: 'occurrenceDate',
@@ -55,8 +105,9 @@ export class EmpChildComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.CHILDORDER,
         name: 'childOrder',
@@ -69,7 +120,7 @@ export class EmpChildComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.GENDER_NAME,
         name: 'genderId',
@@ -84,7 +135,7 @@ export class EmpChildComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.STATUS_NAME,
         name: 'statusId',
@@ -99,7 +150,7 @@ export class EmpChildComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.NAME,
         name: 'name',
@@ -112,7 +163,7 @@ export class EmpChildComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.MOTHERNAME,
         name: 'motherName',
@@ -125,10 +176,23 @@ export class EmpChildComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.OCCURRENCECONTRACTNUMBER,
         name: 'occurrenceContractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -143,20 +207,20 @@ export class EmpChildComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'birthDate', header: APP_CONSTANTS.BIRTHDATE},
-{ dataKey: 'occurrenceDate', header: APP_CONSTANTS.OCCURRENCEDATE},
-{ dataKey: 'childOrder', header: APP_CONSTANTS.CHILDORDER},
-{ dataKey: 'genderId', header: APP_CONSTANTS.GENDERID},
-{ dataKey: 'genderName', header: APP_CONSTANTS.GENDERNAME},
-{ dataKey: 'statusId', header: APP_CONSTANTS.STATUSID},
-{ dataKey: 'childStatusName', header: APP_CONSTANTS.CHILDSTATUSNAME},
-{ dataKey: 'name', header: APP_CONSTANTS.NAME},
-{ dataKey: 'motherName', header: APP_CONSTANTS.MOTHERNAME},
-{ dataKey: 'occurrenceContractNumber', header: APP_CONSTANTS.OCCURRENCECONTRACTNUMBER},
+      { dataKey: 'birthDate', header: APP_CONSTANTS.BIRTHDATE },
+      { dataKey: 'occurrenceDate', header: APP_CONSTANTS.OCCURRENCEDATE },
+      { dataKey: 'childOrder', header: APP_CONSTANTS.CHILDORDER },
+      { dataKey: 'genderName', header: APP_CONSTANTS.GENDER_NAME },
+      { dataKey: 'childStatusName', header: APP_CONSTANTS.CHILDSTATUSNAME },
+      { dataKey: 'name', header: APP_CONSTANTS.NAME },
+      { dataKey: 'motherName', header: APP_CONSTANTS.MOTHERNAME },
+      { dataKey: 'occurrenceContractNumber', header: APP_CONSTANTS.OCCURRENCECONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empchildService.UpdateEmpChild(eventData).subscribe(
         () => {
@@ -186,9 +250,10 @@ export class EmpChildComponent implements OnInit {
   }
 
   reload() {
-    this.empchildService.GetAllEmpChilds('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empchildService.GetEmpChildsInfo(this.filter).subscribe(
       (res) => {
-        this.empchilds = res;
+        this.empchilds = this.mapItemList(res);
       }
     )
   }

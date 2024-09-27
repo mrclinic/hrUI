@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpEmploymentStatus } from 'src/app/demo/models/employee/empemploymentstatus.model';
+import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
+import { StartingTypeService } from 'src/app/demo/service/constants/startingtype.service';
 import { EmpEmploymentStatusService } from 'src/app/demo/service/employee/empemploymentstatus.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +15,70 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpEmploymentStatusComponent implements OnInit {
   cols: any[] = [];
-  empemploymentstatuss: EmpEmploymentStatus[] = [];
+  empemploymentstatuss: any[] = [];
   formStructure: IFormStructure[] = [];
+  contractTypes: any[] = [];
+  startingTypes: any[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
 
   constructor(private messageService: MessageService,
-    private readonly empemploymentstatusService: EmpEmploymentStatusService) { }
+    private readonly empemploymentstatusService: EmpEmploymentStatusService, private readonly modificationContractTypeService: ModificationContractTypeService,
+    private readonly startingTypeService: StartingTypeService, private datePipe: DatePipe
+  ) {
+    this.initColumns();
+  }
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.empemploymentstatusService.GetAllEmpEmploymentStatuss('').subscribe(
-      (res) => {
-        this.empemploymentstatuss = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empemploymentstatusService.GetEmpEmploymentStatussInfo(this.filter),
+    this.modificationContractTypeService.GetAllModificationContractTypes(''),
+    this.startingTypeService.GetAllStartingTypes('')
+    ])
+      .subscribe(([empemploymentstatuss, contracttypes, startingTypes
+      ]) => {
+        this.empemploymentstatuss = this.mapItemList(empemploymentstatuss);
+
+        this.contractTypes = contracttypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.startingTypes = startingTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        contractTypeName: item?.contractType?.name,
+        startingTypeName: item?.startingType?.name,
+        startDate: this.transformDate(item?.startDate),
+        contractDate: this.transformDate(item?.contractDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.STARTDATE,
         name: 'startDate',
@@ -42,8 +90,9 @@ export class EmpEmploymentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.CONTRACTDATE,
         name: 'contractDate',
@@ -55,8 +104,9 @@ export class EmpEmploymentStatusComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.STARTINGTYPE_NAME,
         name: 'startingTypeId',
@@ -71,7 +121,7 @@ export class EmpEmploymentStatusComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.CONTRACTTYPE_NAME,
         name: 'contractTypeId',
@@ -86,10 +136,23 @@ export class EmpEmploymentStatusComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.CONTRACTNUMBER,
         name: 'contractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -104,17 +167,17 @@ export class EmpEmploymentStatusComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE},
-{ dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE},
-{ dataKey: 'startingTypeId', header: APP_CONSTANTS.STARTINGTYPEID},
-{ dataKey: 'startingTypeName', header: APP_CONSTANTS.STARTINGTYPENAME},
-{ dataKey: 'contractTypeId', header: APP_CONSTANTS.CONTRACTTYPEID},
-{ dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPENAME},
-{ dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER},
+      { dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE },
+      { dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE },
+      { dataKey: 'startingTypeName', header: APP_CONSTANTS.STARTINGTYPE_NAME },
+      { dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPE_NAME },
+      { dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empemploymentstatusService.UpdateEmpEmploymentStatus(eventData).subscribe(
         () => {
@@ -144,9 +207,10 @@ export class EmpEmploymentStatusComponent implements OnInit {
   }
 
   reload() {
-    this.empemploymentstatusService.GetAllEmpEmploymentStatuss('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empemploymentstatusService.GetEmpEmploymentStatussInfo(this.filter).subscribe(
       (res) => {
-        this.empemploymentstatuss = res;
+        this.empemploymentstatuss = this.mapItemList(res);
       }
     )
   }

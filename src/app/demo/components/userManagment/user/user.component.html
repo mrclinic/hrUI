@@ -61,7 +61,7 @@
           <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
             (click)="deleteSelectedUser(user)"></button>
           <button pButton pRipple icon="pi pi-user" title="تفاصيل البروفايل" class="p-button-rounded p-button-Primary"
-            (click)="deleteSelectedUser(user)"></button>
+            (click)="goToProfile(user)"></button>
         </td>
       </tr>
     </ng-template>
@@ -77,45 +77,50 @@
         <input type="text" pInputText id="FName" [(ngModel)]="user.fName" required autofocus maxlength="100" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.fName">الاسم الأول مطلوب</small>
       </div>
+      <p-divider></p-divider>
       <div class="p-field col-sm">
         <label for="LName">الكنية</label>
         <input id="LName" pInputText [(ngModel)]="user.lName" required maxlength="100" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.lName">الكنية مطلوبة</small>
       </div>
     </div>
+    <p-divider></p-divider>
     <div class="row">
       <div class="p-field col-sm">
         <label for="UserName">اسم المستخدم</label>
         <input id="UserName" pInputText [(ngModel)]="user.userName" required maxlength="100" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.userName">اسم المستخدم مطلوب</small>
       </div>
+      <p-divider></p-divider>
       <div class="p-field col-sm">
         <label for="PassWord">كلمة المرور</label>
         <input id="PassWord" pInputText [(ngModel)]="user.passWord" required maxlength="100" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.passWord">كلمة المرور مطلوبة</small>
       </div>
     </div>
+    <p-divider></p-divider>
     <div class="row">
-
       <div class="p-field col-sm">
         <label for="Phone">رقم الهاتف</label>
         <input id="Phone" pInputText [(ngModel)]="user.phone" required maxlength="10" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.phone">رقم الهاتف مطلوب</small>
       </div>
+      <p-divider></p-divider>
       <div class="p-field col-sm">
         <label for="NatNum">الرقم الوطني</label>
         <input id="NatNum" pInputText [(ngModel)]="user.natNum" required maxlength="11" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.natNum">الرقم الوطني مطلوب</small>
       </div>
     </div>
+    <p-divider></p-divider>
     <div class="row">
-
       <div class="p-field col-sm">
         <label for="EmailAddress">البريد الالكتروني</label>
         <input id="EmailAddress" pInputText [(ngModel)]="user.emailAddress" required maxlength="100" />
         <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !user.emailAddress">البريدالالكتروني
           مطلوب</small>
       </div>
+      <p-divider></p-divider>
       <div class="p-field col-sm">
         <label for="RoleID">الدور</label>
         <p-autoComplete [suggestions]="roles" appendTo="body" (completeMethod)="searchRole($event)"

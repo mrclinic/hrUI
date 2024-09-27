@@ -10,4 +10,5 @@ export interface IFormStructure {
         message: string;
     }[];
     placeHolder?: string;
+    format?: string | 'yy-mm-dd';
 }

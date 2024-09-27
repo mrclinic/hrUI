@@ -7,22 +7,23 @@
           <div class="my-2">
             <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus"
               class="p-button-success mr-2" (click)="openNew()"></button>
-            <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
-              (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button>
+            <!-- <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button> -->
           </div>
         </ng-template>
 
-        <ng-template pTemplate="right">
+        <!--  <ng-template pTemplate="right">
           <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
             (click)="dt.exportCSV()"></button>
-        </ng-template>
+        </ng-template> -->
       </p-toolbar>
 
       <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10"
         [globalFilterFields]="globalFilterFields" [paginator]="hasPaginator" [rowsPerPageOptions]="[10,20,30]"
         [showCurrentPageReport]="showCurrentPageReport"
         currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
-        [(selection)]="selectedItems" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        [(selection)]="selectedItem" selectionMode="single" [rowHover]="true" dataKey="id"
+        (onRowSelect)="onRowSelect($event)">
         <ng-template pTemplate="caption">
           <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
             <h5 class="m-0">{{tableTitle}}</h5>
@@ -45,7 +46,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-i let-item let-rowData let-columns="columns">
-          <tr>
+          <tr [pSelectableRow]="rowData">
             <td *ngIf="hasCheckBox">
               <p-tableCheckbox [value]="item"></p-tableCheckbox>
             </td>

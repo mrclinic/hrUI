@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpDeputation } from 'src/app/demo/models/employee/empdeputation.model';
+import { CityService } from 'src/app/demo/service/constants/city.service';
+import { CountryService } from 'src/app/demo/service/constants/country.service';
+import { DeputationObjectiveService } from 'src/app/demo/service/constants/deputationobjective.service';
+import { DeputationStatusService } from 'src/app/demo/service/constants/deputationstatus.service';
+import { DeputationTypeService } from 'src/app/demo/service/constants/deputationtype.service';
+import { UniversityService } from 'src/app/demo/service/constants/university.service';
 import { EmpDeputationService } from 'src/app/demo/service/employee/empdeputation.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +19,112 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpDeputationComponent implements OnInit {
   cols: any[] = [];
-  empdeputations: EmpDeputation[] = [];
+  empdeputations: any[] = [];
   formStructure: IFormStructure[] = [];
+  countrys: any[] = [];
+  citys: any[] = [];
+  universitys: any[] = [];
+  deputationObjectives: any[] = [];
+  deputationStatuss: any[] = [];
+  deputationTypes: any[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  filter: string = '';
+  fetched: boolean = false;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly empdeputationService: EmpDeputationService,
+    private readonly countryService: CountryService, private readonly cityService: CityService,
+    private readonly universityService: UniversityService, private readonly deputationObjectiveService: DeputationObjectiveService,
+    private readonly deputationStatusService: DeputationStatusService, private readonly deputationTypeService: DeputationTypeService
+  ) {
+    this.initColumns();
+  }
 
-  constructor(private messageService: MessageService,
-    private readonly empdeputationService: EmpDeputationService) { }
+  transformDate(date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.empdeputationService.GetAllEmpDeputations('').subscribe(
-      (res) => {
-        this.empdeputations = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empdeputationService.GetEmpDeputationsInfo(this.filter),
+    this.countryService.GetAllCountrys(''), this.cityService.GetAllCitys(''),
+    this.universityService.GetAllUniversitys(''),
+    this.deputationObjectiveService.GetAllDeputationObjectives(''), this.deputationStatusService.GetAllDeputationStatuss(''),
+    this.deputationTypeService.GetAllDeputationTypes(''),
+    ])
+      .subscribe(([empdeputations, countrys, citys, universitys, deputationObjectives, deputationStatuss, deputationTypes
+      ]) => {
+        this.empdeputations = this.mapItemList(empdeputations);
+
+        this.countrys = countrys.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.citys = citys.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+        this.universitys = universitys.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.deputationObjectives = deputationObjectives.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+        this.deputationStatuss = deputationStatuss.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.deputationTypes = deputationTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        countryName: item?.country?.name,
+        cityName: item?.city?.name,
+        universityName: item?.university?.name,
+        deputationObjectiveName: item?.deputationObjective?.name,
+        deputationStatusName: item?.deputationStatus?.name,
+        deputationTypeName: item?.deputationType?.name,
+        startDate: this.transformDate(item?.startDate),
+        endDate: this.transformDate(item?.endDate),
+        returnDate: this.transformDate(item?.returnDate),
+        deputationDecisionDate: this.transformDate(item?.deputationDecisionDate),
+        executiveContractDate: this.transformDate(item?.executiveContractDate),
+        startAfterReturnDate: this.transformDate(item?.startAfterReturnDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.STARTDATE,
         name: 'startDate',
@@ -42,8 +136,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.ENDDATE,
         name: 'endDate',
@@ -55,8 +150,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.RETURNDATE,
         name: 'returnDate',
@@ -68,8 +164,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.DEPUTATIONDECISIONDATE,
         name: 'deputationDecisionDate',
@@ -81,8 +178,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.EXECUTIVECONTRACTDATE,
         name: 'executiveContractDate',
@@ -94,8 +192,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.STARTAFTERRETURNDATE,
         name: 'startAfterReturnDate',
@@ -107,8 +206,9 @@ export class EmpDeputationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.COUNTRY_NAME,
         name: 'countryId',
@@ -123,7 +223,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.CITY_NAME,
         name: 'cityId',
@@ -138,7 +238,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.UNIVERSITY_NAME,
         name: 'universityId',
@@ -153,7 +253,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.DEPUTATIONOBJECTIVE_NAME,
         name: 'deputationObjectiveId',
@@ -168,7 +268,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.DEPUTATIONSTATUS_NAME,
         name: 'deputationStatusId',
@@ -183,7 +283,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.DEPUTATIONTYPE_NAME,
         name: 'deputationTypeId',
@@ -198,7 +298,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.DURATION,
         name: 'duration',
@@ -211,7 +311,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.DEPUTATIONDECISIONNUMBER,
         name: 'deputationDecisionNumber',
@@ -224,7 +324,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.REQUIREDSPECIALIZATION,
         name: 'requiredSpecialization',
@@ -237,7 +337,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.EXECUTIVECONTRACTNUMBER,
         name: 'executiveContractNumber',
@@ -250,7 +350,7 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.ASSIGNEDENTITY,
         name: 'assignedEntity',
@@ -263,10 +363,23 @@ export class EmpDeputationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.DEPUTATIONREASON,
         name: 'deputationReason',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -281,34 +394,30 @@ export class EmpDeputationComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE},
-{ dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE},
-{ dataKey: 'returnDate', header: APP_CONSTANTS.RETURNDATE},
-{ dataKey: 'deputationDecisionDate', header: APP_CONSTANTS.DEPUTATIONDECISIONDATE},
-{ dataKey: 'executiveContractDate', header: APP_CONSTANTS.EXECUTIVECONTRACTDATE},
-{ dataKey: 'startAfterReturnDate', header: APP_CONSTANTS.STARTAFTERRETURNDATE},
-{ dataKey: 'countryId', header: APP_CONSTANTS.COUNTRYID},
-{ dataKey: 'countryName', header: APP_CONSTANTS.COUNTRYNAME},
-{ dataKey: 'cityId', header: APP_CONSTANTS.CITYID},
-{ dataKey: 'cityName', header: APP_CONSTANTS.CITYNAME},
-{ dataKey: 'universityId', header: APP_CONSTANTS.UNIVERSITYID},
-{ dataKey: 'universityName', header: APP_CONSTANTS.UNIVERSITYNAME},
-{ dataKey: 'deputationObjectiveId', header: APP_CONSTANTS.DEPUTATIONOBJECTIVEID},
-{ dataKey: 'deputationObjectiveName', header: APP_CONSTANTS.DEPUTATIONOBJECTIVENAME},
-{ dataKey: 'deputationStatusId', header: APP_CONSTANTS.DEPUTATIONSTATUSID},
-{ dataKey: 'deputationStatusName', header: APP_CONSTANTS.DEPUTATIONSTATUSNAME},
-{ dataKey: 'deputationTypeId', header: APP_CONSTANTS.DEPUTATIONTYPEID},
-{ dataKey: 'deputationTypeName', header: APP_CONSTANTS.DEPUTATIONTYPENAME},
-{ dataKey: 'duration', header: APP_CONSTANTS.DURATION},
-{ dataKey: 'deputationDecisionNumber', header: APP_CONSTANTS.DEPUTATIONDECISIONNUMBER},
-{ dataKey: 'requiredSpecialization', header: APP_CONSTANTS.REQUIREDSPECIALIZATION},
-{ dataKey: 'executiveContractNumber', header: APP_CONSTANTS.EXECUTIVECONTRACTNUMBER},
-{ dataKey: 'assignedEntity', header: APP_CONSTANTS.ASSIGNEDENTITY},
-{ dataKey: 'deputationReason', header: APP_CONSTANTS.DEPUTATIONREASON},
+      { dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE },
+      { dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE },
+      { dataKey: 'returnDate', header: APP_CONSTANTS.RETURNDATE },
+      { dataKey: 'deputationDecisionDate', header: APP_CONSTANTS.DEPUTATIONDECISIONDATE },
+      { dataKey: 'executiveContractDate', header: APP_CONSTANTS.EXECUTIVECONTRACTDATE },
+      { dataKey: 'startAfterReturnDate', header: APP_CONSTANTS.STARTAFTERRETURNDATE },
+      { dataKey: 'countryName', header: APP_CONSTANTS.COUNTRY_NAME },
+      { dataKey: 'cityName', header: APP_CONSTANTS.CITY_NAME },
+      { dataKey: 'universityName', header: APP_CONSTANTS.UNIVERSITY_NAME },
+      { dataKey: 'deputationObjectiveName', header: APP_CONSTANTS.DEPUTATIONOBJECTIVE_NAME },
+      { dataKey: 'deputationStatusName', header: APP_CONSTANTS.DEPUTATIONSTATUS_NAME },
+      { dataKey: 'deputationTypeName', header: APP_CONSTANTS.DEPUTATIONTYPE_NAME },
+      { dataKey: 'duration', header: APP_CONSTANTS.DURATION },
+      { dataKey: 'deputationDecisionNumber', header: APP_CONSTANTS.DEPUTATIONDECISIONNUMBER },
+      { dataKey: 'requiredSpecialization', header: APP_CONSTANTS.REQUIREDSPECIALIZATION },
+      { dataKey: 'executiveContractNumber', header: APP_CONSTANTS.EXECUTIVECONTRACTNUMBER },
+      { dataKey: 'assignedEntity', header: APP_CONSTANTS.ASSIGNEDENTITY },
+      { dataKey: 'deputationReason', header: APP_CONSTANTS.DEPUTATIONREASON },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empdeputationService.UpdateEmpDeputation(eventData).subscribe(
         () => {
@@ -338,9 +447,10 @@ export class EmpDeputationComponent implements OnInit {
   }
 
   reload() {
-    this.empdeputationService.GetAllEmpDeputations('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empdeputationService.GetEmpDeputationsInfo(this.filter).subscribe(
       (res) => {
-        this.empdeputations = res;
+        this.empdeputations = this.mapItemList(res);
       }
     )
   }

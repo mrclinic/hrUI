@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpLanguage } from 'src/app/demo/models/employee/emplanguage.model';
+import { LanguageService } from 'src/app/demo/service/constants/language.service';
+import { LanguageLevelService } from 'src/app/demo/service/constants/languagelevel.service';
 import { EmpLanguageService } from 'src/app/demo/service/employee/emplanguage.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +14,62 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpLanguageComponent implements OnInit {
   cols: any[] = [];
-  emplanguages: EmpLanguage[] = [];
+  emplanguages: any[] = [];
   formStructure: IFormStructure[] = [];
-
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  languages: any[] = [];
+  languageLevels: any[] = [];
   constructor(private messageService: MessageService,
-    private readonly emplanguageService: EmpLanguageService) { }
+    private readonly emplanguageService: EmpLanguageService, private readonly languageService: LanguageService
+    , private readonly languageLevelService: LanguageLevelService) {
+    this.initColumns();
+  }
 
   ngOnInit(): void {
-    this.emplanguageService.GetAllEmpLanguages('').subscribe(
-      (res) => {
-        this.emplanguages = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.emplanguageService.GetEmpLanguagesInfo(this.filter),
+    this.languageService.GetAllLanguages(''), this.languageLevelService.GetAllLanguageLevels('')
+    ])
+      .subscribe(([emplanguages, languages, languageLevels
+      ]) => {
+        this.emplanguages = this.mapItemList(emplanguages);
+
+        this.languages = languages.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.languageLevels = languageLevels.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        languageName: item?.language?.name,
+        languageLevelName: item?.languageLevel?.name
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.LANGUAGE_NAME,
         name: 'languageId',
@@ -45,7 +84,7 @@ export class EmpLanguageComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.LANGUAGELEVEL_NAME,
         name: 'languageLevelId',
@@ -60,7 +99,7 @@ export class EmpLanguageComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'radio',
         label: APP_CONSTANTS.DISPLAYONRECORDCARD,
         name: 'displayOnRecordCard',
@@ -78,15 +117,14 @@ export class EmpLanguageComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'languageId', header: APP_CONSTANTS.LANGUAGEID},
-{ dataKey: 'languageName', header: APP_CONSTANTS.LANGUAGENAME},
-{ dataKey: 'languageLevelId', header: APP_CONSTANTS.LANGUAGELEVELID},
-{ dataKey: 'languageLevelName', header: APP_CONSTANTS.LANGUAGELEVELNAME},
-{ dataKey: 'displayOnRecordCard', header: APP_CONSTANTS.DISPLAYONRECORDCARD},
+      { dataKey: 'languageName', header: APP_CONSTANTS.LANGUAGE_NAME },
+      { dataKey: 'languageLevelName', header: APP_CONSTANTS.LANGUAGELEVEL_NAME },
+      { dataKey: 'displayOnRecordCard', header: APP_CONSTANTS.DISPLAYONRECORDCARD },
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.emplanguageService.UpdateEmpLanguage(eventData).subscribe(
         () => {
@@ -116,7 +154,8 @@ export class EmpLanguageComponent implements OnInit {
   }
 
   reload() {
-    this.emplanguageService.GetAllEmpLanguages('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.emplanguageService.GetEmpLanguagesInfo(this.filter).subscribe(
       (res) => {
         this.emplanguages = res;
       }
