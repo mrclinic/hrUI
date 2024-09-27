@@ -1,5 +1,4 @@
 export interface JobCategory {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

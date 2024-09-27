@@ -14,16 +14,20 @@ export class RewardTypeComponent implements OnInit {
   cols: any[] = [];
   rewardtypes: RewardType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly rewardtypeService: RewardTypeService) { }
+    private readonly rewardtypeService: RewardTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.rewardtypeService.GetAllRewardTypes('').subscribe(
       (res) => {
-        this.rewardtypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.rewardtypes = res
       }
     );
   }

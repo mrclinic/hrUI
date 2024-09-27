@@ -14,16 +14,20 @@ export class EmploymentStatusTypeComponent implements OnInit {
   cols: any[] = [];
   employmentstatustypes: EmploymentStatusType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly employmentstatustypeService: EmploymentStatusTypeService) { }
+    private readonly employmentstatustypeService: EmploymentStatusTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.employmentstatustypeService.GetAllEmploymentStatusTypes('').subscribe(
       (res) => {
-        this.employmentstatustypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.employmentstatustypes = res
       }
     );
   }

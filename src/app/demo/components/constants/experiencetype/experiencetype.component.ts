@@ -14,16 +14,20 @@ export class ExperienceTypeComponent implements OnInit {
   cols: any[] = [];
   experiencetypes: ExperienceType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly experiencetypeService: ExperienceTypeService) { }
+    private readonly experiencetypeService: ExperienceTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.experiencetypeService.GetAllExperienceTypes('').subscribe(
       (res) => {
-        this.experiencetypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.experiencetypes = res
       }
     );
   }

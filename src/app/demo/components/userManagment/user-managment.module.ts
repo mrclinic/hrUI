@@ -8,9 +8,11 @@ import { RolePermissionComponent } from './role.permission/role.permission.compo
 import { UserComponent } from './user/user.component';
 import { UserProfileComponent } from './user.profile/user.profile.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { UserManagmentRoutingModule } from './user-managment-routing.module';
+import { JwtInterceptorInterceptor } from 'src/intercepters/jwt-interceptor.interceptor';
+import { ErrorInterceptorInterceptor } from 'src/intercepters/error-interceptor.interceptor';
 
 @NgModule({
     imports: [
@@ -30,7 +32,17 @@ import { UserManagmentRoutingModule } from './user-managment-routing.module';
         , UserComponent, UserProfileComponent
     ],
     providers: [
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtInterceptorInterceptor,
+            multi: true,
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: ErrorInterceptorInterceptor,
+            multi: true,
+        },
     ],
 })
 export class UserManagmentModule { }

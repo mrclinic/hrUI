@@ -2,27 +2,28 @@
   <div class="col-12">
     <div class="card px-6 py-6">
       <p-toast></p-toast>
-      <p-toolbar styleClass="mb-4" *ngIf="canAdd || canMultiDelete">
+      <p-toolbar styleClass="mb-4" *hasPermission="[canAdd,canEdit]; op 'OR'">
         <ng-template pTemplate="left">
           <div class="my-2">
-            <button *ngIf="canAdd" pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
-              (click)="openNew()"></button>
-            <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
-              (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button>
+            <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus"
+              class="p-button-success mr-2" (click)="openNew()"></button>
+            <!-- <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
+              (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button> -->
           </div>
         </ng-template>
 
-        <ng-template pTemplate="right">
+        <!--  <ng-template pTemplate="right">
           <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
             (click)="dt.exportCSV()"></button>
-        </ng-template>
+        </ng-template> -->
       </p-toolbar>
 
       <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10"
         [globalFilterFields]="globalFilterFields" [paginator]="hasPaginator" [rowsPerPageOptions]="[10,20,30]"
         [showCurrentPageReport]="showCurrentPageReport"
         currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
-        [(selection)]="selectedItems" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        [(selection)]="selectedItem" selectionMode="single" [rowHover]="true" dataKey="id"
+        (onRowSelect)="onRowSelect($event)">
         <ng-template pTemplate="caption">
           <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
             <h5 class="m-0">{{tableTitle}}</h5>
@@ -45,18 +46,18 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-i let-item let-rowData let-columns="columns">
-          <tr>
+          <tr [pSelectableRow]="rowData">
             <td *ngIf="hasCheckBox">
               <p-tableCheckbox [value]="item"></p-tableCheckbox>
             </td>
             <td style="width:14%; min-width:10rem;" *ngFor="let col of columns">
               <span class="p-column-title">{{col.header}}</span> {{rowData[col.dataKey]}}
             </td>
-            <td *ngIf="canEdit || canSingleDelete">
+            <td *hasPermission="[canEdit , canSingleDelete]">
               <div class="flex">
-                <button *ngIf="canEdit" pButton pRipple icon="pi pi-pencil"
+                <button *hasPermission="[canEdit]" pButton pRipple icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2" (click)="editItem(item)"></button>
-                <button *ngIf="canSingleDelete" pButton pRipple icon="pi pi-trash"
+                <button *hasPermission="[canSingleDelete]" pButton pRipple icon="pi pi-trash"
                   class="p-button-rounded p-button-warning" (click)="deleteSelectedItem(item)"></button>
               </div>
             </td>
@@ -65,8 +66,8 @@
       </p-table>
     </div>
 
-    <p-dialog [(visible)]="itemDialog" [style]="{width: '450px'}" header="التفاصيل" [modal]="true" class="p-fluid">
-      <app-dynamic-form [formStructure]="formStructure"></app-dynamic-form>
+    <p-dialog [(visible)]="itemDialog" [style]="{width: 'auto'}" header="التفاصيل" [modal]="true" class="p-fluid">
+      <app-dynamic-form [formStructure]="formStructure" [hasCustomCssClass]="hasCustomCssClass"></app-dynamic-form>
       <ng-template pTemplate="footer">
         <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
         <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>

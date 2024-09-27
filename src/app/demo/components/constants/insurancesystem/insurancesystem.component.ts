@@ -14,16 +14,20 @@ export class InsuranceSystemComponent implements OnInit {
   cols: any[] = [];
   insurancesystems: InsuranceSystem[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly insurancesystemService: InsuranceSystemService) { }
+    private readonly insurancesystemService: InsuranceSystemService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.insurancesystemService.GetAllInsuranceSystems('').subscribe(
       (res) => {
-        this.insurancesystems = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.insurancesystems = res
       }
     );
   }

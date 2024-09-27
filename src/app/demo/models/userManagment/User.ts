@@ -9,7 +9,7 @@ export interface User {
   Phone?: string;
   NatNum?: string;
   EmailAddress?: string;
-  UserToken?: string;
+  userToken?: string;
   ActivationCode?: string;
   IsActive?: boolean;
   roleID?: string;

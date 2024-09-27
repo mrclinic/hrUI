@@ -13,6 +13,7 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     try {
       this.currentUser = JSON.parse(localStorage.getItem('users.loggedUser') || "") as User;
+
       if (this.currentUser.id) {
         /* if (!this.currentUser?.IsActive) {
           const link = ['activate'];
@@ -21,10 +22,10 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
           });
           return next.handle(request);
         } */
-        this.accessToken != this.currentUser.UserToken;
+        this.accessToken = this.currentUser.userToken;
         request = request.clone({
           setHeaders: {
-            Authorization: `${this.accessToken}`,
+            Authorization: `Bearer ${this.accessToken}`,
           },
         });
         return next.handle(request);

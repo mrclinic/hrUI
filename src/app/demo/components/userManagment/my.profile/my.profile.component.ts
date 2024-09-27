@@ -24,14 +24,13 @@ export class MyProfileComponent implements OnInit {
   userProfileDialog: boolean;
   userProfile!: UserProfile;
   submitted: boolean;
-  FatherName: string = '';
-  MotherName: string = '';
-  BirthPlace: string = '';
-  BirthDate: string = '';
-  Gender: string = '';
-  Address: string = '';
-  CardNumber: string = '';
-  UserId: string = '';
+  fatherName: string = '';
+  motherName: string = '';
+  birthPlace: string = '';
+  birthDate: string = '';
+  gender: string = '';
+  address: string = '';
+  cardNumber: string = '';
   ConfirmTitle: string = '';
   ConfirmMsg: string = '';
   Success: string = '';
@@ -47,13 +46,13 @@ export class MyProfileComponent implements OnInit {
   constructor(private fb: FormBuilder, private datePipe: DatePipe, private store: Store, private messageService: MessageService,
     private confirmationService: ConfirmationService, private translate: TranslateService) {
     this.myProfileForm = this.fb.group({
-      FatherName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      MotherName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      BirthPlace: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      BirthDate: new FormControl('', [Validators.required]),
-      Gender: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-      Address: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      CardNumber: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      fatherName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      motherName: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      birthPlace: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      birthDate: new FormControl('', [Validators.required]),
+      gender: new FormControl('', [Validators.required, Validators.maxLength(10)]),
+      address: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+      cardNumber: new FormControl('', [Validators.required, Validators.maxLength(20)]),
     });
     this.cols = [];
     this.userProfileDialog = false;
@@ -66,9 +65,8 @@ export class MyProfileComponent implements OnInit {
       (state) => state.users.isLoading
     );
     let user = JSON.parse(localStorage.getItem('users.loggedUser') || '') as User;
-    console.log(user)
     this.userId = user.id || '';
-    this.filter = `Filters=UserId==${this.userId}`;
+    this.filter = `Filters=userId==${this.userId}`;
     this.store.dispatch(new UserProfileActions.GetMyUserProfiles(this.filter)).subscribe(
       () => {
         this.userProfiles = this.store.selectSnapshot<UserProfile[]>((state) => state.users.userProfiles);
@@ -78,13 +76,13 @@ export class MyProfileComponent implements OnInit {
   }
   initColumns() {
     this.cols = [
-      { field: 'FatherName', header: this.FatherName },
-      { field: 'MotherName', header: this.MotherName },
-      { field: 'BirthPlace', header: this.BirthPlace },
-      { field: 'BirthDate', header: this.BirthDate },
-      { field: 'Gender', header: this.Gender },
-      { field: 'CardNumber', header: this.CardNumber },
-      { field: 'Address', header: this.Address }
+      { field: 'fatherName', header: this.fatherName },
+      { field: 'motherName', header: this.motherName },
+      { field: 'birthPlace', header: this.birthPlace },
+      { field: 'birthDate', header: this.birthDate },
+      { field: 'gender', header: this.gender },
+      { field: 'cardNumber', header: this.cardNumber },
+      { field: 'address', header: this.address }
     ]
   }
   openNew() {
@@ -94,8 +92,8 @@ export class MyProfileComponent implements OnInit {
   }
   editUserProfile(userProfile: UserProfile) {
     this.userProfile = { ...userProfile };
-    let date = this.datePipe.transform(userProfile?.BirthDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    this.userProfile.BirthDate = new Date(date != null ? date : "");
+    let date = this.datePipe.transform(userProfile?.birthDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    this.userProfile.birthDate = new Date(date != null ? date : "");
     this.userProfileDialog = true;
   }
   deleteSelectedUserProfile(userProfile: UserProfile) {
@@ -104,11 +102,11 @@ export class MyProfileComponent implements OnInit {
   }
   deleteUserProfile() {
     this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.userProfile.FatherName + '?',
+      message: 'هل أنت متأكد من حذف' + this.userProfile.fatherName + '?',
       header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.store.dispatch(new UserProfileActions.DeleteUserProfile(this.userProfile.Id as string)).subscribe(
+        this.store.dispatch(new UserProfileActions.DeleteUserProfile(this.userProfile.id as string)).subscribe(
           data => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
             this.reload();
@@ -128,7 +126,7 @@ export class MyProfileComponent implements OnInit {
   saveUserProfile() {
     this.submitted = true;
     if (this.myProfileForm.valid) {
-      if (this.userProfile.Id) {
+      if (this.userProfile.id) {
         this.store.dispatch(new UserProfileActions.UpdateUserProfile(this.userProfile)).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
@@ -137,7 +135,7 @@ export class MyProfileComponent implements OnInit {
         )
       }
       else {
-        delete this.userProfile.Id;
+        delete this.userProfile.id;
         this.store.dispatch(new UserProfileActions.AddUserProfile(this.userProfile)).subscribe(
           () => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
@@ -159,7 +157,7 @@ export class MyProfileComponent implements OnInit {
     )
   }
   onClear() {
-    delete this.userProfile.Gender;
+    delete this.userProfile.gender;
   }
 
   get f() {

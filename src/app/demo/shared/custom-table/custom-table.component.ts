@@ -1,6 +1,7 @@
-import { Component, EventEmitter, input, Input, OnInit, Output, output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { IFormStructure } from '../dynamic-form/from-structure-model';
 import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-custom-table',
@@ -9,9 +10,9 @@ import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.
 })
 export class CustomTableComponent implements OnInit {
   @Input() cols: any[] = [];
-  @Input() canAdd: boolean = true;
-  @Input() canEdit: boolean = true;
-  @Input() canSingleDelete: boolean = true;
+  @Input() canAdd: string = '';
+  @Input() canEdit: string = '';
+  @Input() canSingleDelete: string = '';
   @Input() canMultiDelete: boolean = true;
   @Input() hasCheckBox: boolean = true;
   selectedItems: any[] = [];
@@ -29,12 +30,24 @@ export class CustomTableComponent implements OnInit {
   @Output() submitEventHandler = new EventEmitter<any>();
   @Output() deleteEventHandler = new EventEmitter<string>();
   @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
-  constructor() { }
+  @Input() hasCustomCssClass: boolean = false;
+
+  @Input() hasClickAbleRow: boolean = false;
+  @Input() redirectUrlUpOnClick: string;
+  @Input() queryParamName: string;
+  selectedItem: any;
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
 
   }
+  onRowSelect(event: any) {
+    if (!this.hasClickAbleRow) return;
+    this.router.navigate([this.redirectUrlUpOnClick, event.data.id], {
+      queryParams: { [this.queryParamName]: event.data.id },
+    });
 
+  }
   openNew() {
     this.childComponent.dynamicForm?.reset();
     this.item = {};

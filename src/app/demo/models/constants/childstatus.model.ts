@@ -1,5 +1,4 @@
 export interface ChildStatus {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

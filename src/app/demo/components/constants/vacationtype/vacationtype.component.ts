@@ -14,16 +14,20 @@ export class VacationTypeComponent implements OnInit {
   cols: any[] = [];
   vacationtypes: VacationType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly vacationtypeService: VacationTypeService) { }
+    private readonly vacationtypeService: VacationTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.vacationtypeService.GetAllVacationTypes('').subscribe(
       (res) => {
-        this.vacationtypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.vacationtypes = res
       }
     );
   }

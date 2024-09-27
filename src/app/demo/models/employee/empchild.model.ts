@@ -3,15 +3,15 @@ import { Gender } from "../constants/gender.model";
 
 export interface EmpChild {
 
-    birthdate?: Date;
-    occurrencedate?: Date;
-    childorder?: number;
-    genderid?: string;
+    birthdDte?: Date;
+    occurrenceDate?: Date;
+    childOrder?: number;
+    genderId?: string;
     gender?: Gender;
-    statusid?: string;
-    childstatus?: ChildStatus;
+    statusId?: string;
+    childStatus?: ChildStatus;
     name?: string;
-    mothername?: string;
-    occurrencecontractnumber?: string;
+    motherName?: string;
+    occurrenceContractNumber?: string;
     id?: string;
 }

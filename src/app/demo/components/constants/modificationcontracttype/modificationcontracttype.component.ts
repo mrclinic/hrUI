@@ -14,16 +14,20 @@ export class ModificationContractTypeComponent implements OnInit {
   cols: any[] = [];
   modificationcontracttypes: ModificationContractType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly modificationcontracttypeService: ModificationContractTypeService) { }
+    private readonly modificationcontracttypeService: ModificationContractTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.modificationcontracttypeService.GetAllModificationContractTypes('').subscribe(
       (res) => {
-        this.modificationcontracttypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.modificationcontracttypes = res
       }
     );
   }

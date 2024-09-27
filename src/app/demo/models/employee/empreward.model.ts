@@ -1,6 +1,6 @@
-import { Department } from "../constants/department.model";
 import { FinancialIndicatorType } from "../constants/financialindicatortype.model";
 import { ModificationContractType } from "../constants/modificationcontracttype.model";
+import { OrgDepartment } from "../constants/org-department.model";
 import { RewardType } from "../constants/rewardtype.model";
 import { Person } from "./person.model";
 
@@ -18,7 +18,7 @@ export interface EmpReward {
     ordernumber?: string;
     contractnumber?: string;
     contracttype?: ModificationContractType;
-    department?: Department;
+    department?: OrgDepartment;
     employee?: Person;
     financialindicatortype?: FinancialIndicatorType;
     rewardtype?: RewardType;

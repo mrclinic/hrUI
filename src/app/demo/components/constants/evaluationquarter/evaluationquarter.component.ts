@@ -14,16 +14,20 @@ export class EvaluationQuarterComponent implements OnInit {
   cols: any[] = [];
   evaluationquarters: EvaluationQuarter[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly evaluationquarterService: EvaluationQuarterService) { }
+    private readonly evaluationquarterService: EvaluationQuarterService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.evaluationquarterService.GetAllEvaluationQuarters('').subscribe(
       (res) => {
-        this.evaluationquarters = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.evaluationquarters = res
       }
     );
   }

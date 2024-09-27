@@ -14,16 +14,20 @@ export class QualificationComponent implements OnInit {
   cols: any[] = [];
   qualifications: Qualification[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly qualificationService: QualificationService) { }
+    private readonly qualificationService: QualificationService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.qualificationService.GetAllQualifications('').subscribe(
       (res) => {
-        this.qualifications = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.qualifications = res
       }
     );
   }

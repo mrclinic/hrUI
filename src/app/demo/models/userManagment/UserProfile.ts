@@ -1,14 +1,14 @@
 import { User } from "./User";
 
 export interface UserProfile {
-  Id?: string;
-  FatherName?: string;
-  MotherName?: string;
-  BirthPlace?: string;
-  BirthDate?: Date;
-  Gender?: string;
-  Address?: string;
-  CardNumber?: string;
-  UserId?: string;
-  User?: User;
+  id?: string;
+  fatherName?: string;
+  motherName?: string;
+  birthPlace?: string;
+  birthDate?: Date;
+  gender?: string;
+  address?: string;
+  cardNumber?: string;
+  userId?: string;
+  user?: User;
 }

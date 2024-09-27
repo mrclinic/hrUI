@@ -14,16 +14,20 @@ export class LawComponent implements OnInit {
   cols: any[] = [];
   laws: Law[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly lawService: LawService) { }
+    private readonly lawService: LawService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.lawService.GetAllLaws('').subscribe(
       (res) => {
-        this.laws = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.laws = res
       }
     );
   }

@@ -27,6 +27,9 @@ import { MenuModule } from 'primeng/menu';
 import { PasswordModule } from 'primeng/password';
 import { PaginatorModule } from 'primeng/paginator';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { TreeModule } from 'primeng/tree';
+import { TreeSelectModule } from 'primeng/treeselect';
 @NgModule({
 
   imports: [
@@ -57,7 +60,10 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
     MenuModule,
     PasswordModule,
     PaginatorModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    ContextMenuModule,
+    TreeModule,
+    TreeSelectModule,
   ],
   exports: [
     ToastModule,
@@ -87,7 +93,10 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
     MenuModule,
     PasswordModule,
     PaginatorModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    ContextMenuModule,
+    TreeModule,
+    TreeSelectModule,
   ]
 })
 export class PrimengModule { }

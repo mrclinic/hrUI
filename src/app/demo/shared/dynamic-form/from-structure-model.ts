@@ -9,4 +9,6 @@ export interface IFormStructure {
         validator: string;
         message: string;
     }[];
+    placeHolder?: string;
+    format?: string | 'yy-mm-dd';
 }

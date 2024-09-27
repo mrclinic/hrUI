@@ -14,16 +14,20 @@ export class LanguageComponent implements OnInit {
   cols: any[] = [];
   languages: Language[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly languageService: LanguageService) { }
+    private readonly languageService: LanguageService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.languageService.GetAllLanguages('').subscribe(
       (res) => {
-        this.languages = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.languages = res
       }
     );
   }

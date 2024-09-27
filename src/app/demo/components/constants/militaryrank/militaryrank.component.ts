@@ -14,16 +14,20 @@ export class MilitaryRankComponent implements OnInit {
   cols: any[] = [];
   militaryranks: MilitaryRank[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly militaryrankService: MilitaryRankService) { }
+    private readonly militaryrankService: MilitaryRankService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.militaryrankService.GetAllMilitaryRanks('').subscribe(
       (res) => {
-        this.militaryranks = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.militaryranks = res
       }
     );
   }

@@ -1,5 +1,4 @@
 export interface TerminationReason {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

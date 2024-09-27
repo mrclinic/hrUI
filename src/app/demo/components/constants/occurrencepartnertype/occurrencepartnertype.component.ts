@@ -14,16 +14,20 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   cols: any[] = [];
   occurrencepartnertypes: OccurrencePartnerType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) { }
+    private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.occurrencepartnertypeService.GetAllOccurrencePartnerTypes('').subscribe(
       (res) => {
-        this.occurrencepartnertypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.occurrencepartnertypes = res
       }
     );
   }

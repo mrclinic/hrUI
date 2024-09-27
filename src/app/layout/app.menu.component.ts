@@ -1,6 +1,7 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { AuthServiceService } from '../demo/service/auth-service.service';
 
 @Component({
     selector: 'app-menu',
@@ -10,7 +11,7 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(public layoutService: LayoutService, private authServiceService: AuthServiceService) { }
 
     ngOnInit() {
         this.model = [
@@ -21,26 +22,43 @@ export class AppMenuComponent implements OnInit {
                 ]
             }, */
             {
+                label: 'الذاتية',
+                items: [
+                    { label: 'الموظفين', icon: 'pi pi-fw pi-home', routerLink: ['/employees/employees'] }
+                ]
+            },
+            {
                 label: 'إدارة المستخدمين',
                 items: [
-                    { label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions'] },
-                    { label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users'] },
-                    { label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles'] },
+                    {
+                        label: 'الصلاحيات', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/permissions']
+                        , visible: this.authServiceService.checkPermission('UserManagment_Permission_GetPermissions')
+                    },
+                    {
+                        label: 'المستخدمين', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/users']
+                        , visible: this.authServiceService.checkPermission('UserManagment_User_GetUsersInfo')
+                    },
+                    {
+                        label: 'الأدوار', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/roles']
+                        , visible: this.authServiceService.checkPermission('UserManagment_Role_GetRoles')
+                    },
                     //{ label: 'user Profiles', icon: 'pi pi-fw pi-home', routerLink: ['/mgt/userProfiles'] }
 
-                ]
+                ],
+                visible: this.authServiceService.checkPermissions(['UserManagment_Permission_GetPermissions', 'UserManagment_User_GetUsersInfo', 'UserManagment_Role_GetRoles'])
             },
 
             {
                 label: 'إدارة الثوابت',
                 items: [
+                    { label: 'المديريات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department-tree'] },
                     { label: 'الزمر الدموية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/blood-group'] },
                     { label: 'الفروع', icon: 'pi pi-fw pi-home', routerLink: ['/constants/branch'] },
                     { label: 'حالات الطفل', icon: 'pi pi-fw pi-home', routerLink: ['/constants/child-status'] },
                     { label: 'المدن', icon: 'pi pi-fw pi-home', routerLink: ['/constants/city'] },
                     { label: 'البلدان', icon: 'pi pi-fw pi-home', routerLink: ['/constants/country'] },
                     { label: 'جهات المنح', icon: 'pi pi-fw pi-home', routerLink: ['/constants/degrees-authority'] },
-                    { label: 'الجهات المصدرة', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department'] },
+                    //{ label: 'الجهات المصدرة', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department'] },
                     { label: 'أهداف الايفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-objective'] },
                     { label: 'أوضاع الإيفاد وتغيراته', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-status'] },
                     { label: 'أنواع الإيفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-type'] },
@@ -74,7 +92,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'أنواع المكافآت', icon: 'pi pi-fw pi-home', routerLink: ['/constants/reward-type'] },
                     { label: 'الاختصاصات العلمية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/specialization'] },
                     { label: 'أنواع البدء', icon: 'pi pi-fw pi-home', routerLink: ['/constants/starting-type'] },
-                    { label: 'الفعاليات الفرعية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/sub-department'] },
+                    //{ label: 'الفعاليات الفرعية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/sub-department'] },
                     { label: 'أسباب الطرد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/termination-reason'] },
                     { label: 'الجامعات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/university'] },
                     { label: 'أنواع الإجازات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/vacation-type'] }

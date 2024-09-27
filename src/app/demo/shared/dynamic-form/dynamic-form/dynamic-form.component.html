@@ -1,4 +1,4 @@
-<form [formGroup]="dynamicForm">
+<form [formGroup]="dynamicForm" [ngClass]="{'dynamicForm' : hasCustomCssClass }">
     <ng-container *ngFor="let control of formStructure">
         <!-- Text, Textarea & Number -->
         <div class="field" *ngIf="['text', 'number', 'textarea'].includes(control.type)">
@@ -30,15 +30,26 @@
 
         <!-- Select  -->
         <div class="field" *ngIf="['select'].includes(control.type)">
-            <label for="exampleFormControlInput1" class="form-label">
+            <label for="exampleFormControlInput1">
                 {{ control.label }}
             </label>
-            <select class="form-select" aria-label="Default select example" [formControlName]="control.name">
-                <option selected>-Select-</option>
-                <option *ngFor="let option of control.options" [value]="option.value">
-                    {{ option.label }}
-                </option>
-            </select>
+            <p-dropdown appendTo="body" [formControlName]="control.name" [options]="control.options" optionLabel="label"
+                [placeholder]="control.placeHolder" dataKey="value" optionValue="value"
+                [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" />
+            <span class="error"
+                *ngIf="dynamicForm.controls[control.name]?.invalid && dynamicForm.controls[control.name]?.touched">
+                {{ getErrorMessage(control) }}
+            </span>
+        </div>
+
+        <!-- date  -->
+        <div class="field" *ngIf="['Date'].includes(control.type)">
+            <label for="exampleFormControlInput1">
+                {{ control.label }}
+            </label>
+            <p-calendar appendTo="body" [formControlName]="control.name" [placeholder]="control.placeHolder"
+                [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" [iconDisplay]="'input'" [showIcon]="true"
+                inputId="icondisplay" [dateFormat]="control.format" />
             <span class="error"
                 *ngIf="dynamicForm.controls[control.name]?.invalid && dynamicForm.controls[control.name]?.touched">
                 {{ getErrorMessage(control) }}

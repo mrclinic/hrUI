@@ -1,5 +1,4 @@
 export interface RewardType {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

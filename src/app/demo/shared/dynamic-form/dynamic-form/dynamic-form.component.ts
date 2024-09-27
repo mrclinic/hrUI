@@ -12,7 +12,7 @@ export class DynamicFormComponent implements OnInit {
   @Input() formStructure: IFormStructure[];
 
   dynamicForm: FormGroup = this.fb.group({});
-
+  @Input() hasCustomCssClass: boolean = false;
   constructor(private fb: FormBuilder) {
   }
   ngOnInit(): void {

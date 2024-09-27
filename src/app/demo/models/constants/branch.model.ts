@@ -1,11 +1,8 @@
-import { Department } from "./department.model";
-import { SubDepartment } from "./subdepartment.model";
+import { OrgDepartment } from "./org-department.model";
 
 export interface Branch {
     departmentid?: string;
-    department?: Department
-    subdepartmentid?: string;
-    subdepartment?: SubDepartment
+    orgDepartment?: OrgDepartment
     name?: string;
     id?: string;
 }

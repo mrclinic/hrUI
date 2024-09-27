@@ -14,16 +14,20 @@ export class DeputationObjectiveComponent implements OnInit {
   cols: any[] = [];
   deputationobjectives: DeputationObjective[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly deputationobjectiveService: DeputationObjectiveService) { }
+    private readonly deputationobjectiveService: DeputationObjectiveService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.deputationobjectiveService.GetAllDeputationObjectives('').subscribe(
       (res) => {
-        this.deputationobjectives = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.deputationobjectives = res
       }
     );
   }

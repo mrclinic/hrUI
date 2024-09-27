@@ -14,16 +14,20 @@ export class CountryComponent implements OnInit {
   cols: any[] = [];
   countrys: Country[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly countryService: CountryService) { }
+    private readonly countryService: CountryService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.countryService.GetAllCountrys('').subscribe(
       (res) => {
-        this.countrys = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.countrys = res
       }
     );
   }

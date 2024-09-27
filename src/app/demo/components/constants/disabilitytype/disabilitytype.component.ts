@@ -14,16 +14,20 @@ export class DisabilityTypeComponent implements OnInit {
   cols: any[] = [];
   disabilitytypes: DisabilityType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly disabilitytypeService: DisabilityTypeService) { }
+    private readonly disabilitytypeService: DisabilityTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.disabilitytypeService.GetAllDisabilityTypes('').subscribe(
       (res) => {
-        this.disabilitytypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.disabilitytypes = res
       }
     );
   }

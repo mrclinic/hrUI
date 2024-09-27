@@ -11,8 +11,8 @@ export interface EmpEmploymentChange {
     insurancesalary?: number;
     jobchangereasonid?: string;
     jobchangereason?: JobChangeReason;
-    modificationcontracttypeid?: string;
-    modificationcontracttype?: ModificationContractType;
+    modificationContractTypeId?: string;
+    modificationContractType?: ModificationContractType;
     jobtitleid?: string;
     jobtitle?: JobTitle;
     workplace?: string;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Observable } from 'rxjs/internal/Observable';
@@ -40,7 +40,7 @@ export class UserComponent implements OnInit {
   addSuccess: string = '';
   roles: Role[] = [];
   constructor(private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
+    private confirmationService: ConfirmationService, private router: Router) {
     this.cols = [];
     this.userDialog = false;
     this.submitted = false;
@@ -140,7 +140,7 @@ export class UserComponent implements OnInit {
   }
 
   searchRole(event: any) {
-    let filter = "Filters=DisplayName@=" + event.query;
+    let filter = "filters=displayName@=" + event.query;
     this.store.dispatch(new RoleActions.GetAllRoles(filter)).subscribe(
       () => {
         this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);
@@ -148,7 +148,11 @@ export class UserComponent implements OnInit {
     );
   }
   onSelectRole(event: any) {
-    console.log(this.user)
     this.user.roleID = event.Id;
+  }
+  goToProfile(user) {
+    this.router.navigate(['mgt/userProfiles/', user.id], {
+      queryParams: { userId: user.id },
+    });
   }
 }

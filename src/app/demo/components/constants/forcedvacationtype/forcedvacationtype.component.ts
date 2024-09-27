@@ -14,16 +14,20 @@ export class ForcedVacationTypeComponent implements OnInit {
   cols: any[] = [];
   forcedvacationtypes: ForcedVacationType[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly forcedvacationtypeService: ForcedVacationTypeService) { }
+    private readonly forcedvacationtypeService: ForcedVacationTypeService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.forcedvacationtypeService.GetAllForcedVacationTypes('').subscribe(
       (res) => {
-        this.forcedvacationtypes = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.forcedvacationtypes = res
       }
     );
   }

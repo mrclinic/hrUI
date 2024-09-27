@@ -14,16 +14,20 @@ export class MilitarySpecializationComponent implements OnInit {
   cols: any[] = [];
   militaryspecializations: MilitarySpecialization[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly militaryspecializationService: MilitarySpecializationService) { }
+    private readonly militaryspecializationService: MilitarySpecializationService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.militaryspecializationService.GetAllMilitarySpecializations('').subscribe(
       (res) => {
-        this.militaryspecializations = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.militaryspecializations = res
       }
     );
   }

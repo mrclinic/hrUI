@@ -14,16 +14,20 @@ export class ChildStatusComponent implements OnInit {
   cols: any[] = [];
   childstatuss: ChildStatus[] = [];
   formStructure: IFormStructure[] = [];
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
 
   constructor(private messageService: MessageService,
-    private readonly childstatusService: ChildStatusService) { }
+    private readonly childstatusService: ChildStatusService) {
+    this.initColumns();
+    this.initFormStructure();
+  }
 
   ngOnInit(): void {
     this.childstatusService.GetAllChildStatuss('').subscribe(
       (res) => {
-        this.childstatuss = res;
-        this.initColumns();
-        this.initFormStructure();
+        this.childstatuss = res
       }
     );
   }

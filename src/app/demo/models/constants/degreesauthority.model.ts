@@ -1,5 +1,4 @@
 export interface DegreesAuthority {
-name?:string;
- id?:string;
- }
- 
+    name?: string;
+    id?: string;
+}

@@ -1,0 +1,9 @@
+<app-custom-tree *ngIf="fetched" [treeItems]="treeNodes" (submitEventHandler)="submitEventHandler($event)"
+    (deleteEventHandler)="deleteEventHandler($event)"></app-custom-tree>
+<p-dialog [(visible)]="itemDialog" [style]="{width: 'auto'}" header="التفاصيل" [modal]="true" class="p-fluid">
+    <app-dynamic-form [formStructure]="formStructure" [hasCustomCssClass]="false"></app-dynamic-form>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>
+    </ng-template>
+</p-dialog>
