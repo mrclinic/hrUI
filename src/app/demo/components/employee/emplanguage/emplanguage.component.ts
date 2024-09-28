@@ -24,6 +24,7 @@ export class EmpLanguageComponent implements OnInit {
   @Input() personId: string;
   languages: any[] = [];
   languageLevels: any[] = [];
+  options: any[] = [{ value: true, label: 'نعم' }, { value: false, label: 'لا' }];
   constructor(private messageService: MessageService,
     private readonly emplanguageService: EmpLanguageService, private readonly languageService: LanguageService
     , private readonly languageLevelService: LanguageLevelService) {
@@ -104,6 +105,20 @@ export class EmpLanguageComponent implements OnInit {
         label: APP_CONSTANTS.DISPLAYONRECORDCARD,
         name: 'displayOnRecordCard',
         value: '',
+        options: [...this.options],
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
+        value: '',
         validations: [
           {
             name: 'required',
@@ -120,6 +135,7 @@ export class EmpLanguageComponent implements OnInit {
       { dataKey: 'languageName', header: APP_CONSTANTS.LANGUAGE_NAME },
       { dataKey: 'languageLevelName', header: APP_CONSTANTS.LANGUAGELEVEL_NAME },
       { dataKey: 'displayOnRecordCard', header: APP_CONSTANTS.DISPLAYONRECORDCARD },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
@@ -157,7 +173,7 @@ export class EmpLanguageComponent implements OnInit {
     this.filter = `Filters=EmployeeId==${this.personId}`;
     this.emplanguageService.GetEmpLanguagesInfo(this.filter).subscribe(
       (res) => {
-        this.emplanguages = res;
+        this.emplanguages = this.mapItemList(res);
       }
     )
   }

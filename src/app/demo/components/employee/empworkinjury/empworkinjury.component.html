@@ -1,4 +1,5 @@
-<app-custom-table [cols]="cols" [tableData]='empworkinjurys' [tableTitle]="'kkk'"
+<app-custom-table *ngIf="fetched" [cols]="cols" [tableData]='empworkinjurys' [tableTitle]="'إصابات العمل'"
     (submitEventHandler)="submitEventHandler($event)" (deleteEventHandler)="deleteEventHandler($event)"
-    [formStructure]="formStructure" [canAdd]="canAdd" [canEdit]="canEdit" [canSingleDelete]="canSingleDelete">
+    [formStructure]="formStructure" [canAdd]="canAdd" [canEdit]="canEdit" [canSingleDelete]="canSingleDelete"
+    [hasCustomCssClass]="true">
 </app-custom-table>

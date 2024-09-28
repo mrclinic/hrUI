@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpPerformanceEvaluation } from 'src/app/demo/models/employee/empperformanceevaluation.model';
+import { EvaluationGradeService } from 'src/app/demo/service/constants/evaluationgrade.service';
+import { EvaluationQuarterService } from 'src/app/demo/service/constants/evaluationquarter.service';
 import { EmpPerformanceEvaluationService } from 'src/app/demo/service/employee/empperformanceevaluation.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +15,71 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpPerformanceEvaluationComponent implements OnInit {
   cols: any[] = [];
-  empperformanceevaluations: EmpPerformanceEvaluation[] = [];
+  empperformanceevaluations: any[] = [];
   formStructure: IFormStructure[] = [];
+  evaluationGrades: any[] = [];
+  evaluationQuarters: any[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly empperformanceevaluationService: EmpPerformanceEvaluationService,
+    private readonly evaluationGradeService: EvaluationGradeService,
+    private readonly evaluationQuarterService: EvaluationQuarterService
+  ) {
+    this.initColumns();
+  }
 
-  constructor(private messageService: MessageService,
-    private readonly empperformanceevaluationService: EmpPerformanceEvaluationService) { }
-
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
   ngOnInit(): void {
-    this.empperformanceevaluationService.GetAllEmpPerformanceEvaluations('').subscribe(
-      (res) => {
-        this.empperformanceevaluations = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empperformanceevaluationService.GetEmpPerformanceEvaluationsInfo(this.filter),
+    this.evaluationGradeService.GetAllEvaluationGrades(''),
+    this.evaluationQuarterService.GetAllEvaluationQuarters('')
+    ])
+      .subscribe(([empperformanceevaluations, evaluationGrades, evaluationQuarters
+      ]) => {
+        this.empperformanceevaluations = this.mapItemList(empperformanceevaluations);
+
+        this.evaluationGrades = evaluationGrades.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.evaluationQuarters = evaluationQuarters.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        evaluationGradeName: item?.evaluationGrade?.name,
+        evaluationQuarterName: item?.evaluationQuarter?.name,
+        reportDate: this.transformDate(item?.reportDate),
+        promotionDate: this.transformDate(item?.promotionDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.REPORTDATE,
         name: 'reportDate',
@@ -42,8 +91,9 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.PROMOTIONDATE,
         name: 'promotionDate',
@@ -55,8 +105,9 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.EVALUATIONGRADE_NAME,
         name: 'evaluationGradeId',
@@ -71,7 +122,7 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.EVALUATIONQUARTER_NAME,
         name: 'evaluationQuarterId',
@@ -86,10 +137,23 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.REPORTNUMBER,
         name: 'reportNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -104,17 +168,17 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'reportDate', header: APP_CONSTANTS.REPORTDATE},
-{ dataKey: 'promotionDate', header: APP_CONSTANTS.PROMOTIONDATE},
-{ dataKey: 'evaluationGradeId', header: APP_CONSTANTS.EVALUATIONGRADEID},
-{ dataKey: 'evaluationGradeName', header: APP_CONSTANTS.EVALUATIONGRADENAME},
-{ dataKey: 'evaluationQuarterId', header: APP_CONSTANTS.EVALUATIONQUARTERID},
-{ dataKey: 'evaluationQuarterName', header: APP_CONSTANTS.EVALUATIONQUARTERNAME},
-{ dataKey: 'reportNumber', header: APP_CONSTANTS.REPORTNUMBER},
+      { dataKey: 'reportDate', header: APP_CONSTANTS.REPORTDATE },
+      { dataKey: 'promotionDate', header: APP_CONSTANTS.PROMOTIONDATE },
+      { dataKey: 'evaluationGradeName', header: APP_CONSTANTS.EVALUATIONGRADE_NAME },
+      { dataKey: 'evaluationQuarterName', header: APP_CONSTANTS.EVALUATIONQUARTER_NAME },
+      { dataKey: 'reportNumber', header: APP_CONSTANTS.REPORTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empperformanceevaluationService.UpdateEmpPerformanceEvaluation(eventData).subscribe(
         () => {
@@ -144,9 +208,10 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
   }
 
   reload() {
-    this.empperformanceevaluationService.GetAllEmpPerformanceEvaluations('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empperformanceevaluationService.GetEmpPerformanceEvaluationsInfo(this.filter).subscribe(
       (res) => {
-        this.empperformanceevaluations = res;
+        this.empperformanceevaluations = this.mapItemList(res);
       }
     )
   }

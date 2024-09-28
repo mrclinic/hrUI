@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpMilitaryServiceSuspension } from 'src/app/demo/models/employee/empmilitaryservicesuspension.model';
@@ -14,23 +15,44 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
   cols: any[] = [];
   empmilitaryservicesuspensions: EmpMilitaryServiceSuspension[] = [];
   formStructure: IFormStructure[] = [];
-
-  constructor(private messageService: MessageService,
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly empmilitaryservicesuspensionService: EmpMilitaryServiceSuspensionService) { }
 
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
+
   ngOnInit(): void {
-    this.empmilitaryservicesuspensionService.GetAllEmpMilitaryServiceSuspensions('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empmilitaryservicesuspensionService.GetAllEmpMilitaryServiceSuspensions(this.filter).subscribe(
       (res) => {
-        this.empmilitaryservicesuspensions = res;
+        this.fetched = true;
+        this.empmilitaryservicesuspensions = this.mapItemList(res);
         this.initColumns();
         this.initFormStructure();
       }
     );
   }
-
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        suspensionDate: this.transformDate(item?.suspensionDate),
+        suspensionContractDate: this.transformDate(item?.suspensionContractDate),
+        returnToServiceDate: this.transformDate(item?.returnToServiceDate),
+        returnContractDate: this.transformDate(item?.returnContractDate)
+      });
+    })
+  }
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.SUSPENSIONDATE,
         name: 'suspensionDate',
@@ -42,8 +64,9 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.SUSPENSIONCONTRACTDATE,
         name: 'suspensionContractDate',
@@ -55,8 +78,9 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.RETURNTOSERVICEDATE,
         name: 'returnToServiceDate',
@@ -68,8 +92,9 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.RETURNCONTRACTDATE,
         name: 'returnContractDate',
@@ -81,8 +106,9 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.SUSPENSIONCONTRACTNUMBER,
         name: 'suspensionContractNumber',
@@ -95,10 +121,23 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.RETURNCONTRACTNUMBER,
         name: 'returnContractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -113,16 +152,18 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'suspensionDate', header: APP_CONSTANTS.SUSPENSIONDATE},
-{ dataKey: 'suspensionContractDate', header: APP_CONSTANTS.SUSPENSIONCONTRACTDATE},
-{ dataKey: 'returnToServiceDate', header: APP_CONSTANTS.RETURNTOSERVICEDATE},
-{ dataKey: 'returnContractDate', header: APP_CONSTANTS.RETURNCONTRACTDATE},
-{ dataKey: 'suspensionContractNumber', header: APP_CONSTANTS.SUSPENSIONCONTRACTNUMBER},
-{ dataKey: 'returnContractNumber', header: APP_CONSTANTS.RETURNCONTRACTNUMBER},
+      { dataKey: 'suspensionDate', header: APP_CONSTANTS.SUSPENSIONDATE },
+      { dataKey: 'suspensionContractDate', header: APP_CONSTANTS.SUSPENSIONCONTRACTDATE },
+      { dataKey: 'returnToServiceDate', header: APP_CONSTANTS.RETURNTOSERVICEDATE },
+      { dataKey: 'returnContractDate', header: APP_CONSTANTS.RETURNCONTRACTDATE },
+      { dataKey: 'suspensionContractNumber', header: APP_CONSTANTS.SUSPENSIONCONTRACTNUMBER },
+      { dataKey: 'returnContractNumber', header: APP_CONSTANTS.RETURNCONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empmilitaryservicesuspensionService.UpdateEmpMilitaryServiceSuspension(eventData).subscribe(
         () => {
@@ -152,9 +193,10 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
   }
 
   reload() {
-    this.empmilitaryservicesuspensionService.GetAllEmpMilitaryServiceSuspensions('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empmilitaryservicesuspensionService.GetAllEmpMilitaryServiceSuspensions(this.filter).subscribe(
       (res) => {
-        this.empmilitaryservicesuspensions = res;
+        this.empmilitaryservicesuspensions = this.mapItemList(res);
       }
     )
   }

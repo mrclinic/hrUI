@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpRelinquishment } from 'src/app/demo/models/employee/emprelinquishment.model';
+import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
+import { RelinquishmentReasonService } from 'src/app/demo/service/constants/relinquishmentreason.service';
 import { EmpRelinquishmentService } from 'src/app/demo/service/employee/emprelinquishment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +15,72 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpRelinquishmentComponent implements OnInit {
   cols: any[] = [];
-  emprelinquishments: EmpRelinquishment[] = [];
+  emprelinquishments: any[] = [];
   formStructure: IFormStructure[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  relinquishmentReasons: any;
+  contractTypes: any;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly emprelinquishmentService: EmpRelinquishmentService,
+    private readonly relinquishmentReasonService: RelinquishmentReasonService,
+    private readonly modificationContractTypeService: ModificationContractTypeService
+  ) {
 
-  constructor(private messageService: MessageService,
-    private readonly emprelinquishmentService: EmpRelinquishmentService) { }
+    this.initColumns();
+  }
+
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.emprelinquishmentService.GetAllEmpRelinquishments('').subscribe(
-      (res) => {
-        this.emprelinquishments = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.emprelinquishmentService.GetEmpRelinquishmentsInfo(this.filter),
+    this.relinquishmentReasonService.GetAllRelinquishmentReasons(''),
+    this.modificationContractTypeService.GetAllModificationContractTypes('')
+    ])
+      .subscribe(([emprelinquishments, relinquishmentReasons, contractTypes
+      ]) => {
+        this.emprelinquishments = this.mapItemList(emprelinquishments);
+
+        this.relinquishmentReasons = relinquishmentReasons.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.contractTypes = contractTypes.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        contractTypeName: item?.contractType?.name,
+        relinquishmentReasonName: item?.relinquishmentReason?.name,
+        relinquishmentDate: this.transformDate(item?.relinquishmentDate),
+        contractDate: this.transformDate(item?.contractDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.RELINQUISHMENTDATE,
         name: 'relinquishmentDate',
@@ -42,8 +92,9 @@ export class EmpRelinquishmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.CONTRACTDATE,
         name: 'contractDate',
@@ -55,8 +106,9 @@ export class EmpRelinquishmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.RELINQUISHMENTREASON_NAME,
         name: 'relinquishmentReasonId',
@@ -71,7 +123,7 @@ export class EmpRelinquishmentComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.CONTRACTTYPE_NAME,
         name: 'contractTypeId',
@@ -86,7 +138,7 @@ export class EmpRelinquishmentComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.CONTRACTNUMBER,
         name: 'contractNumber',
@@ -99,7 +151,7 @@ export class EmpRelinquishmentComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.NOTE,
         name: 'note',
@@ -111,40 +163,24 @@ export class EmpRelinquishmentComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
-      },
-{
-        type: 'select',
-        label: APP_CONSTANTS.EMPLOYEE_NAME,
-        name: 'employeeId',
-        value: '',
-        options: [...this.employees],
-        placeHolder: APP_CONSTANTS.EMPLOYEE_PLACE_HOLDER,
-        validations: [
-          {
-            name: 'required',
-            validator: 'required',
-            message: APP_CONSTANTS.FIELD_REQUIRED,
-          },
-        ],
-      },
+      }
     ];
   }
 
   initColumns() {
     this.cols = [
-{ dataKey: 'relinquishmentDate', header: APP_CONSTANTS.RELINQUISHMENTDATE},
-{ dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE},
-{ dataKey: 'relinquishmentReasonId', header: APP_CONSTANTS.RELINQUISHMENTREASONID},
-{ dataKey: 'contractTypeId', header: APP_CONSTANTS.CONTRACTTYPEID},
-{ dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER},
-{ dataKey: 'note', header: APP_CONSTANTS.NOTE},
-{ dataKey: 'employeeId', header: APP_CONSTANTS.EMPLOYEEID},
-{ dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPENAME},
-{ dataKey: 'relinquishmentReasonName', header: APP_CONSTANTS.RELINQUISHMENTREASONNAME},
+      { dataKey: 'relinquishmentDate', header: APP_CONSTANTS.RELINQUISHMENTDATE },
+      { dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE },
+      { dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE },
+      { dataKey: 'contractTypeName', header: APP_CONSTANTS.CONTRACTTYPE_NAME },
+      { dataKey: 'relinquishmentReasonName', header: APP_CONSTANTS.RELINQUISHMENTREASON_NAME },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.emprelinquishmentService.UpdateEmpRelinquishment(eventData).subscribe(
         () => {
@@ -174,9 +210,10 @@ export class EmpRelinquishmentComponent implements OnInit {
   }
 
   reload() {
-    this.emprelinquishmentService.GetAllEmpRelinquishments('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.emprelinquishmentService.GetEmpRelinquishmentsInfo(this.filter).subscribe(
       (res) => {
-        this.emprelinquishments = res;
+        this.emprelinquishments = this.mapItemList(res);
       }
     )
   }

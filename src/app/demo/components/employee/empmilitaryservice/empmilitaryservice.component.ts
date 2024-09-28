@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpMilitaryService } from 'src/app/demo/models/employee/empmilitaryservice.model';
+import { MilitaryRankService } from 'src/app/demo/service/constants/militaryrank.service';
+import { MilitarySpecializationService } from 'src/app/demo/service/constants/militaryspecialization.service';
 import { EmpMilitaryServiceService } from 'src/app/demo/service/employee/empmilitaryservice.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +15,71 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpMilitaryServiceComponent implements OnInit {
   cols: any[] = [];
-  empmilitaryservices: EmpMilitaryService[] = [];
+  empmilitaryservices: any[] = [];
   formStructure: IFormStructure[] = [];
+  militaryRanks: any[] = [];
+  militarySpecializations: any[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
 
   constructor(private messageService: MessageService,
-    private readonly empmilitaryserviceService: EmpMilitaryServiceService) { }
+    private readonly empmilitaryserviceService: EmpMilitaryServiceService,
+    private readonly militaryRankService: MilitaryRankService,
+    private readonly militarySpecializationService: MilitarySpecializationService, private datePipe: DatePipe) {
+    this.initColumns();
+  }
+
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.empmilitaryserviceService.GetAllEmpMilitaryServices('').subscribe(
-      (res) => {
-        this.empmilitaryservices = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.empmilitaryserviceService.GetEmpMilitaryServicesInfo(this.filter),
+    this.militaryRankService.GetAllMilitaryRanks(''),
+    this.militarySpecializationService.GetAllMilitarySpecializations('')
+    ])
+      .subscribe(([empmilitaryservices, militaryRanks, militarySpecializations
+      ]) => {
+        this.empmilitaryservices = this.mapItemList(empmilitaryservices);
+
+        this.militaryRanks = militaryRanks.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.militarySpecializations = militarySpecializations.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        militaryRankName: item?.militaryRank?.name,
+        militarySpecializationName: item?.militarySpecialization?.name,
+        startDate: this.transformDate(item?.startDate),
+        endDate: this.transformDate(item?.endDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.STARTDATE,
         name: 'startDate',
@@ -42,8 +91,9 @@ export class EmpMilitaryServiceComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.ENDDATE,
         name: 'endDate',
@@ -55,8 +105,9 @@ export class EmpMilitaryServiceComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.MILITARYRANK_NAME,
         name: 'militaryRankId',
@@ -71,7 +122,7 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.MILITARYSPECIALIZATION_NAME,
         name: 'militarySpecializationId',
@@ -86,7 +137,7 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.MILITARYNUMBER,
         name: 'militaryNumber',
@@ -99,7 +150,7 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.RESERVENUMBER,
         name: 'reserveNumber',
@@ -112,7 +163,7 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.COHORTNUMBER,
         name: 'cohortNumber',
@@ -125,7 +176,7 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.RECRUITMENTBRANCH,
         name: 'recruitmentBranch',
@@ -138,10 +189,23 @@ export class EmpMilitaryServiceComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.RECRUITMENTNUMBER,
         name: 'recruitmentNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -156,21 +220,21 @@ export class EmpMilitaryServiceComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE},
-{ dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE},
-{ dataKey: 'militaryRankId', header: APP_CONSTANTS.MILITARYRANKID},
-{ dataKey: 'militaryRankName', header: APP_CONSTANTS.MILITARYRANKNAME},
-{ dataKey: 'militarySpecializationId', header: APP_CONSTANTS.MILITARYSPECIALIZATIONID},
-{ dataKey: 'militarySpecializationName', header: APP_CONSTANTS.MILITARYSPECIALIZATIONNAME},
-{ dataKey: 'militaryNumber', header: APP_CONSTANTS.MILITARYNUMBER},
-{ dataKey: 'reserveNumber', header: APP_CONSTANTS.RESERVENUMBER},
-{ dataKey: 'cohortNumber', header: APP_CONSTANTS.COHORTNUMBER},
-{ dataKey: 'recruitmentBranch', header: APP_CONSTANTS.RECRUITMENTBRANCH},
-{ dataKey: 'recruitmentNumber', header: APP_CONSTANTS.RECRUITMENTNUMBER},
+      { dataKey: 'startDate', header: APP_CONSTANTS.STARTDATE },
+      { dataKey: 'endDate', header: APP_CONSTANTS.ENDDATE },
+      { dataKey: 'militaryRankName', header: APP_CONSTANTS.MILITARYRANK_NAME },
+      { dataKey: 'militarySpecializationName', header: APP_CONSTANTS.MILITARYSPECIALIZATION_NAME },
+      { dataKey: 'militaryNumber', header: APP_CONSTANTS.MILITARYNUMBER },
+      { dataKey: 'reserveNumber', header: APP_CONSTANTS.RESERVENUMBER },
+      { dataKey: 'cohortNumber', header: APP_CONSTANTS.COHORTNUMBER },
+      { dataKey: 'recruitmentBranch', header: APP_CONSTANTS.RECRUITMENTBRANCH },
+      { dataKey: 'recruitmentNumber', header: APP_CONSTANTS.RECRUITMENTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empmilitaryserviceService.UpdateEmpMilitaryService(eventData).subscribe(
         () => {
@@ -200,9 +264,10 @@ export class EmpMilitaryServiceComponent implements OnInit {
   }
 
   reload() {
-    this.empmilitaryserviceService.GetAllEmpMilitaryServices('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empmilitaryserviceService.GetEmpMilitaryServicesInfo(this.filter).subscribe(
       (res) => {
-        this.empmilitaryservices = res;
+        this.empmilitaryservices = this.mapItemList(res);
       }
     )
   }

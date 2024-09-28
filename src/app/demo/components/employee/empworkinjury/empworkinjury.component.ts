@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpWorkInjury } from 'src/app/demo/models/employee/empworkinjury.model';
 import { EmpWorkInjuryService } from 'src/app/demo/service/employee/empworkinjury.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +12,44 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpWorkInjuryComponent implements OnInit {
   cols: any[] = [];
-  empworkinjurys: EmpWorkInjury[] = [];
+  empworkinjurys: any[] = [];
   formStructure: IFormStructure[] = [];
-
-  constructor(private messageService: MessageService,
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly empworkinjuryService: EmpWorkInjuryService) { }
+
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
     this.empworkinjuryService.GetAllEmpWorkInjurys('').subscribe(
       (res) => {
-        this.empworkinjurys = res;
+        this.fetched = true;
+        this.empworkinjurys = this.mapItemList(res);
         this.initColumns();
         this.initFormStructure();
       }
     );
   }
 
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        contractDate: this.transformDate(item?.contractDate)
+      });
+    })
+  }
+
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.CONTRACTDATE,
         name: 'contractDate',
@@ -42,8 +61,9 @@ export class EmpWorkInjuryComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.DISABILITYRATIO,
         name: 'disabilityRatio',
@@ -56,7 +76,7 @@ export class EmpWorkInjuryComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.LUMPSUMAMOUNT,
         name: 'lumpSumAmount',
@@ -69,7 +89,7 @@ export class EmpWorkInjuryComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.MONTHLYAMOUNT,
         name: 'monthlyAmount',
@@ -82,7 +102,7 @@ export class EmpWorkInjuryComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.INJURYTYPE,
         name: 'injuryType',
@@ -95,10 +115,23 @@ export class EmpWorkInjuryComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'text',
         label: APP_CONSTANTS.CONTRACTNUMBER,
         name: 'contractNumber',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
         value: '',
         validations: [
           {
@@ -113,16 +146,18 @@ export class EmpWorkInjuryComponent implements OnInit {
 
   initColumns() {
     this.cols = [
-{ dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE},
-{ dataKey: 'disabilityRatio', header: APP_CONSTANTS.DISABILITYRATIO},
-{ dataKey: 'lumpSumAmount', header: APP_CONSTANTS.LUMPSUMAMOUNT},
-{ dataKey: 'monthlyAmount', header: APP_CONSTANTS.MONTHLYAMOUNT},
-{ dataKey: 'injuryType', header: APP_CONSTANTS.INJURYTYPE},
-{ dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER},
+      { dataKey: 'contractDate', header: APP_CONSTANTS.CONTRACTDATE },
+      { dataKey: 'disabilityRatio', header: APP_CONSTANTS.DISABILITYRATIO },
+      { dataKey: 'lumpSumAmount', header: APP_CONSTANTS.LUMPSUMAMOUNT },
+      { dataKey: 'monthlyAmount', header: APP_CONSTANTS.MONTHLYAMOUNT },
+      { dataKey: 'injuryType', header: APP_CONSTANTS.INJURYTYPE },
+      { dataKey: 'contractNumber', header: APP_CONSTANTS.CONTRACTNUMBER },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.empworkinjuryService.UpdateEmpWorkInjury(eventData).subscribe(
         () => {
@@ -152,9 +187,10 @@ export class EmpWorkInjuryComponent implements OnInit {
   }
 
   reload() {
-    this.empworkinjuryService.GetAllEmpWorkInjurys('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.empworkinjuryService.GetAllEmpWorkInjurys(this.filter).subscribe(
       (res) => {
-        this.empworkinjurys = res;
+        this.empworkinjurys = this.mapItemList(res);
       }
     )
   }

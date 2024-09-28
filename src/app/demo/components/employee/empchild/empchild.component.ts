@@ -33,7 +33,7 @@ export class EmpChildComponent implements OnInit {
     this.initColumns();
   }
 
-  transformDate(date) {
+  transformDate(date: string | number | Date) {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }
 

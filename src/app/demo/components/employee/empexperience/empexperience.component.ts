@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpExperience } from 'src/app/demo/models/employee/empexperience.model';
 import { ExperienceTypeService } from 'src/app/demo/service/constants/experiencetype.service';
 import { EmpExperienceService } from 'src/app/demo/service/employee/empexperience.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
@@ -14,7 +13,7 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpExperienceComponent implements OnInit {
   cols: any[] = [];
-  empexperiences: EmpExperience[] = [];
+  empexperiences: any[] = [];
   formStructure: IFormStructure[] = [];
   experienceTypes: any[] = [];
   fetched: boolean = false;
@@ -100,6 +99,19 @@ export class EmpExperienceComponent implements OnInit {
           },
         ],
       },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
     ];
   }
 
@@ -108,6 +120,7 @@ export class EmpExperienceComponent implements OnInit {
       { dataKey: 'experienceTypeName', header: APP_CONSTANTS.EXPERIENCETYPE_NAME },
       { dataKey: 'source', header: APP_CONSTANTS.SOURCE },
       { dataKey: 'duration', header: APP_CONSTANTS.DURATION },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
@@ -145,7 +158,7 @@ export class EmpExperienceComponent implements OnInit {
     this.filter = `Filters=EmployeeId==${this.personId}`;
     this.empexperienceService.GetEmpExperiencesInfo(this.filter).subscribe(
       (res) => {
-        this.empexperiences = res;
+        this.empexperiences = this.mapItemList(res);
       }
     )
   }

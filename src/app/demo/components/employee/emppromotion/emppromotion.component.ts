@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { EmpPromotion } from 'src/app/demo/models/employee/emppromotion.model';
+import { EvaluationGradeService } from 'src/app/demo/service/constants/evaluationgrade.service';
+import { PromotionPercentageService } from 'src/app/demo/service/constants/promotionpercentage.service';
 import { EmpPromotionService } from 'src/app/demo/service/employee/emppromotion.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 
@@ -12,25 +15,70 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class EmpPromotionComponent implements OnInit {
   cols: any[] = [];
-  emppromotions: EmpPromotion[] = [];
+  emppromotions: any[] = [];
   formStructure: IFormStructure[] = [];
+  fetched: boolean = false;
+  filter: string;
+  canAdd: string = '';
+  canEdit: string = '';
+  canSingleDelete: string = '';
+  @Input() personId: string;
+  evaluationGrades: any[] = [];
+  promotionPercentages: any[] = [];
 
-  constructor(private messageService: MessageService,
-    private readonly emppromotionService: EmpPromotionService) { }
+  constructor(private messageService: MessageService, private datePipe: DatePipe,
+    private readonly emppromotionService: EmpPromotionService,
+    private readonly evaluationGradeService: EvaluationGradeService,
+    private readonly promotionPercentageService: PromotionPercentageService) {
+    this.initColumns();
+  }
+
+  transformDate(date: string | number | Date) {
+    return this.datePipe.transform(date, 'yyyy-MM-dd');
+  }
 
   ngOnInit(): void {
-    this.emppromotionService.GetAllEmpPromotions('').subscribe(
-      (res) => {
-        this.emppromotions = res;
-        this.initColumns();
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    forkJoin([this.emppromotionService.GetEmpPromotionsInfo(this.filter),
+    this.evaluationGradeService.GetAllEvaluationGrades(''),
+    this.promotionPercentageService.GetAllPromotionPercentages('')
+    ])
+      .subscribe(([emppromotions, evaluationGrades, promotionPercentages
+      ]) => {
+        this.emppromotions = this.mapItemList(emppromotions);
+
+        this.evaluationGrades = evaluationGrades.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+
+        this.promotionPercentages = promotionPercentages.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
         this.initFormStructure();
-      }
-    );
+        this.fetched = true;
+      });
+  }
+
+  mapItemList(items: any[]): any[] {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        evaluationGradeName: item?.evaluationGrade?.name,
+        promotionPercentageName: item?.promotionPercentage?.name,
+        promotionDate: this.transformDate(item?.promotionDate)
+      });
+    })
   }
 
   initFormStructure() {
     this.formStructure = [
-{
+      {
         type: 'Date',
         label: APP_CONSTANTS.PROMOTIONDATE,
         name: 'promotionDate',
@@ -42,8 +90,9 @@ export class EmpPromotionComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
+        format: 'yy-mm-dd'
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.PROMOTIONDURATION,
         name: 'promotionDuration',
@@ -56,7 +105,7 @@ export class EmpPromotionComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.EVALUATIONGRADE_NAME,
         name: 'evaluationGradeId',
@@ -71,7 +120,7 @@ export class EmpPromotionComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.NEWSALARY,
         name: 'newSalary',
@@ -84,7 +133,7 @@ export class EmpPromotionComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'number',
         label: APP_CONSTANTS.BONUSAMOUNT,
         name: 'bonusAmount',
@@ -97,7 +146,7 @@ export class EmpPromotionComponent implements OnInit {
           },
         ],
       },
-{
+      {
         type: 'select',
         label: APP_CONSTANTS.PROMOTIONPERCENTAGE_NAME,
         name: 'promotionPercentageId',
@@ -112,23 +161,36 @@ export class EmpPromotionComponent implements OnInit {
           },
         ],
       },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NOTE,
+        name: 'note',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
     ];
   }
 
   initColumns() {
     this.cols = [
-{ dataKey: 'promotionDate', header: APP_CONSTANTS.PROMOTIONDATE},
-{ dataKey: 'promotionDuration', header: APP_CONSTANTS.PROMOTIONDURATION},
-{ dataKey: 'evaluationGradeId', header: APP_CONSTANTS.EVALUATIONGRADEID},
-{ dataKey: 'evaluationGradeName', header: APP_CONSTANTS.EVALUATIONGRADENAME},
-{ dataKey: 'newSalary', header: APP_CONSTANTS.NEWSALARY},
-{ dataKey: 'bonusAmount', header: APP_CONSTANTS.BONUSAMOUNT},
-{ dataKey: 'promotionPercentageId', header: APP_CONSTANTS.PROMOTIONPERCENTAGEID},
-{ dataKey: 'promotionPercentageName', header: APP_CONSTANTS.PROMOTIONPERCENTAGENAME},
+      { dataKey: 'promotionDate', header: APP_CONSTANTS.PROMOTIONDATE },
+      { dataKey: 'promotionDuration', header: APP_CONSTANTS.PROMOTIONDURATION },
+      { dataKey: 'evaluationGradeName', header: APP_CONSTANTS.EVALUATIONGRADE_NAME },
+      { dataKey: 'newSalary', header: APP_CONSTANTS.NEWSALARY },
+      { dataKey: 'bonusAmount', header: APP_CONSTANTS.BONUSAMOUNT },
+      { dataKey: 'promotionPercentageName', header: APP_CONSTANTS.PROMOTIONPERCENTAGE_NAME },
+      { dataKey: 'note', header: APP_CONSTANTS.NOTE }
     ]
   }
 
   submitEventHandler(eventData) {
+    eventData = { ...eventData, employeeId: this.personId };
     if (eventData.id) {
       this.emppromotionService.UpdateEmpPromotion(eventData).subscribe(
         () => {
@@ -158,9 +220,10 @@ export class EmpPromotionComponent implements OnInit {
   }
 
   reload() {
-    this.emppromotionService.GetAllEmpPromotions('').subscribe(
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    this.emppromotionService.GetEmpPromotionsInfo(this.filter).subscribe(
       (res) => {
-        this.emppromotions = res;
+        this.emppromotions = this.mapItemList(res);
       }
     )
   }
