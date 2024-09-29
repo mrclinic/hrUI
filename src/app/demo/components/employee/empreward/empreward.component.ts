@@ -92,10 +92,10 @@ export class EmpRewardComponent implements OnInit {
       return Object.assign(item, {
         ...item,
         contractTypeName: item?.contractType?.name,
-        departmentName: item?.department?.name,
+        departmentName: item?.orgDepartment?.name,
         financialIndicatorTypeName: item?.financialIndicatorType?.name,
         rewardTypeName: item?.rewardType?.name,
-        orderDate: this.transformDate(item?.promotionDate),
+        orderDate: this.transformDate(item?.orderDate),
         executionDate: this.transformDate(item?.executionDate),
         contractDate: this.transformDate(item?.contractDate)
       });

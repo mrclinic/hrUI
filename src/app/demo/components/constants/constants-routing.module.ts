@@ -46,6 +46,7 @@ import { UniversityComponent } from './university/university.component';
 import { VacationTypeComponent } from './vacationtype/vacationtype.component';
 import { BranchComponent } from './branch/branch.component';
 import { DepartmentTreeComponent } from './department-tree/department-tree.component';
+import { DocTypeComponent } from './doctype/doctype.component';
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -455,6 +456,15 @@ import { DepartmentTreeComponent } from './department-tree/department-tree.compo
         {
             path: 'vacation-type',
             component: VacationTypeComponent,
+            data: {
+                ogTitle: environment.ogTitle,
+                ogDescription: environment.ogDescription,
+                ogImage: environment.appUrl + environment.ogImage
+            }
+        },
+        {
+            path: 'doc-type',
+            component: DocTypeComponent,
             data: {
                 ogTitle: environment.ogTitle,
                 ogDescription: environment.ogDescription,

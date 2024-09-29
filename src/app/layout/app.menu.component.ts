@@ -58,7 +58,6 @@ export class AppMenuComponent implements OnInit {
                     { label: 'المدن', icon: 'pi pi-fw pi-home', routerLink: ['/constants/city'] },
                     { label: 'البلدان', icon: 'pi pi-fw pi-home', routerLink: ['/constants/country'] },
                     { label: 'جهات المنح', icon: 'pi pi-fw pi-home', routerLink: ['/constants/degrees-authority'] },
-                    //{ label: 'الجهات المصدرة', icon: 'pi pi-fw pi-home', routerLink: ['/constants/department'] },
                     { label: 'أهداف الايفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-objective'] },
                     { label: 'أوضاع الإيفاد وتغيراته', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-status'] },
                     { label: 'أنواع الإيفاد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/deputation-type'] },
@@ -92,10 +91,10 @@ export class AppMenuComponent implements OnInit {
                     { label: 'أنواع المكافآت', icon: 'pi pi-fw pi-home', routerLink: ['/constants/reward-type'] },
                     { label: 'الاختصاصات العلمية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/specialization'] },
                     { label: 'أنواع البدء', icon: 'pi pi-fw pi-home', routerLink: ['/constants/starting-type'] },
-                    //{ label: 'الفعاليات الفرعية', icon: 'pi pi-fw pi-home', routerLink: ['/constants/sub-department'] },
                     { label: 'أسباب الطرد', icon: 'pi pi-fw pi-home', routerLink: ['/constants/termination-reason'] },
                     { label: 'الجامعات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/university'] },
-                    { label: 'أنواع الإجازات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/vacation-type'] }
+                    { label: 'أنواع الإجازات', icon: 'pi pi-fw pi-home', routerLink: ['/constants/vacation-type'] },
+                    { label: 'أنواع الوثائق', icon: 'pi pi-fw pi-home', routerLink: ['/constants/doc-type'] }
 
                 ]
             },

@@ -52,6 +52,7 @@ import { VacationTypeComponent } from './vacationtype/vacationtype.component';
 import { BranchComponent } from './branch/branch.component';
 import { SharedModule } from '../../shared/shared.module';
 import { DepartmentTreeComponent } from './department-tree/department-tree.component';
+import { DocTypeComponent } from './doctype/doctype.component';
 
 @NgModule({
     imports: [
@@ -83,7 +84,8 @@ import { DepartmentTreeComponent } from './department-tree/department-tree.compo
         , PunishmentTypeComponent, QualificationComponent, RelinquishmentReasonComponent
         , RewardTypeComponent, SpecializationComponent,
         StartingTypeComponent, SubDepartmentComponent, TerminationReasonComponent
-        , UniversityComponent, VacationTypeComponent, BranchComponent, DepartmentTreeComponent
+        , UniversityComponent, VacationTypeComponent, BranchComponent, DepartmentTreeComponent,
+        DocTypeComponent
     ]
 })
 export class ConstantsModule { }

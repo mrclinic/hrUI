@@ -7,10 +7,10 @@ export interface EmpPunishment {
     orderdate?: Date;
     contractdate?: Date;
     issuingdepartmentid?: string;
-    issuingdepartment?: OrgDepartment;
+    issuingOrgDepartment?: OrgDepartment;
     durationindays?: number;
     orderdepartmentid?: string;
-    orderdepartment?: OrgDepartment;
+    orderOrgDepartment?: OrgDepartment;
     isappearinginrecordcard?: boolean;
     contracttypeid?: string;
     contracttype?: ModificationContractType;

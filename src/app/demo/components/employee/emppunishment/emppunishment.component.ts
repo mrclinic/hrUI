@@ -81,8 +81,8 @@ export class EmpPunishmentComponent implements OnInit {
     return items.map((item) => {
       return Object.assign(item, {
         ...item,
-        issuingDepartmentName: item?.issuingDepartment?.name,
-        orderDepartmentName: item?.orderDepartment?.name,
+        issuingDepartmentName: item?.issuingOrgDepartment?.name,
+        orderDepartmentName: item?.orderOrgDepartment?.name,
         contractTypeName: item?.contractType?.name,
         punishmentTypeName: item?.punishmentType?.name,
         executionDate: this.transformDate(item?.executionDate),
