@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
-import { EventService } from './demo/service/event.service';
+import { EventService } from './demo/service/common/event.service';
 import { NgxsModule } from '@ngxs/store';
 import { UserState } from './demo/stateManagement/userManagment/states/user.state';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';

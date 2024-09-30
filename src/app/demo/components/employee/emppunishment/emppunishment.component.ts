@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpPunishment } from 'src/app/demo/models/employee/emppunishment.model';
+import { GeneralService } from 'src/app/demo/service/common/general-service.service';
 import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { OrgDepartmentService } from 'src/app/demo/service/constants/org-department.service';
 import { PunishmentTypeService } from 'src/app/demo/service/constants/punishmenttype.service';
@@ -29,12 +30,11 @@ export class EmpPunishmentComponent implements OnInit {
   orderDepartments: any;
   contractTypes: any;
   punishmentTypes: any;
-  options: any[] = [{ value: true, label: 'نعم' }, { value: false, label: 'لا' }];
   constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly emppunishmentService: EmpPunishmentService,
     private readonly orgDepartmentService: OrgDepartmentService,
     private readonly modificationContractTypeService: ModificationContractTypeService,
-    private readonly punishmentTypeService: PunishmentTypeService) {
+    private readonly punishmentTypeService: PunishmentTypeService, private readonly generalService: GeneralService) {
     this.initColumns();
   }
 
@@ -87,7 +87,9 @@ export class EmpPunishmentComponent implements OnInit {
         punishmentTypeName: item?.punishmentType?.name,
         executionDate: this.transformDate(item?.executionDate),
         orderDate: this.transformDate(item?.orderDate),
-        contractDate: this.transformDate(item?.contractDate)
+        contractDate: this.transformDate(item?.contractDate),
+        isAppearingInRecordCard: this.generalService.getRadioOptionLabel(item?.isAppearingInRecordCard),
+        isPercentage: this.generalService.getRadioOptionLabel(item?.isPercentage)
       });
     })
   }
@@ -184,7 +186,7 @@ export class EmpPunishmentComponent implements OnInit {
         label: APP_CONSTANTS.ISAPPEARINGINRECORDCARD,
         name: 'isAppearingInRecordCard',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',
@@ -241,7 +243,7 @@ export class EmpPunishmentComponent implements OnInit {
         label: APP_CONSTANTS.ISPERCENTAGE,
         name: 'isPercentage',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',

@@ -58,14 +58,6 @@
       </span>
     </div>
     <p-divider></p-divider>
-    <div class="p-field">
-      <span class="p-float-label">
-        <input id="statusCode" pInputText type="number" [(ngModel)]="role.statusCode" required />
-        <small class="p-invalid" [style]="{color: 'red'}" *ngIf="submitted && !role.statusCode">رمز الحالة الموافق للدور
-          مطلوب</small>
-        <label for="statusCode" dir="rtl">رمز الحالة الموافق للدور</label>
-      </span>
-    </div>
   </ng-template>
 
   <ng-template pTemplate="footer">

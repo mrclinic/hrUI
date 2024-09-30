@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { GeneralService } from 'src/app/demo/service/common/general-service.service';
 import { FinancialImpactService } from 'src/app/demo/service/constants/financialimpact.service';
 import { ForcedVacationTypeService } from 'src/app/demo/service/constants/forcedvacationtype.service';
 import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
@@ -30,13 +31,13 @@ export class EmpVacationComponent implements OnInit {
   financialImpacts: any[] = [];
   forcedVacationTypes: any[] = [];
   modificationContractTypes: any[] = [];
-  options: any[] = [{ value: true, label: 'نعم' }, { value: false, label: 'لا' }];
   constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly empvacationService: EmpVacationService,
     private readonly vacationTypeService: VacationTypeService,
     private readonly modificationContractTypeService: ModificationContractTypeService,
     private readonly financialImpactService: FinancialImpactService,
     private readonly forcedVacationTypeService: ForcedVacationTypeService
+    , private readonly generalService: GeneralService
   ) {
 
     this.initColumns();
@@ -104,6 +105,8 @@ export class EmpVacationComponent implements OnInit {
         financialImpactName: item?.financialImpact?.name,
         modificationContractTypeName: item?.modificationContractType?.name,
         vacationTypeName: item?.vacationType?.name,
+        isAppearingInRecordCard: this.generalService.getRadioOptionLabel(item?.isAppearingInRecordCard),
+        isIncludedInServiceDuration: this.generalService.getRadioOptionLabel(item?.isIncludedInServiceDuration)
       });
     })
   }
@@ -241,7 +244,7 @@ export class EmpVacationComponent implements OnInit {
         label: APP_CONSTANTS.ISAPPEARINGINRECORDCARD,
         name: 'isAppearingInRecordCard',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',
@@ -285,7 +288,7 @@ export class EmpVacationComponent implements OnInit {
         label: APP_CONSTANTS.ISINCLUDEDINSERVICEDURATION,
         name: 'isIncludedInServiceDuration',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',

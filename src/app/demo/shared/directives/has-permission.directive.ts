@@ -6,7 +6,7 @@ import {
   ElementRef,
   OnInit
 } from '@angular/core';
-import { AuthServiceService } from '../../service/auth-service.service';
+import { AuthServiceService } from '../../service/common/auth-service.service';
 
 @Directive({
   selector: '[hasPermission]'

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { GeneralService } from 'src/app/demo/service/common/general-service.service';
 import { LanguageService } from 'src/app/demo/service/constants/language.service';
 import { LanguageLevelService } from 'src/app/demo/service/constants/languagelevel.service';
 import { EmpLanguageService } from 'src/app/demo/service/employee/emplanguage.service';
@@ -24,10 +25,9 @@ export class EmpLanguageComponent implements OnInit {
   @Input() personId: string;
   languages: any[] = [];
   languageLevels: any[] = [];
-  options: any[] = [{ value: true, label: 'نعم' }, { value: false, label: 'لا' }];
   constructor(private messageService: MessageService,
     private readonly emplanguageService: EmpLanguageService, private readonly languageService: LanguageService
-    , private readonly languageLevelService: LanguageLevelService) {
+    , private readonly languageLevelService: LanguageLevelService, private readonly generalService: GeneralService) {
     this.initColumns();
   }
 
@@ -63,7 +63,8 @@ export class EmpLanguageComponent implements OnInit {
       return Object.assign(item, {
         ...item,
         languageName: item?.language?.name,
-        languageLevelName: item?.languageLevel?.name
+        languageLevelName: item?.languageLevel?.name,
+        displayOnRecordCard: this.generalService.getRadioOptionLabel(item?.displayOnRecordCard)
       });
     })
   }
@@ -105,7 +106,7 @@ export class EmpLanguageComponent implements OnInit {
         label: APP_CONSTANTS.DISPLAYONRECORDCARD,
         name: 'displayOnRecordCard',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',

@@ -12,4 +12,6 @@ export interface EmpDoc {
     docType: DocType;
     refId: string;
     employeeId: string;
+    fileType: string;
+    extension: string;
 }

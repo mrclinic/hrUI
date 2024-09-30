@@ -14,6 +14,5 @@ export interface User {
   IsActive?: boolean;
   roleID?: string;
   Role?: Role;
-  IsComplete?: boolean;
   Permissions?: string[]
 }

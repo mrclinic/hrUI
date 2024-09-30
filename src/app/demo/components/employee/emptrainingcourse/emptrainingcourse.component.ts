@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { GeneralService } from 'src/app/demo/service/common/general-service.service';
 import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { EmpTrainingCourseService } from 'src/app/demo/service/employee/emptrainingcourse.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
@@ -23,10 +24,9 @@ export class EmpTrainingCourseComponent implements OnInit {
   canSingleDelete: string = '';
   @Input() personId: string;
   contractTypes: any[] = [];
-  options: any[] = [{ value: true, label: 'نعم' }, { value: false, label: 'لا' }];
   constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly emptrainingcourseService: EmpTrainingCourseService,
-    private readonly modificationContractTypeService: ModificationContractTypeService) {
+    private readonly modificationContractTypeService: ModificationContractTypeService, private readonly generalService: GeneralService) {
     this.initColumns();
   }
 
@@ -130,7 +130,7 @@ export class EmpTrainingCourseComponent implements OnInit {
         label: APP_CONSTANTS.DISPLAYONRECORDCARD,
         name: 'displayOnRecordCard',
         value: '',
-        options: [...this.options],
+        options: [...this.generalService.getRadioOptions()],
         validations: [
           {
             name: 'required',

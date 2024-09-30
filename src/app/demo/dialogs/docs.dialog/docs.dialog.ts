@@ -1,9 +1,7 @@
-/* import { Component } from "@angular/core";
-import { Store } from "@ngxs/store";
+import { Component } from "@angular/core";
 import { MessageService } from "primeng/api";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
-import { RequestDoc } from "src/app/demo/models/constants/guild/RequestDoc";
-import { RequestDocActions } from "src/app/stateManagement/guild/actions/request.doc.action";
+import { EmpDoc } from "../../models/employee/empdoc.model";
 @Component({
   styleUrls: ['./docs.dialog.css'],
   template: `
@@ -44,16 +42,13 @@ export class FileUploadComponent {
   uploadedFiles: any[] = [];
   requestId: string = '';
   filter: string = '';
-  constructor(private store: Store, private messageService: MessageService,
+  constructor(private messageService: MessageService,
     public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
   ngOnInit() {
     if (this.config.data) {
       this.requestId = this.config.data;
     }
     this.filter = `Filters=RequestId==${this.requestId}`;
-    this.store.dispatch(new RequestDocActions.GetAllRequestDocs(this.filter)).subscribe(data => {
-      this.uploadedFiles = this.store.selectSnapshot<any[]>((state) => state.users.requestdocs);
-    });
   }
   uploadFiles(event: any) {
     this.uploadedFiles = Object.assign([], this.uploadedFiles);
@@ -65,16 +60,11 @@ export class FileUploadComponent {
     }
     this.ref.close(this.uploadedFiles);
   }
-  delete(file: RequestDoc) {
-    this.store.dispatch(new RequestDocActions.DeleteRequestDoc(file?.Id || '')).subscribe(() => {
-      this.reload();
-    })
+  delete(file: EmpDoc) {
+
   }
   reload() {
     this.filter = `Filters=RequestId==${this.requestId}`;
-    this.store.dispatch(new RequestDocActions.GetAllRequestDocs(this.filter)).subscribe(data => {
-      this.uploadedFiles = this.store.selectSnapshot<any[]>((state) => state.users.requestdocs);
-    });
+
   }
 }
- */
