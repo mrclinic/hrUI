@@ -348,6 +348,12 @@ export class EmpAppointmentStatusComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 10
+          },
         ],
       },
       {
@@ -361,6 +367,12 @@ export class EmpAppointmentStatusComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 256
+          }
         ],
       },
       {
@@ -374,6 +386,12 @@ export class EmpAppointmentStatusComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 256
+          }
         ],
       },
       {
@@ -387,6 +405,12 @@ export class EmpAppointmentStatusComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 256
+          }
         ],
       },
       {

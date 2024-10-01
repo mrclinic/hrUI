@@ -30,11 +30,15 @@ export class DynamicFormComponent implements OnInit {
             name: string;
             validator: string;
             message: string;
+            value?: number;
           }) => {
+            //console.log(validation);
             if (validation.validator === 'required')
               controlValidators.push(Validators.required);
             if (validation.validator === 'email')
               controlValidators.push(Validators.email);
+            if (validation.validator === 'maxlength')
+              controlValidators.push(Validators.maxLength(validation?.value));
             // Add more built-in validators as needed
           }
         );
@@ -53,7 +57,7 @@ export class DynamicFormComponent implements OnInit {
     }
     for (let validation of control.validations) {
       if (formControl.hasError(validation.name)) {
-        return validation.message;
+        return validation.message + (validation?.value ? validation?.value : '');
       }
     }
     return '';

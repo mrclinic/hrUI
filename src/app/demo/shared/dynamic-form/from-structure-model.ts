@@ -8,6 +8,7 @@ export interface IFormStructure {
         name: string;
         validator: string;
         message: string;
+        value?: number
     }[];
     placeHolder?: string;
     format?: string | 'yy-mm-dd';

@@ -210,4 +210,5 @@ export class APP_CONSTANTS {
     public static MONTHLYAMOUNT = 'المبلغ كمعاش شهري';
     public static INJURYTYPE = 'نوع الإصابة';
     public static DATEOFRELINQUISHMENT = 'تاريخ الانفكاك';
+    public static FIELD_MAX_LENGTH = 'الطول الأعظمي لهذا الحقل ';
 }
