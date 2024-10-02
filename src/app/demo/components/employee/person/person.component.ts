@@ -115,9 +115,10 @@ export class PersonComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
-          },
+          }
         ],
-        format: 'yy-mm-dd'
+        format: 'yy-mm-dd',
+        maxValue: new Date()
       },
       {
         type: 'Date',
@@ -260,6 +261,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
+          },
         ],
       },
       {
@@ -272,6 +279,12 @@ export class PersonComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
           },
         ],
       },
@@ -286,6 +299,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
+          },
         ],
       },
       {
@@ -298,6 +317,12 @@ export class PersonComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
           },
         ],
       },
@@ -325,6 +350,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 500
+          }
         ],
       },
       {
@@ -370,6 +401,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 10
+          }
         ],
       },
       {
@@ -382,6 +419,12 @@ export class PersonComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
           },
         ],
       },
@@ -396,6 +439,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
+          },
         ],
       },
       {
@@ -408,6 +457,12 @@ export class PersonComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
           },
         ],
       },
@@ -422,6 +477,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {

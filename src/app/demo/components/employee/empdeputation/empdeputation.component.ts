@@ -309,6 +309,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
+          },
         ],
       },
       {
@@ -322,6 +328,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {
@@ -335,6 +347,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {
@@ -348,6 +366,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {
@@ -361,6 +385,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {
@@ -374,6 +404,12 @@ export class EmpDeputationComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {

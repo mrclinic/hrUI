@@ -85,7 +85,7 @@ export class UserComponent implements OnInit {
   }
   deleteUser() {
     this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.user.FName + '?',
+      message: 'هل أنت متأكد من حذف' + this.user.fName + '?',
       header: 'تأكيد',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -108,7 +108,7 @@ export class UserComponent implements OnInit {
 
   saveUser() {
     this.submitted = true;
-    if (this.user.FName?.trim()) {
+    if (this.user.fName?.trim()) {
       if (this.user.id) {
         this.store.dispatch(new UserActions.UpdateUser(this.user)).subscribe(
           () => {
@@ -148,7 +148,9 @@ export class UserComponent implements OnInit {
     );
   }
   onSelectRole(event: any) {
-    this.user.roleID = event.Id;
+    console.log(event)
+    this.user.roleID = event?.value.id;
+    console.log(this.user)
   }
   goToProfile(user) {
     this.router.navigate(['mgt/userProfiles/', user.id], {

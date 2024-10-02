@@ -91,7 +91,8 @@ export class EmpChildComponent implements OnInit {
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
         ],
-        format: 'yy-mm-dd'
+        format: 'yy-mm-dd',
+        maxValue: new Date()
       },
       {
         type: 'Date',
@@ -161,6 +162,12 @@ export class EmpChildComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
+          },
         ],
       },
       {
@@ -173,6 +180,12 @@ export class EmpChildComponent implements OnInit {
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 50
           },
         ],
       },
@@ -187,6 +200,12 @@ export class EmpChildComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 255
+          }
         ],
       },
       {

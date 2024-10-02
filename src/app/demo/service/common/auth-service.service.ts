@@ -17,12 +17,18 @@ export class AuthServiceService {
   }
 
   checkPermission(permission): boolean {
-    return true;
+    //return true;
     return this.permissions.includes(permission);
   }
 
   checkPermissions(permissions: any[]): boolean {
-    return true;
-    return !permissions.some((string) => this.permissions.indexOf(string) == -1);
+    let exist = false;
+    permissions.forEach((permission) => {
+      let item = this.permissions.find((z) => z.includes(permission));
+      if (item) {
+        exist = true;
+      }
+    });
+    return exist;
   }
 }

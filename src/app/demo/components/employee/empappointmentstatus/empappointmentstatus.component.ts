@@ -371,7 +371,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             name: 'maxlength',
             validator: 'maxlength',
             message: APP_CONSTANTS.FIELD_MAX_LENGTH,
-            value: 256
+            value: 255
           }
         ],
       },
@@ -390,7 +390,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             name: 'maxlength',
             validator: 'maxlength',
             message: APP_CONSTANTS.FIELD_MAX_LENGTH,
-            value: 256
+            value: 255
           }
         ],
       },
@@ -409,7 +409,7 @@ export class EmpAppointmentStatusComponent implements OnInit {
             name: 'maxlength',
             validator: 'maxlength',
             message: APP_CONSTANTS.FIELD_MAX_LENGTH,
-            value: 256
+            value: 255
           }
         ],
       },

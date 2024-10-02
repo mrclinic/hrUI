@@ -36,7 +36,7 @@ export class UserService {
     return this.http.post<User>(`${environment.backendUrl + environment.userMgtUrl}User/logIn`, logInModel).pipe(map(user => {
       // login successful if there's a user in the response
       if (user) {
-        delete user.PassWord;
+        delete user.passWord;
       }
 
       return user;

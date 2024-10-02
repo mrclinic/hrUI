@@ -463,10 +463,10 @@ export class UserState {
     ctx.patchState({ isLoading: true });
     try {
       let currentUser = JSON.parse(localStorage.getItem('users.loggedUser') || "") as User;
-      let permissions = currentUser.Permissions || [];
+      let permissions = currentUser.permissions || [];
       ctx.setState(
         patch({
-          hasPermission: permissions?.includes(action.permName) || currentUser.Role?.name?.localeCompare('Admin') == 0,
+          hasPermission: permissions?.includes(action.permName) || currentUser.role?.name?.localeCompare('Admin') == 0,
           LoadError: '',
           isLoading: false
         })

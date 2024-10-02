@@ -2,17 +2,17 @@ import { Role } from "./Role";
 
 export interface User {
   id?: string;
-  FName?: string;
-  LName?: string;
-  UserName?: string;
-  PassWord?: string;
-  Phone?: string;
-  NatNum?: string;
-  EmailAddress?: string;
+  fName?: string;
+  lName?: string;
+  userName?: string;
+  passWord?: string;
+  phone?: string;
+  natNum?: string;
+  emailAddress?: string;
   userToken?: string;
-  ActivationCode?: string;
-  IsActive?: boolean;
+  activationCode?: string;
+  isActive?: boolean;
   roleID?: string;
-  Role?: Role;
-  Permissions?: string[]
+  role?: Role;
+  permissions?: string[]
 }

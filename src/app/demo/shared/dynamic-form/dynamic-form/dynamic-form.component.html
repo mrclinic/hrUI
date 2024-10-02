@@ -49,7 +49,7 @@
             </label>
             <p-calendar appendTo="body" [formControlName]="control.name" [placeholder]="control.placeHolder"
                 [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" [iconDisplay]="'input'" [showIcon]="true"
-                inputId="icondisplay" [dateFormat]="control.format" />
+                inputId="icondisplay" [dateFormat]="control.format" [maxDate]="control?.maxValue" />
             <span class="error"
                 *ngIf="dynamicForm.controls[control.name]?.invalid && dynamicForm.controls[control.name]?.touched">
                 {{ getErrorMessage(control) }}

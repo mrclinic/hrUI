@@ -1,112 +1,111 @@
 <p-tabView [(activeIndex)]="activeIndex" [scrollable]="true">
-    <p-tabPanel header="الوضع الوظيفي">
+    <p-tabPanel header="الوضع الوظيفي" *hasPermission="['HR_EmpAppointmentStatus_GetEmpAppointmentStatuss']">
         <ng-template pTemplate="content">
             <app-empappointmentstatus [personId]="personId"></app-empappointmentstatus>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الأعمال والتكاليف">
+    <p-tabPanel header="الأعمال والتكاليف" *hasPermission="['HR_EmpAssignment_GetEmpAssignments']">
         <ng-template pTemplate="content">
             <app-empassignment [personId]="personId"></app-empassignment>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الابناء">
+    <p-tabPanel header="الأبناء" *hasPermission="['HR_EmpChild_GetEmpChilds']">
         <ng-template pTemplate="content">
             <app-empchild [personId]="personId"></app-empchild>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الإيفادات">
+    <p-tabPanel header="الإيفادات" *hasPermission="['HR_EmpDeputation_GetEmpDeputations']">
         <ng-template pTemplate="content">
             <app-empdeputation [personId]="personId"></app-empdeputation>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="التبدلات الوظيفية">
+    <p-tabPanel header="التبدلات الوظيفية" *hasPermission="['HR_EmpEmploymentChange_GetEmpEmploymentChanges']">
         <ng-template pTemplate="content">
             <app-empemploymentchange [personId]="personId"></app-empemploymentchange>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الاوضاع الوظيفية">
+    <p-tabPanel header="الاوضاع الوظيفية" *hasPermission="['HR_EmpEmploymentStatus_GetEmpEmploymentStatuss']">
         <ng-template pTemplate="content">
             <app-empemploymentstatus [personId]="personId"></app-empemploymentstatus>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الخبرات">
+    <p-tabPanel header="الخبرات" *hasPermission="['HR_EmpExperience_GetEmpExperiences']">
         <ng-template pTemplate="content">
             <app-empexperience [personId]="personId"></app-empexperience>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="اللغات">
+    <p-tabPanel header="اللغات" *hasPermission="['HR_EmpLanguage_GetEmpLanguages']">
         <ng-template pTemplate="content">
             <app-emplanguage [personId]="personId"></app-emplanguage>
         </ng-template>
     </p-tabPanel>
-
-
-    <p-tabPanel header="الخدمة الالزامية">
+    <p-tabPanel header="الخدمة الالزامية" *hasPermission="['HR_EmpMilitaryService_GetEmpMilitaryServices']">
         <ng-template pTemplate="content">
             <app-empmilitaryservice [personId]="personId"></app-empmilitaryservice>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="دورات خدمة العلم">
+    <p-tabPanel header="دورات خدمة العلم" *hasPermission="['HR_EmpMilitaryServiceCohor_GetEmpMilitaryServiceCohors']">
         <ng-template pTemplate="content">
             <app-empmilitaryservicecohort [personId]="personId"></app-empmilitaryservicecohort>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="ايقاف الخدمة الالزامية">
+    <p-tabPanel header="ايقاف الخدمة الالزامية"
+        *hasPermission="['HR_EmpMilitaryServiceSuspension_GetEmpMilitaryServiceSuspensions']">
         <ng-template pTemplate="content">
             <app-empmilitaryservicesuspension [personId]="personId"></app-empmilitaryservicesuspension>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الزوجات">
+    <p-tabPanel header="الزوجات" *hasPermission="['HR_EmpPartner_GetEmpPartners']">
         <ng-template pTemplate="content">
             <app-emppartner [personId]="personId"></app-emppartner>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="التقييمات">
+    <p-tabPanel header="التقييمات" *hasPermission="['HR_EmpPerformanceEvaluation_GetEmpPerformanceEvaluations']">
         <ng-template pTemplate="content">
             <app-empperformanceevaluation [personId]="personId"></app-empperformanceevaluation>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الترفيعات">
+    <p-tabPanel header="الترفيعات" *hasPermission="['HR_EmpPromotion_GetEmpPromotions']">
         <ng-template pTemplate="content">
             <app-emppromotion [personId]="personId"></app-emppromotion>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="العقوبات">
+    <p-tabPanel header="العقوبات" *hasPermission="['HR_EmpPunishment_GetEmpPunishments']">
         <ng-template pTemplate="content">
             <app-emppunishment [personId]="personId"></app-emppunishment>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="المؤهلات العلمية">
+    <p-tabPanel header="المؤهلات العلمية" *hasPermission="['HR_EmpQualification_GetEmpQualifications']">
         <ng-template pTemplate="content">
             <app-empqualification [personId]="personId"></app-empqualification>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الانفكاك">
+    <p-tabPanel header="الانفكاك" *hasPermission="['HR_EmpRelinquishment_GetEmpRelinquishments']">
         <ng-template pTemplate="content">
             <app-emprelinquishment [personId]="personId"></app-emprelinquishment>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="المكافآت">
+    <p-tabPanel header="المكافآت" *hasPermission="['HR_EmpReward_GetEmpRewards']">
         <ng-template pTemplate="content">
             <app-empreward [personId]="personId"></app-empreward>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الدورات التدريبية">
+    <p-tabPanel header="الدورات التدريبية" *hasPermission="['HR_EmpTrainingCourse_GetEmpTrainingCourses']">
         <ng-template pTemplate="content">
             <app-emptrainingcourse [personId]="personId"></app-emptrainingcourse>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="الإجازات">
+    <p-tabPanel header="الإجازات" *hasPermission="['HR_EmpVacation_GetEmpVacations']">
         <ng-template pTemplate="content">
             <app-empvacation [personId]="personId"></app-empvacation>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="إصابات العمل">
+    <p-tabPanel header="إصابات العمل" *hasPermission="['HR_EmpWorkInjury_GetEmpWorkInjurys']">
         <ng-template pTemplate="content">
             <app-empworkinjury [personId]="personId"></app-empworkinjury>
         </ng-template>
     </p-tabPanel>
-    <p-tabPanel header="أماكن العمل">
+    <p-tabPanel header="أماكن العمل" *hasPermission="['HR_EmpWorkPlace_GetEmpWorkPlaces']">
         <ng-template pTemplate="content">
             <app-empworkplace [personId]="personId"></app-empworkplace>
         </ng-template>
