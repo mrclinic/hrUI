@@ -14,9 +14,9 @@ import { RolePermissionActions } from "../../stateManagement/userManagment/actio
   <ng-template pTemplate="left">
   </ng-template>
   <ng-template pTemplate="right">
-    <button pButton pRipple label="منح جميع الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
+    <button *hasPermission="['UserManagment_RolePermissions_SetRolePermission']" pButton pRipple label="منح جميع الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
       (click)="addPermsToRole()"></button>
-    <button pButton pRipple label="منح الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
+    <button *hasPermission="['UserManagment_RolePermissions_SetRolePermission']" pButton pRipple label="منح الصلاحيات لهذا الدور" icon="pi pi-check" class="p-button-success mr-2"
     [disabled]="!this.selectedPermissions || !this.selectedPermissions.length" (click)="addPermToRole()"></button>
   </ng-template>
 </p-toolbar>

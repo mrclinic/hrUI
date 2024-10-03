@@ -31,14 +31,14 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
         return next.handle(request);
       }
       const link = ['auth/login'];
-      /* this.zone.run(() => {
+      this.zone.run(() => {
         this.router.navigate(link);
-      }); */
+      });
     } catch (err) {
       const link = ['auth/login'];
-      /* this.zone.run(() => {
+      this.zone.run(() => {
         this.router.navigate(link);
-      }); */
+      });
     }
     return next.handle(request);
   }

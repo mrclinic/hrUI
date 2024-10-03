@@ -6,8 +6,8 @@
     </ng-template>
 
     <ng-template pTemplate="right">
-      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
-        (click)="openNew()"></button>
+      <button *hasPermission="['UserManagment_Role_UpdateRole']" pButton pRipple label="إضافة" icon="pi pi-plus"
+        class="p-button-success mr-2" (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
   <p-table responsiveLayout="scroll" [value]="roles" selectionMode="single" [(selection)]="role" [rowHover]="true"
@@ -26,12 +26,12 @@
           {{role[col.field]}}
         </td>
         <td class="td">
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editRole(role)" title="تعديل"></button>
-          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
-            (click)="deleteSelectedRole(role)"></button>
-          <button pButton pRipple icon="pi pi-slack" title="صلاحيات الدور" class="p-button-rounded p-button-Primary"
-            (click)="setPermissions(role)"></button>
+          <button *hasPermission="['UserManagment_Role_UpdateRole']" pButton pRipple icon="pi pi-pencil"
+            class="p-button-rounded p-button-success p-mr-2" (click)="editRole(role)" title="تعديل"></button>
+          <button *hasPermission="['UserManagment_Role_UpdateRole']" pButton pRipple icon=" pi pi-trash" title="حذف"
+            class="p-button-rounded p-button-warning" (click)="deleteSelectedRole(role)"></button>
+          <button *hasPermission="['UserManagment_Permission_GetPermissions']" pButton pRipple icon="pi pi-slack"
+            title="صلاحيات الدور" class="p-button-rounded p-button-Primary" (click)="setPermissions(role)"></button>
         </td>
       </tr>
     </ng-template>

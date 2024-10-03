@@ -5,8 +5,8 @@
     </ng-template>
 
     <ng-template pTemplate="right">
-      <button pButton pRipple label="إضافة" icon="pi pi-plus" class="p-button-success mr-2"
-        (click)="openNew()"></button>
+      <button *hasPermission="['UserManagment_User_CreateUser']" pButton pRipple label="إضافة" icon="pi pi-plus"
+        class="p-button-success mr-2" (click)="openNew()"></button>
     </ng-template>
   </p-toolbar>
   <p-table responsiveLayout="scroll" [value]="users" selectionMode="single" [(selection)]="user" [rowHover]="true"
@@ -56,12 +56,12 @@
           </ng-container>
         </td>
         <td class="td">
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editUser(user)" title="تعديل"></button>
-          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
-            (click)="deleteSelectedUser(user)"></button>
-          <button pButton pRipple icon="pi pi-user" title="تفاصيل البروفايل" class="p-button-rounded p-button-Primary"
-            (click)="goToProfile(user)"></button>
+          <button *hasPermission="['UserManagment_User_UpdateUser']" pButton pRipple icon="pi pi-pencil"
+            class="p-button-rounded p-button-success p-mr-2" (click)="editUser(user)" title="تعديل"></button>
+          <button *hasPermission="['UserManagment_User_DeleteUser']" pButton pRipple icon=" pi pi-trash" title="حذف"
+            class="p-button-rounded p-button-warning" (click)="deleteSelectedUser(user)"></button>
+          <button *hasPermission="['UserManagment_UserProfile_GetUserProfilesInfo']" pButton pRipple icon="pi pi-user"
+            title="تفاصيل البروفايل" class="p-button-rounded p-button-Primary" (click)="goToProfile(user)"></button>
         </td>
       </tr>
     </ng-template>

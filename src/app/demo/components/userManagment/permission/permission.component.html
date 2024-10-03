@@ -25,9 +25,11 @@
           {{permission[col.field]}}
         </td>
         <td class="td">
-          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-            (click)="editPermission(permission)" title="تعديل"></button>
-          <button pButton pRipple icon=" pi pi-trash" title="حذف" class="p-button-rounded p-button-warning"
+          <button *hasPermission="['UserManagment_Permission_UpdatePermission']" pButton pRipple icon="pi pi-pencil"
+            class="p-button-rounded p-button-success p-mr-2" (click)="editPermission(permission)"
+            title="تعديل"></button>
+          <button *hasPermission="['UserManagment_Permission_DeletePermission']" pButton pRipple icon=" pi pi-trash"
+            title="حذف" class="p-button-rounded p-button-warning"
             (click)="deleteSelectedPermission(permission)"></button>
         </td>
       </tr>
