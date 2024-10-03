@@ -14,9 +14,9 @@ export class QualificationComponent implements OnInit {
   cols: any[] = [];
   qualifications: Qualification[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Qualification_CreateQualification';
+  canEdit: string = 'HR_Qualification_UpdateQualification';
+  canSingleDelete: string = 'HR_Qualification_DeleteQualification';
 
   constructor(private messageService: MessageService,
     private readonly qualificationService: QualificationService) {

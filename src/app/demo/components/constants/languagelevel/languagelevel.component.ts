@@ -14,9 +14,9 @@ export class LanguageLevelComponent implements OnInit {
   cols: any[] = [];
   languagelevels: LanguageLevel[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_LanguageLevel_CreateLanguageLevel';
+  canEdit: string = 'HR_LanguageLevel_UpdateLanguageLevel';
+  canSingleDelete: string = 'HR_LanguageLevel_DeleteLanguageLevel';
 
   constructor(private messageService: MessageService,
     private readonly languagelevelService: LanguageLevelService) {

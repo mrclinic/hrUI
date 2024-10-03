@@ -14,9 +14,9 @@ export class StartingTypeComponent implements OnInit {
   cols: any[] = [];
   startingtypes: StartingType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_StartingType_CreateStartingType';
+  canEdit: string = 'HR_StartingType_UpdateStartingType';
+  canSingleDelete: string = 'HR_StartingType_DeleteStartingType';
 
   constructor(private messageService: MessageService,
     private readonly startingtypeService: StartingTypeService) {

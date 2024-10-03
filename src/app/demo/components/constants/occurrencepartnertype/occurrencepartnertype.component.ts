@@ -14,9 +14,9 @@ export class OccurrencePartnerTypeComponent implements OnInit {
   cols: any[] = [];
   occurrencepartnertypes: OccurrencePartnerType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_OccurrencePartnerType_CreateOccurrencePartnerType';
+  canEdit: string = 'HR_OccurrencePartnerType_UpdateOccurrencePartnerType';
+  canSingleDelete: string = 'HR_OccurrencePartnerType_DeleteOccurrencePartnerType';
 
   constructor(private messageService: MessageService,
     private readonly occurrencepartnertypeService: OccurrencePartnerTypeService) {

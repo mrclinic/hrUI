@@ -17,9 +17,9 @@ export class BranchComponent implements OnInit {
   branchs: any[] = [];
   departments: any[] | undefined;
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Branch_CreateBranch';
+  canEdit: string = 'HR_Branch_UpdateBranch';
+  canSingleDelete: string = 'HR_Branch_DeleteBranch';
   fetched: boolean = false;
   constructor(private messageService: MessageService,
     private readonly branchService: BranchService,

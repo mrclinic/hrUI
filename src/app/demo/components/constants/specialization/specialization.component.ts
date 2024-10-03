@@ -15,9 +15,9 @@ export class SpecializationComponent implements OnInit {
   cols: any[] = [];
   specializations: any[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Specialization_CreateSpecialization';
+  canEdit: string = 'HR_Specialization_UpdateSpecialization';
+  canSingleDelete: string = 'HR_Specialization_DeleteSpecialization';
   qualifications: any[] = [];
   fetched: boolean = false;
   constructor(private messageService: MessageService,

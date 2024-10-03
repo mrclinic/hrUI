@@ -14,9 +14,9 @@ export class ExperienceTypeComponent implements OnInit {
   cols: any[] = [];
   experiencetypes: ExperienceType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_ExperienceType_CreateExperienceType';
+  canEdit: string = 'HR_ExperienceType_UpdateExperienceType';
+  canSingleDelete: string = 'HR_ExperienceType_DeleteExperienceType';
 
   constructor(private messageService: MessageService,
     private readonly experiencetypeService: ExperienceTypeService) {

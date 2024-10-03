@@ -12,9 +12,9 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 })
 export class DepartmentTreeComponent implements OnInit {
   orgDepartments: any[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_OrgDepartment_CreateOrgDepartment';
+  canEdit: string = 'HR_OrgDepartment_UpdateOrgDepartment';
+  canSingleDelete: string = 'HR_OrgDepartment_DeleteOrgDepartment';
   treeNodes: any[] = [];
   itemDialog: boolean = false;
   formStructure: IFormStructure[] = [];

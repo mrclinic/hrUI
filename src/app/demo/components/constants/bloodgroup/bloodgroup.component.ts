@@ -14,9 +14,9 @@ export class BloodGroupComponent implements OnInit {
   cols: any[] = [];
   bloodgroups: BloodGroup[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_BloodGroup_CreateBloodGroup';
+  canEdit: string = 'HR_BloodGroup_UpdateBloodGroup';
+  canSingleDelete: string = 'HR_BloodGroup_DeleteBloodGroup';
 
   constructor(private messageService: MessageService,
     private readonly bloodgroupService: BloodGroupService) {

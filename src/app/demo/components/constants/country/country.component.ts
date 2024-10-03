@@ -14,9 +14,9 @@ export class CountryComponent implements OnInit {
   cols: any[] = [];
   countrys: Country[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Country_CreateCountry';
+  canEdit: string = 'HR_Country_UpdateCountry';
+  canSingleDelete: string = 'HR_Country_DeleteCountry';
 
   constructor(private messageService: MessageService,
     private readonly countryService: CountryService) {

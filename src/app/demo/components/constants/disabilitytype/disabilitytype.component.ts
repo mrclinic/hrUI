@@ -14,9 +14,9 @@ export class DisabilityTypeComponent implements OnInit {
   cols: any[] = [];
   disabilitytypes: DisabilityType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_DisabilityType_CreateDisabilityType';
+  canEdit: string = 'HR_DisabilityType_UpdateDisabilityType';
+  canSingleDelete: string = 'HR_DisabilityType_DeleteDisabilityType';
 
   constructor(private messageService: MessageService,
     private readonly disabilitytypeService: DisabilityTypeService) {

@@ -14,9 +14,9 @@ export class DocTypeComponent implements OnInit {
   cols: any[] = [];
   doctypes: DocType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_DocType_CreateDocType';
+  canEdit: string = 'HR_DocType_UpdateDocType';
+  canSingleDelete: string = 'HR_DocType_DeleteDocType';
 
   constructor(private messageService: MessageService,
     private readonly doctypeService: DocTypeService) {

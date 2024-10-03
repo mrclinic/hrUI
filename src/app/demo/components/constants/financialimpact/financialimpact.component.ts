@@ -14,9 +14,9 @@ export class FinancialImpactComponent implements OnInit {
   cols: any[] = [];
   financialimpacts: FinancialImpact[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_FinancialImpact_CreateFinancialImpact';
+  canEdit: string = 'HR_FinancialImpact_UpdateFinancialImpact';
+  canSingleDelete: string = 'HR_FinancialImpact_DeleteFinancialImpact';
 
   constructor(private messageService: MessageService,
     private readonly financialimpactService: FinancialImpactService) {

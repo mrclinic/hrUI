@@ -15,9 +15,9 @@ export class JobChangeReasonComponent implements OnInit {
   cols: any[] = [];
   jobchangereasons: any[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_JobChangeReason_CreateJobChangeReason';
+  canEdit: string = 'HR_JobChangeReason_UpdateJobChangeReason';
+  canSingleDelete: string = 'HR_JobChangeReason_DeleteJobChangeReason';
   fetched: boolean = false;
   modificationContractTypes: any[] = [];
   constructor(private messageService: MessageService,

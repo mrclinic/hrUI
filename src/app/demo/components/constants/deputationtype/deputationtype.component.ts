@@ -14,9 +14,9 @@ export class DeputationTypeComponent implements OnInit {
   cols: any[] = [];
   deputationtypes: DeputationType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_DeputationType_CreateDeputationType';
+  canEdit: string = 'HR_DeputationType_UpdateDeputationType';
+  canSingleDelete: string = 'HR_DeputationType_DeleteDeputationType';
 
   constructor(private messageService: MessageService,
     private readonly deputationtypeService: DeputationTypeService) {

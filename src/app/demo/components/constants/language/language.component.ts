@@ -14,9 +14,9 @@ export class LanguageComponent implements OnInit {
   cols: any[] = [];
   languages: Language[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Language_CreateLanguage';
+  canEdit: string = 'HR_Language_UpdateLanguage';
+  canSingleDelete: string = 'HR_Language_DeleteLanguage';
 
   constructor(private messageService: MessageService,
     private readonly languageService: LanguageService) {

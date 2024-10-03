@@ -14,9 +14,9 @@ export class LawComponent implements OnInit {
   cols: any[] = [];
   laws: Law[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Law_CreateLaw';
+  canEdit: string = 'HR_Law_UpdateLaw';
+  canSingleDelete: string = 'HR_Law_DeleteLaw';
 
   constructor(private messageService: MessageService,
     private readonly lawService: LawService) {

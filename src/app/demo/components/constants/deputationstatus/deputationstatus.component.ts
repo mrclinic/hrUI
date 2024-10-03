@@ -14,9 +14,9 @@ export class DeputationStatusComponent implements OnInit {
   cols: any[] = [];
   deputationstatuss: DeputationStatus[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_DeputationStatus_CreateDeputationStatus';
+  canEdit: string = 'HR_DeputationStatus_UpdateDeputationStatus';
+  canSingleDelete: string = 'HR_DeputationStatus_DeleteDeputationStatus';
 
   constructor(private messageService: MessageService,
     private readonly deputationstatusService: DeputationStatusService) {

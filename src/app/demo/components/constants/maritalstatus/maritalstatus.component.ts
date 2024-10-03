@@ -14,9 +14,9 @@ export class MaritalStatusComponent implements OnInit {
   cols: any[] = [];
   maritalstatuss: MaritalStatus[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_MaritalStatus_CreateMaritalStatus';
+  canEdit: string = 'HR_MaritalStatus_UpdateMaritalStatus';
+  canSingleDelete: string = 'HR_MaritalStatus_DeleteMaritalStatus';
 
   constructor(private messageService: MessageService,
     private readonly maritalstatusService: MaritalStatusService) {

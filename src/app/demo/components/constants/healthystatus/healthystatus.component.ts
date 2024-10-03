@@ -14,9 +14,9 @@ export class HealthyStatusComponent implements OnInit {
   cols: any[] = [];
   healthystatuss: HealthyStatus[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_HealthyStatus_CreateHealthyStatus';
+  canEdit: string = 'HR_HealthyStatus_UpdateHealthyStatus';
+  canSingleDelete: string = 'HR_HealthyStatus_DeleteHealthyStatus';
 
   constructor(private messageService: MessageService,
     private readonly healthystatusService: HealthyStatusService) {

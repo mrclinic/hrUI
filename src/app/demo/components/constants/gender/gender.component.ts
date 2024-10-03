@@ -14,9 +14,9 @@ export class GenderComponent implements OnInit {
   cols: any[] = [];
   genders: Gender[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Gender_CreateGender';
+  canEdit: string = 'HR_Gender_UpdateGender';
+  canSingleDelete: string = 'HR_Gender_DeleteGender';
 
   constructor(private messageService: MessageService,
     private readonly genderService: GenderService) {

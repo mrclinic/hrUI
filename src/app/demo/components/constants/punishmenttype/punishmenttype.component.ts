@@ -15,9 +15,9 @@ export class PunishmentTypeComponent implements OnInit {
   cols: any[] = [];
   punishmenttypes: any[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_PunishmentType_CreatePunishmentType';
+  canEdit: string = 'HR_PunishmentType_UpdatePunishmentType';
+  canSingleDelete: string = 'HR_PunishmentType_DeletePunishmentType';
   fetched: boolean = false;
   financialImpacts: any[] = [];
   constructor(private messageService: MessageService,

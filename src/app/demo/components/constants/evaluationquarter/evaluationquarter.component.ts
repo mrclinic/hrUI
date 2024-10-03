@@ -14,9 +14,9 @@ export class EvaluationQuarterComponent implements OnInit {
   cols: any[] = [];
   evaluationquarters: EvaluationQuarter[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpChild_CreateEmpChild';
+  canEdit: string = 'HR_EmpChild_UpdateEmpChild';
+  canSingleDelete: string = 'HR_EmpChild_DeleteEmpChild';
 
   constructor(private messageService: MessageService,
     private readonly evaluationquarterService: EvaluationQuarterService) {

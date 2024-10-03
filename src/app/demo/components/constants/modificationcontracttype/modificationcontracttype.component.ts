@@ -14,9 +14,9 @@ export class ModificationContractTypeComponent implements OnInit {
   cols: any[] = [];
   modificationcontracttypes: ModificationContractType[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_ModificationContractType_CreateModificationContractType';
+  canEdit: string = 'HR_ModificationContractType_UpdateModificationContractType';
+  canSingleDelete: string = 'HR_ModificationContractType_DeleteModificationContractType';
 
   constructor(private messageService: MessageService,
     private readonly modificationcontracttypeService: ModificationContractTypeService) {
