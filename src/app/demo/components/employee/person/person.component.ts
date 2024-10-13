@@ -28,9 +28,9 @@ export class PersonComponent implements OnInit {
   bloodGroups: any[] = [];
   citys: any[] = [];
   fetched: boolean = false;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_Person_CreatePerson';
+  canEdit: string = 'HR_Person_UpdatePerson';
+  canSingleDelete: string = 'HR_Person_DeletePerson';
   hasClickAbleRow: boolean = true;
   redirectUrlUpOnClick: string = 'employees/employee-profile';
   queryParamName: string = 'personId';

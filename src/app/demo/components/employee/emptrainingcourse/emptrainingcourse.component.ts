@@ -19,9 +19,9 @@ export class EmpTrainingCourseComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpTrainingCourse_CreateEmpTrainingCourse';
+  canEdit: string = 'HR_EmpTrainingCourse_UpdateEmpTrainingCourse';
+  canSingleDelete: string = 'HR_EmpTrainingCourse_DeleteEmpTrainingCourse';
   @Input() personId: string;
   contractTypes: any[] = [];
   constructor(private messageService: MessageService, private datePipe: DatePipe,

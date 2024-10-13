@@ -19,9 +19,9 @@ export class EmpLanguageComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpLanguage_CreateEmpLanguage';
+  canEdit: string = 'HR_EmpLanguage_UpdateEmpLanguage';
+  canSingleDelete: string = 'HR_EmpLanguage_DeleteEmpLanguage';
   @Input() personId: string;
   languages: any[] = [];
   languageLevels: any[] = [];

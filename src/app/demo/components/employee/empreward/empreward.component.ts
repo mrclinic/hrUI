@@ -21,9 +21,9 @@ export class EmpRewardComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpReward_CreateEmpReward';
+  canEdit: string = 'HR_EmpReward_UpdateEmpReward';
+  canSingleDelete: string = 'HR_EmpReward_DeleteEmpReward';
   @Input() personId: string;
   rewardTypes: any[] = [];
   departments: any[] = [];

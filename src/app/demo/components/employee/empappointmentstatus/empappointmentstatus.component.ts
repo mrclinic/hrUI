@@ -31,9 +31,9 @@ export class EmpAppointmentStatusComponent implements OnInit {
   modificationContractTypes: any[] = [];
   startingTypes: any[] = [];
   fetched: boolean = false;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpAppointmentStatus_CreateEmpAppointmentStatus';
+  canEdit: string = 'HR_EmpAppointmentStatus_UpdateEmpAppointmentStatus';
+  canSingleDelete: string = 'HR_EmpAppointmentStatus_DeleteEmpAppointmentStatus';
   @Input() personId: string;
   filter: string = '';
   constructor(private messageService: MessageService,

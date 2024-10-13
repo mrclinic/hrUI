@@ -19,9 +19,9 @@ export class EmpRelinquishmentComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpRelinquishment_CreateEmpRelinquishment';
+  canEdit: string = 'HR_EmpRelinquishment_UpdateEmpRelinquishment';
+  canSingleDelete: string = 'HR_EmpRelinquishment_DeleteEmpRelinquishment';
   @Input() personId: string;
   relinquishmentReasons: any;
   contractTypes: any;

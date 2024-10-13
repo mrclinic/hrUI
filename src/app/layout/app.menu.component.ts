@@ -26,7 +26,7 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'الموظفين', icon: 'pi pi-fw pi-home', routerLink: ['/employees/employees'] }
                 ]
-                , visible: this.authServiceService.checkPermission('hr_Person_GetPersons')
+                , visible: this.authServiceService.checkPermission('HR_Person_GetPersonsInfo')
             },
             {
                 label: 'إدارة المستخدمين',

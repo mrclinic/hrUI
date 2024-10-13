@@ -56,6 +56,7 @@ export class HasPermissionDirective implements OnInit {
   }
 
   private checkPermission() {
+    console.log(this.currentUserPermissions)
     //just for development purpose
     //return true;
     let hasPermission = false;

@@ -17,9 +17,9 @@ export class EmpAssignmentComponent implements OnInit {
   empassignments: any[] = [];
   formStructure: IFormStructure[] = [];
   contractTypes: any[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpAssignment_CreateEmpAssignment';
+  canEdit: string = 'HR_EmpAssignment_UpdateEmpAssignment';
+  canSingleDelete: string = 'HR_EmpAssignment_DeleteEmpAssignment';
   @Input() personId: string;
   filter: string = '';
   fetched: boolean = false;

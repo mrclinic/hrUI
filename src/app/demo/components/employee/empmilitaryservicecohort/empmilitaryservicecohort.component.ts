@@ -16,9 +16,9 @@ export class EmpMilitaryServiceCohortComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpMilitaryServiceCohort_CreateEmpMilitaryServiceCohort';
+  canEdit: string = 'HR_EmpMilitaryServiceCohort_UpdateEmpMilitaryServiceCohort';
+  canSingleDelete: string = 'HR_EmpMilitaryServiceCohort_DeleteEmpMilitaryServiceCohort';
   @Input() personId: string;
   constructor(private messageService: MessageService,
     private readonly empmilitaryservicecohortService: EmpMilitaryServiceCohortService

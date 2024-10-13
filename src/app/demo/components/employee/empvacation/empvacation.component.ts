@@ -22,9 +22,9 @@ export class EmpVacationComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpVacation_CreateEmpVacation';
+  canEdit: string = 'HR_EmpVacation_UpdateEmpVacation';
+  canSingleDelete: string = 'HR_EmpVacation_DeleteEmpVacation';
   @Input() personId: string;
   vacationTypes: any[] = [];
   contractTypes: any[] = [];

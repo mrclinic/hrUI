@@ -17,9 +17,9 @@ export class EmpMilitaryServiceSuspensionComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpMilitaryServiceSuspension_CreateEmpMilitaryServiceSuspension';
+  canEdit: string = 'HR_EmpMilitaryServiceSuspension_UpdateEmpMilitaryServiceSuspension';
+  canSingleDelete: string = 'HR_EmpMilitaryServiceSuspension_DeleteEmpMilitaryServiceSuspension';
   @Input() personId: string;
   constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly empmilitaryservicesuspensionService: EmpMilitaryServiceSuspensionService) { }

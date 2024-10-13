@@ -21,9 +21,9 @@ export class EmpPartnerComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpPartner_CreateEmpPartner';
+  canEdit: string = 'HR_EmpPartner_UpdateEmpPartner';
+  canSingleDelete: string = 'HR_EmpPartner_DeleteEmpPartner';
   @Input() personId: string;
   genders: any;
   nationalitys: any;

@@ -18,9 +18,9 @@ export class EmpWorkPlaceComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpWorkPlace_CreateEmpWorkPlace';
+  canEdit: string = 'HR_EmpWorkPlace_UpdateEmpWorkPlace';
+  canSingleDelete: string = 'HR_EmpWorkPlace_DeleteEmpWorkPlace';
   @Input() personId: string;
   contractTypes: any[] = [];
   constructor(private messageService: MessageService, private datePipe: DatePipe,

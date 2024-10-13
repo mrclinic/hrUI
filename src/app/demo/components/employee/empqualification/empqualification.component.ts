@@ -21,9 +21,9 @@ export class EmpQualificationComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpQualification_CreateEmpQualification';
+  canEdit: string = 'HR_EmpQualification_UpdateEmpQualification';
+  canSingleDelete: string = 'HR_EmpQualification_DeleteEmpQualification';
   @Input() personId: string;
   specializations: any[] = [];
   degreesAuthoritys: any[] = [];

@@ -21,9 +21,9 @@ export class EmpMilitaryServiceComponent implements OnInit {
   militarySpecializations: any[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpMilitaryService_CreateEmpMilitaryService';
+  canEdit: string = 'HR_EmpMilitaryService_UpdateEmpMilitaryService';
+  canSingleDelete: string = 'HR_EmpMilitaryService_DeleteEmpMilitaryService';
   @Input() personId: string;
 
   constructor(private messageService: MessageService,

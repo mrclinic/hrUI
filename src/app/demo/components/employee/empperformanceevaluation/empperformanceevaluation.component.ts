@@ -21,9 +21,9 @@ export class EmpPerformanceEvaluationComponent implements OnInit {
   evaluationQuarters: any[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpPerformanceEvaluation_CreateEmpPerformanceEvaluation';
+  canEdit: string = 'HR_EmpPerformanceEvaluation_UpdateEmpPerformanceEvaluation';
+  canSingleDelete: string = 'HR_EmpPerformanceEvaluation_DeleteEmpPerformanceEvaluation';
   @Input() personId: string;
   constructor(private messageService: MessageService, private datePipe: DatePipe,
     private readonly empperformanceevaluationService: EmpPerformanceEvaluationService,

@@ -18,9 +18,9 @@ export class EmpChildComponent implements OnInit {
   cols: any[] = [];
   empchilds: EmpChild[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpChild_CreateEmpChild';
+  canEdit: string = 'HR_EmpChild_UpdateEmpChild';
+  canSingleDelete: string = 'HR_EmpChild_DeleteEmpChild';
   @Input() personId: string;
   filter: string = '';
   fetched: boolean = false;

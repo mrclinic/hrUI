@@ -21,10 +21,10 @@ export class AuthServiceService {
     return this.permissions.includes(permission);
   }
 
-  checkPermissions(permissions: any[]): boolean {
+  checkPermissions(menuPermissions: any[]): boolean {
     let exist = false;
-    permissions.forEach((permission) => {
-      let item = this.permissions.find((z) => z.includes(permission));
+    menuPermissions.forEach((menuPermission) => {
+      let item = this.permissions.find((z) => z.includes(menuPermission));
       if (item) {
         exist = true;
       }

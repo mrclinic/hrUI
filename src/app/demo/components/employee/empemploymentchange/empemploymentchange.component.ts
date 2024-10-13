@@ -18,9 +18,9 @@ export class EmpEmploymentChangeComponent implements OnInit {
   cols: any[] = [];
   empemploymentchanges: any[] = [];
   formStructure: IFormStructure[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpEmploymentChange_CreateEmpEmploymentChange';
+  canEdit: string = 'HR_EmpEmploymentChange_UpdateEmpEmploymentChange';
+  canSingleDelete: string = 'HR_EmpEmploymentChange_DeleteEmpEmploymentChange';
   @Input() personId: string;
   filter: string = '';
   fetched: boolean = false;

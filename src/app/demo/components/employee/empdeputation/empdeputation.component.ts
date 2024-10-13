@@ -27,9 +27,9 @@ export class EmpDeputationComponent implements OnInit {
   deputationObjectives: any[] = [];
   deputationStatuss: any[] = [];
   deputationTypes: any[] = [];
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpDeputation_CreateEmpDeputation';
+  canEdit: string = 'HR_EmpDeputation_UpdateEmpDeputation';
+  canSingleDelete: string = 'HR_EmpDeputation_DeleteEmpDeputation';
   @Input() personId: string;
   filter: string = '';
   fetched: boolean = false;

@@ -21,9 +21,9 @@ export class EmpEmploymentStatusComponent implements OnInit {
   startingTypes: any[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpEmploymentStatus_CreateEmpEmploymentStatus';
+  canEdit: string = 'HR_EmpEmploymentStatus_UpdateEmpEmploymentStatus';
+  canSingleDelete: string = 'HR_EmpEmploymentStatus_DeleteEmpEmploymentStatus';
   @Input() personId: string;
 
   constructor(private messageService: MessageService,

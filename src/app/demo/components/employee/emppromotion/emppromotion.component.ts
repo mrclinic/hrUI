@@ -19,9 +19,9 @@ export class EmpPromotionComponent implements OnInit {
   formStructure: IFormStructure[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpPromotion_CreateEmpPromotion';
+  canEdit: string = 'HR_EmpPromotion_UpdateEmpPromotion';
+  canSingleDelete: string = 'HR_EmpPromotion_DeleteEmpPromotion';
   @Input() personId: string;
   evaluationGrades: any[] = [];
   promotionPercentages: any[] = [];

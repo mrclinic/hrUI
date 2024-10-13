@@ -18,9 +18,9 @@ export class EmpExperienceComponent implements OnInit {
   experienceTypes: any[] = [];
   fetched: boolean = false;
   filter: string;
-  canAdd: string = '';
-  canEdit: string = '';
-  canSingleDelete: string = '';
+  canAdd: string = 'HR_EmpExperience_CreateEmpExperience';
+  canEdit: string = 'HR_EmpExperience_UpdateEmpExperience';
+  canSingleDelete: string = 'HR_EmpExperience_DeleteEmpExperience';
   @Input() personId: string;
 
   constructor(private messageService: MessageService,
