@@ -14,7 +14,8 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 @Component({
   selector: 'app-empvacation',
   templateUrl: './empvacation.component.html',
-  styleUrls: ['./empvacation.component.css']
+  styleUrls: ['./empvacation.component.css'],
+  providers: [GeneralService]
 })
 export class EmpVacationComponent implements OnInit {
   cols: any[] = [];
@@ -106,7 +107,8 @@ export class EmpVacationComponent implements OnInit {
         modificationContractTypeName: item?.modificationContractType?.name,
         vacationTypeName: item?.vacationType?.name,
         isAppearingInRecordCard: this.generalService.getRadioOptionLabel(item?.isAppearingInRecordCard),
-        isIncludedInServiceDuration: this.generalService.getRadioOptionLabel(item?.isIncludedInServiceDuration)
+        isIncludedInServiceDuration: this.generalService.getRadioOptionLabel(item?.isIncludedInServiceDuration),
+        forcedVacationTypeName: item?.forcedVacationType?.name
       });
     })
   }

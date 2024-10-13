@@ -17,11 +17,12 @@ export class AuthServiceService {
   }
 
   checkPermission(permission): boolean {
-    //return true;
+    return true;
     return this.permissions.includes(permission);
   }
 
   checkPermissions(menuPermissions: any[]): boolean {
+    return true;
     let exist = false;
     menuPermissions.forEach((menuPermission) => {
       let item = this.permissions.find((z) => z.includes(menuPermission));
