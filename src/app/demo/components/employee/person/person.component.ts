@@ -135,6 +135,19 @@ export class PersonComponent implements OnInit {
         format: 'yy-mm-dd'
       },
       {
+        type: 'number',
+        label: APP_CONSTANTS.PersonalNum,
+        name: 'personalNum',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
         type: 'text',
         label: APP_CONSTANTS.IMAGEPATH,
         name: 'imagePath',
@@ -498,6 +511,7 @@ export class PersonComponent implements OnInit {
   initColumns() {
     this.cols = [
       { dataKey: 'birthDate', header: APP_CONSTANTS.BIRTHDATE },
+      { dataKey: 'personalNum', header: APP_CONSTANTS.PersonalNum },      
       { dataKey: 'familyBookDate', header: APP_CONSTANTS.FAMILYBOOKDATE },
       { dataKey: 'imagePath', header: APP_CONSTANTS.IMAGEPATH },
       { dataKey: 'employmentStatusTypeName', header: APP_CONSTANTS.EMPLOYMENTSTATUSTYPE_NAME },
