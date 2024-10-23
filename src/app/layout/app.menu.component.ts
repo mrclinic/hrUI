@@ -142,7 +142,7 @@ export class AppMenuComponent implements OnInit {
                         visible: this.authServiceService.checkPermission('HR_JobTitle_GetJobTitles')
                     },
                     {
-                        label: 'اللغات', icon: 'pi pi-fw pi-wallet', routerLink: ['/constants/language'],
+                        label: 'اللغات', icon: 'pi pi-fw pi-language', routerLink: ['/constants/language'],
                         visible: this.authServiceService.checkPermission('HR_Language_GetLanguages')
                     },
                     {

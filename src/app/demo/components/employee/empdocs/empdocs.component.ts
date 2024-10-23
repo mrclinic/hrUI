@@ -45,7 +45,6 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
     this.filter = `Filters=EmployeeId==${this.personId}&RefId==${this.refId}`;
     this.empDocService.GetEmpDocsInfo(this.filter).subscribe((res) => {
       this.empDocs = this.mapItemList(res);
-      console.log(this.empDocs);
     })
   }
 
@@ -68,13 +67,14 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
       case '.docx':
         return 'pi-file-word';
       case '.xlsx':
+      case '.csv':
         return 'pi-file-excel';
       case '.jpg':
         return 'pi-image';
       case '.txt':
         return 'pi-file-o';
       default:
-        return '';
+        return extension;
     }
   }
 

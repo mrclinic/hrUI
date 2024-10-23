@@ -1,3 +1,11 @@
 :host ::ng-deep .p-tree .p-treenode-children {
     padding: 0 0.5rem 0 1rem !important;
 }
+
+:host ::ng-deep p-toolbar .p-button {
+    gap: 1rem !important;
+}
+
+:host ::ng-deep .p-contextmenu .p-menuitem-link {
+    gap: 0.5rem;
+}

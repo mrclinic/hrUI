@@ -1,29 +1,27 @@
 <div class="grid">
-  <div class="col-12">
-    <div class="card px-6 py-6">
+  <div class="col-12 py-0">
+    <div class="card px-2 py-2">
       <p-toast></p-toast>
-      <p-toolbar styleClass="mb-4" *hasPermission="[canAdd,canEdit]; op 'OR'">
-        <ng-template pTemplate="left">
+      <p-toolbar styleClass="mb-2" *hasPermission="[canAdd,canEdit]; op 'OR'">
+        <ng-template pTemplate="left" *ngIf="!hasUploadAction">
           <div class="my-2">
-            <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus"
-              class="p-button-success mr-2" (click)="openNew()"></button>
+            <button *hasPermission="[canAdd]" pButton pRipple label="إضافة" icon="pi pi-plus" tooltipPosition="top"
+              pTooltip="إضافة" class="p-button-success mr-2" (click)="openNew()"></button>
             <!-- <button *ngIf="canMultiDelete" pButton pRipple label="حذف" icon="pi pi-trash" class="p-button-danger"
               (click)="deleteSelectedItems()" [disabled]="!selectedItems || !selectedItems.length"></button> -->
           </div>
         </ng-template>
 
+        <ng-template pTemplate="left" *ngIf="hasUploadAction">
+          <div class="my-2">
+            <button pButton pRipple label="إرفاق وثيقة" tooltipPosition="top" pTooltip="إرفاق وثيقة" icon="pi pi-upload"
+              class="p-button-success mr-2" (click)="uploadDoc()"></button>
+          </div>
+        </ng-template>
         <!--  <ng-template pTemplate="right">
           <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
             (click)="dt.exportCSV()"></button>
         </ng-template> -->
-      </p-toolbar>
-      <p-toolbar styleClass="mb-4" *ngIf="hasUploadAction">
-        <ng-template pTemplate="left">
-          <div class="my-2">
-            <button pButton pRipple label="إرفاق وثيقة" icon="pi pi-upload" class="p-button-success mr-2"
-              (click)="uploadDoc()"></button>
-          </div>
-        </ng-template>
       </p-toolbar>
 
       <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10"
@@ -67,15 +65,15 @@
               </ng-container>
             </td>
             <td *hasPermission="[canEdit , canSingleDelete]">
-              <div class="flex">
-                <button *hasPermission="[canEdit]" pButton pRipple icon="pi pi-pencil"
-                  class="p-button-rounded p-button-success mr-2" (click)="editItem(item)"></button>
-                <button *hasPermission="[canSingleDelete]" pButton pRipple icon="pi pi-trash"
-                  class="p-button-rounded p-button-warning" (click)="deleteSelectedItem(item)"></button>
+              <div class="actions">
+                <button *hasPermission="[canEdit]" pButton pRipple icon="pi pi-pencil" tooltipPosition="top"
+                  pTooltip="تعديل" class="p-button-rounded p-button-success mr-2" (click)="editItem(item)"></button>
+                <button *hasPermission="[canSingleDelete]" pButton pRipple icon="pi pi-trash" tooltipPosition="top"
+                  pTooltip="حذف" class="p-button-rounded p-button-warning" (click)="deleteSelectedItem(item)"></button>
                 <button *ngIf="hasDocs" pButton pRipple icon="pi pi-file" class="p-button-rounded p-button-warning"
-                  (click)="goToDocs(item)"></button>
-                <button *ngIf="hasDownloadAction" pButton pRipple icon="pi pi-download"
-                  class="p-button-rounded p-button-warning" (click)="downloadDoc(item)"></button>
+                  tooltipPosition="top" pTooltip="عرض الوثائق" (click)="goToDocs(item)"></button>
+                <button *ngIf="hasDownloadAction" pButton pRipple icon="pi pi-download" tooltipPosition="top"
+                  pTooltip="تنزيل" class="p-button-rounded p-button-warning" (click)="downloadDoc(item)"></button>
               </div>
             </td>
           </tr>
@@ -86,8 +84,10 @@
     <p-dialog [(visible)]="itemDialog" [style]="{width: 'auto'}" header="التفاصيل" [modal]="true" class="p-fluid">
       <app-dynamic-form [formStructure]="formStructure" [hasCustomCssClass]="hasCustomCssClass"></app-dynamic-form>
       <ng-template pTemplate="footer">
-        <button pButton pRipple label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="حفظ" icon="pi pi-check" class="p-button-text" (click)="saveItem()"></button>
+        <button pButton pRipple label="إلغاء" tooltipPosition="top" pTooltip="إلغاء" icon="pi pi-times"
+          class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="حفظ" tooltipPosition="top" pTooltip="حفظ" icon="pi pi-check"
+          class="p-button-text" (click)="saveItem()"></button>
       </ng-template>
     </p-dialog>
 
@@ -97,10 +97,10 @@
         <span *ngIf="item">هل أنت متأكد من حذف <b>{{item?.name}}</b>?</span>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا" tooltipPosition="top" pTooltip="ل"
           (click)="deleteItemDialog = false"></button>
-        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
-          (click)="confirmDelete(item)"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" tooltipPosition="top"
+          pTooltip="نعم" (click)="confirmDelete(item)"></button>
       </ng-template>
     </p-dialog>
 
@@ -110,10 +110,10 @@
         <span>هل أنت متأكد من حذف العناصر المختارة؟</span>
       </div>
       <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا"
-          (click)="deleteItemsDialog = false"></button>
-        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم"
-          (click)="confirmDeleteSelected(item)"></button>
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="لا" tooltipPosition="top"
+          pTooltip="إضافة" (click)="deleteItemsDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" tooltipPosition="top"
+          pTooltip="نعم" (click)="confirmDeleteSelected(item)"></button>
       </ng-template>
     </p-dialog>
   </div>

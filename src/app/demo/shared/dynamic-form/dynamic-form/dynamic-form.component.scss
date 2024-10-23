@@ -1,6 +1,20 @@
-.dynamicForm{
+.dynamicForm {
     display: grid;
     grid-template-columns: 3fr 3fr;
     align-items: center;
     gap: 8px;
+
+    ::ng-deep .field>label {
+        font-size: 1.2rem !important;
+        color: darkblue !important;
+    }
+
+    textarea {
+        display: flex;
+        width: -webkit-fill-available;
+    }
+}
+
+:host ::ng-deep .error {
+    color: red !important;
 }

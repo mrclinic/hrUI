@@ -26,7 +26,7 @@ export class CustomTreeComponent implements OnInit {
   initMenuItems() {
     this.menuItems = [
       { label: APP_CONSTANTS.ADD_NAME, icon: 'pi pi-plus', command: (event) => this.addItem(this.selectedITem) },
-      { label: APP_CONSTANTS.EDIT_NAME, icon: 'pi pi-pen-to-square', command: (event) => this.editITem(this.selectedITem) },
+      { label: APP_CONSTANTS.EDIT_NAME, icon: 'pi pi-pencil', command: (event) => this.editITem(this.selectedITem) },
       { label: APP_CONSTANTS.DELETE_NAME, icon: 'pi pi-trash', command: (event) => this.deleteITem(this.selectedITem) }
     ];
   }
