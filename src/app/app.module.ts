@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { DatePipe, HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { CommonModule, DatePipe, HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -19,11 +19,13 @@ import { BaseGuard } from './demo/guards/BaseGuard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { PrimengModule } from 'src/primeng/primeng.module';
+import { LoaderComponent } from './demo/shared/loader/loader.component';
+import { SpinnerState } from './demo/stateManagement/userManagment/states/SpinnerState';
 @NgModule({
-    declarations: [AppComponent, NotfoundComponent
+    declarations: [AppComponent, NotfoundComponent, LoaderComponent
     ],
-    imports: [PrimengModule, AppRoutingModule, AppLayoutModule,
-        NgxsModule.forRoot([UserState], { developmentMode: !environment.production }),
+    imports: [PrimengModule, AppRoutingModule, AppLayoutModule, CommonModule,
+        NgxsModule.forRoot([UserState, SpinnerState], { developmentMode: !environment.production }),
         NgxsReduxDevtoolsPluginModule.forRoot(),
         //npm i @ngxs/storage-plugin
         NgxsStoragePluginModule.forRoot({

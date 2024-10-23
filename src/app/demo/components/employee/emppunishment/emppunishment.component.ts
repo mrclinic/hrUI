@@ -14,7 +14,8 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 @Component({
   selector: 'app-emppunishment',
   templateUrl: './emppunishment.component.html',
-  styleUrls: ['./emppunishment.component.css']
+  styleUrls: ['./emppunishment.component.css'],
+  providers: [GeneralService]
 })
 export class EmpPunishmentComponent implements OnInit {
   cols: any[] = [];

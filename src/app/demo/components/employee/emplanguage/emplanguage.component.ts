@@ -11,7 +11,8 @@ import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-
 @Component({
   selector: 'app-emplanguage',
   templateUrl: './emplanguage.component.html',
-  styleUrls: ['./emplanguage.component.css']
+  styleUrls: ['./emplanguage.component.css'],
+  providers: [GeneralService]
 })
 export class EmpLanguageComponent implements OnInit {
   cols: any[] = [];

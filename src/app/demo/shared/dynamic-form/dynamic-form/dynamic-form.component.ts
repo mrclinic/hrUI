@@ -58,7 +58,6 @@ export class DynamicFormComponent implements OnInit {
       return '';
     }
     for (let validation of control.validations) {
-      console.log(validation)
       if (formControl.hasError(validation.name)) {
         return validation.message + (validation?.value ? validation?.value : '');
       }

@@ -7,15 +7,18 @@ import { DynamicFormComponent } from "./dynamic-form/dynamic-form/dynamic-form.c
 import { CustomTreeComponent } from "./custom-tree/custom-tree.component";
 import { HasPermissionDirective } from "./directives/has-permission.directive";
 import { FileUploadComponent } from "../dialogs/docs.dialog/docs.dialog";
+import { UploadFileDialogComponent } from "../dialogs/docs.dialog/upload-dialog/upload-doc.dialog";
 
 @NgModule({
   declarations: [
     CustomTableComponent, PermissionListComponent, DynamicFormComponent,
-    CustomTreeComponent, HasPermissionDirective, FileUploadComponent
+    CustomTreeComponent, HasPermissionDirective, FileUploadComponent,
+    UploadFileDialogComponent
   ],
   exports: [
     CustomTableComponent, PermissionListComponent, DynamicFormComponent,
-    CustomTreeComponent, HasPermissionDirective, FileUploadComponent
+    CustomTreeComponent, HasPermissionDirective, FileUploadComponent,
+    UploadFileDialogComponent
   ],
   imports: [
     PrimengModule, CommonModule

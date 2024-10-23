@@ -15,7 +15,6 @@ import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { FileUploadModule } from 'primeng/fileupload';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { SpeedDialModule } from 'primeng/speeddial';
@@ -49,7 +48,6 @@ import { TreeSelectModule } from 'primeng/treeselect';
     CardModule,
     DynamicDialogModule,
     FileUploadModule,
-    ProgressSpinnerModule,
     DividerModule,
     DropdownModule,
     SpeedDialModule,
@@ -82,7 +80,6 @@ import { TreeSelectModule } from 'primeng/treeselect';
     CardModule,
     DynamicDialogModule,
     FileUploadModule,
-    ProgressSpinnerModule,
     DividerModule,
     DropdownModule,
     SpeedDialModule,

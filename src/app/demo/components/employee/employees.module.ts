@@ -31,6 +31,7 @@ import { EmpTrainingCourseComponent } from './emptrainingcourse/emptrainingcours
 import { EmpVacationComponent } from './empvacation/empvacation.component';
 import { EmpWorkInjuryComponent } from './empworkinjury/empworkinjury.component';
 import { EmpWorkPlaceComponent } from './empworkplace/empworkplace.component';
+import { EmpDocsComponent } from './empdocs/empdocs.component';
 
 @NgModule({
     imports: [
@@ -54,7 +55,7 @@ import { EmpWorkPlaceComponent } from './empworkplace/empworkplace.component';
         EmpMilitaryServiceSuspensionComponent, EmpPartnerComponent, EmpPerformanceEvaluationComponent,
         EmpPromotionComponent, EmpPunishmentComponent, EmpQualificationComponent,
         EmpRelinquishmentComponent, EmpRewardComponent, EmpTrainingCourseComponent, EmpVacationComponent,
-        EmpWorkInjuryComponent, EmpWorkPlaceComponent
+        EmpWorkInjuryComponent, EmpWorkPlaceComponent, EmpDocsComponent
     ],
     providers: [DatePipe]
 })

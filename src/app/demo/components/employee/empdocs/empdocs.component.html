@@ -1,0 +1,5 @@
+<app-custom-table [cols]="cols" [tableData]='empDocs' [tableTitle]="'الوثائق'"
+    (deleteEventHandler)="deleteEventHandler($event)" [canAdd]="canAdd" [canEdit]="canEdit"
+    [canSingleDelete]="canSingleDelete" [hasCustomCssClass]="true" [hasUploadAction]="true" [personId]="personId"
+    (uploadEventHandler)="uploadEventHandler($event)" [hasDownloadAction]="true">
+</app-custom-table>

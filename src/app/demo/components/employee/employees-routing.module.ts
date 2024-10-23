@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { PersonComponent } from './person/person.component';
 import { PersonPrfileComponent } from './person-profile/person-profile.component';
+import { EmpDocsComponent } from './empdocs/empdocs.component';
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -25,7 +26,16 @@ import { PersonPrfileComponent } from './person-profile/person-profile.component
                 ogDescription: environment.ogDescription,
                 ogImage: environment.appUrl + environment.ogImage
             }
-        }
+        },
+        {
+            path: 'docs/:refId/:personId',
+            component: EmpDocsComponent,
+            data: {
+                ogTitle: environment.ogTitle,
+                ogDescription: environment.ogDescription,
+                ogImage: environment.appUrl + environment.ogImage
+            }
+        },
     ])],
     exports: [RouterModule]
 })

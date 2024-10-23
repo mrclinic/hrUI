@@ -3,14 +3,17 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/c
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from 'src/app/demo/models/userManagment/User';
+import { Store } from '@ngxs/store';
+import { ToggleShow } from 'src/app/demo/stateManagement/userManagment/actions/spinner.actions';
 
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {
   currentUser: User = {};
   accessToken: string = '';
-  constructor(private router: Router, private zone: NgZone) { }
+  constructor(private router: Router, private zone: NgZone, private store: Store) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.store.dispatch(new ToggleShow());
     try {
       this.currentUser = JSON.parse(localStorage.getItem('users.loggedUser') || "") as User;
 

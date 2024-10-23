@@ -1,0 +1,17 @@
+.docForm {
+  display: grid;
+  grid-template-columns: 3fr 3fr;
+  align-items: center;
+  gap: 8px;
+  padding: 1.5rem;
+
+  .customCss {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .inputCss {
+    display: contents;
+  }
+}

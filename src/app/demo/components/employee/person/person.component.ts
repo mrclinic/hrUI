@@ -145,6 +145,12 @@ export class PersonComponent implements OnInit {
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 7
+          },
         ],
       },
       {
@@ -511,7 +517,7 @@ export class PersonComponent implements OnInit {
   initColumns() {
     this.cols = [
       { dataKey: 'birthDate', header: APP_CONSTANTS.BIRTHDATE },
-      { dataKey: 'personalNum', header: APP_CONSTANTS.PersonalNum },      
+      { dataKey: 'personalNum', header: APP_CONSTANTS.PersonalNum },
       { dataKey: 'familyBookDate', header: APP_CONSTANTS.FAMILYBOOKDATE },
       { dataKey: 'imagePath', header: APP_CONSTANTS.IMAGEPATH },
       { dataKey: 'employmentStatusTypeName', header: APP_CONSTANTS.EMPLOYMENTSTATUSTYPE_NAME },

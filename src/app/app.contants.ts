@@ -212,4 +212,11 @@ export class APP_CONSTANTS {
     public static DATEOFRELINQUISHMENT = 'تاريخ الانفكاك';
     public static FIELD_MAX_LENGTH = 'الطول الأعظمي لهذا الحقل ';
     public static PersonalNum = 'الرقم الذاتي';
+
+    public static DocDate = 'تاريخ الوثيقة';
+    public static DocNumber = 'رقم الوثيقة';
+    public static DocSrc = 'مصدر الوثيقة';
+    public static DocDescription = 'الوصف';
+    public static FileType = 'نوع الملف';
+    public static Extension = 'لاحقة الملف';
 }

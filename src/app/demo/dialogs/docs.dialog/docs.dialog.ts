@@ -11,7 +11,12 @@ import { EmpDoc } from "../../models/employee/empdoc.model";
     <p-fileUpload name="demo[]" [customUpload]="true"  (uploadHandler)="uploadFiles($event)"
             [multiple]="true"  [maxFileSize]="1000000" chooseLabel="اختر الملفات"
             cancelLabel="إلغاء" uploadLabel="تحميل الملفات">
-            <ng-template pTemplate="content">
+             <ng-template pTemplate="content">
+            <ul *ngIf="uploadedFiles.length">
+                <li *ngFor="let file of uploadedFiles">
+                    {{ file.name }} - {{ file.size }} bytes
+                </li>
+            </ul>
 
             <p-table [value]="uploadedFiles"   dir="rtl" [paginator]="true"
             [rows]="5" [responsive]="true" >
@@ -24,7 +29,7 @@ import { EmpDoc } from "../../models/employee/empdoc.model";
                 </th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-file>
+            <ng-template pTemplate="body" let-file let-editing="editing">
               <tr>
                 <td class="td">{{file.name? file.name : file.Name}}</td>
                 <td>

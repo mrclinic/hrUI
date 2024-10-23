@@ -2,13 +2,15 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { IFormStructure } from '../dynamic-form/from-structure-model';
 import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.component';
 import { Router } from '@angular/router';
+import { UnsubscribeComponent } from '../unsubscribe/unsubscribe.component';
+import { EmpDocService } from '../../service/employee/empdoc.service';
 
 @Component({
   selector: 'app-custom-table',
   templateUrl: './custom-table.component.html',
   styleUrls: ['./custom-table.component.css']
 })
-export class CustomTableComponent implements OnInit {
+export class CustomTableComponent extends UnsubscribeComponent implements OnInit {
   @Input() cols: any[] = [];
   @Input() canAdd: string = '';
   @Input() canEdit: string = '';
@@ -36,7 +38,15 @@ export class CustomTableComponent implements OnInit {
   @Input() redirectUrlUpOnClick: string;
   @Input() queryParamName: string;
   selectedItem: any;
-  constructor(private router: Router) { }
+
+  @Input() personId: string;
+  @Input() hasDocs: boolean = false;
+  @Input() hasUploadAction: boolean = false;
+  @Input() hasDownloadAction: boolean = false;
+  @Output() uploadEventHandler = new EventEmitter<any>();
+  constructor(private router: Router, private readonly empDocService: EmpDocService,) {
+    super();
+  }
 
   ngOnInit(): void {
 
@@ -94,5 +104,21 @@ export class CustomTableComponent implements OnInit {
       this.itemDialog = false;
       this.item = {};
     }
+  }
+
+  uploadDoc() {
+    this.uploadEventHandler.emit(true);
+  }
+
+  goToDocs(item) {
+    this.router.navigate([
+      'employees/docs',
+      item.id,
+      this.personId,
+    ]);
+  }
+
+  downloadDoc(item) {
+    this.empDocService.DownloadEmpDoc(item.id, item.fileType, item.name);
   }
 }
