@@ -23,7 +23,6 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   @Input() hasPaginator: boolean = true;
   @Input() showCurrentPageReport: boolean = true;
   @Input() tableTitle: string = '';
-  @Input() globalFilterFields: string[] = [];
   itemDialog: boolean = false;
   @Input() formStructure: IFormStructure[] = [];
   deleteItemDialog: boolean = false;
@@ -35,12 +34,10 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
   @ViewChild(DynamicFilterComponent) childComponentFilter: DynamicFilterComponent;
   @Input() hasCustomCssClass: boolean = false;
-
   @Input() hasClickAbleRow: boolean = false;
   @Input() redirectUrlUpOnClick: string;
   @Input() queryParamName: string;
   selectedItem: any;
-
   @Input() personId: string;
   @Input() hasDocs: boolean = false;
   @Input() hasUploadAction: boolean = false;
@@ -50,6 +47,7 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   isFiltering: boolean = false;
   @Input() formStructureFilter: IFormStructure[] = [];
   @Output() submitEventHandlerFilter = new EventEmitter<any>();
+
   constructor(private router: Router, private readonly empDocService: EmpDocService,) {
     super();
   }

@@ -17,7 +17,6 @@ export class DynamicFilterComponent implements OnInit {
   }
   ngOnInit(): void {
     this.generateFormGroup();
-    console.log(this.dynamicForm)
   }
 
   generateFormGroup() {

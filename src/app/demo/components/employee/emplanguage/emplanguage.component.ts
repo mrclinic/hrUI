@@ -214,7 +214,8 @@ export class EmpLanguageComponent implements OnInit {
     if (eventData) {
       let filterStr = '';
       Object.keys(eventData).forEach(key => {
-        filterStr += `&${key}==${eventData[key]}`
+        if (eventData[key])
+          filterStr += `,${key}==${eventData[key]}`
       });
       this.filter = this.filter.concat(filterStr);
     }

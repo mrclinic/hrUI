@@ -38,7 +38,7 @@
                 {{ control.label }}
             </label>
             <p-dropdown appendTo="body" [formControlName]="control.name" [options]="control.options" optionLabel="label"
-                [placeholder]="control.placeHolder" dataKey="value" optionValue="value"
+                [placeholder]="control.placeHolder" dataKey="value" optionValue="value" [showClear]="true"
                 [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" />
             <span class="error"
                 *ngIf="dynamicForm.controls[control.name]?.invalid && dynamicForm.controls[control.name]?.touched">

@@ -31,9 +31,8 @@
         </ng-template> -->
       </p-toolbar>
 
-      <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10"
-        [globalFilterFields]="globalFilterFields" [paginator]="hasPaginator" [rowsPerPageOptions]="[10,20,30]"
-        [showCurrentPageReport]="showCurrentPageReport"
+      <p-table #dt [value]="tableData" [columns]="cols" responsiveLayout="scroll" [rows]="10" [paginator]="hasPaginator"
+        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="showCurrentPageReport"
         currentPageReportTemplate="إظهار {first} إلى {last} من العدد الإجمالي {totalRecords}"
         [(selection)]="selectedItem" selectionMode="single" [rowHover]="true" dataKey="id"
         (onRowSelect)="onRowSelect($event)">

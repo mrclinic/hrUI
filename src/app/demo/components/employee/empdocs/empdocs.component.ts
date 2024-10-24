@@ -42,7 +42,7 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
       this.refId = params['refId'];
       this.personId = params['personId']
     });
-    this.filter = `Filters=EmployeeId==${this.personId}&RefId==${this.refId}`;
+    this.filter = `Filters=EmployeeId==${this.personId},RefId==${this.refId}`;
     this.empDocService.GetEmpDocsInfo(this.filter).subscribe((res) => {
       this.empDocs = this.mapItemList(res);
     })
@@ -122,7 +122,7 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
   }
 
   reload() {
-    this.filter = `Filters=EmployeeId==${this.personId}&RefId==${this.refId}`;
+    this.filter = `Filters=EmployeeId==${this.personId},RefId==${this.refId}`;
     this.empDocService.GetEmpDocsInfo(this.filter).subscribe(
       (res) => {
         this.empDocs = this.mapItemList(res);
