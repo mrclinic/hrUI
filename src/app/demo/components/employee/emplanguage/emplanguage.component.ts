@@ -26,6 +26,7 @@ export class EmpLanguageComponent implements OnInit {
   @Input() personId: string;
   languages: any[] = [];
   languageLevels: any[] = [];
+  formStructureFilter: IFormStructure[] = [];
   constructor(private messageService: MessageService,
     private readonly emplanguageService: EmpLanguageService, private readonly languageService: LanguageService
     , private readonly languageLevelService: LanguageLevelService, private readonly generalService: GeneralService) {
@@ -55,8 +56,37 @@ export class EmpLanguageComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initFormStructureFilter();
         this.fetched = true;
       });
+  }
+
+  initFormStructureFilter() {
+    this.formStructureFilter = [
+      {
+        type: 'autoComplete',
+        label: APP_CONSTANTS.LANGUAGE_NAME,
+        name: 'LanguageId',
+        value: '',
+        options: [...this.languages],
+        placeHolder: APP_CONSTANTS.LANGUAGE_PLACE_HOLDER
+      },
+      {
+        type: 'select',
+        label: APP_CONSTANTS.LANGUAGELEVEL_NAME,
+        name: 'LanguageLevelId',
+        value: '',
+        options: [...this.languageLevels],
+        placeHolder: APP_CONSTANTS.LANGUAGELEVEL_PLACE_HOLDER
+      },
+      {
+        type: 'radio',
+        label: APP_CONSTANTS.DISPLAYONRECORDCARD,
+        name: 'DisplayOnRecordCard',
+        value: '',
+        options: [...this.generalService.getRadioOptions()]
+      }
+    ];
   }
 
   mapItemList(items: any[]): any[] {
@@ -73,7 +103,7 @@ export class EmpLanguageComponent implements OnInit {
   initFormStructure() {
     this.formStructure = [
       {
-        type: 'select',
+        type: 'autoComplete',
         label: APP_CONSTANTS.LANGUAGE_NAME,
         name: 'languageId',
         value: '',
@@ -172,11 +202,22 @@ export class EmpLanguageComponent implements OnInit {
   }
 
   reload() {
-    this.filter = `Filters=EmployeeId==${this.personId}`;
     this.emplanguageService.GetEmpLanguagesInfo(this.filter).subscribe(
       (res) => {
         this.emplanguages = this.mapItemList(res);
       }
     )
+  }
+
+  submitEventHandlerFilter(eventData) {
+    this.filter = `Filters=EmployeeId==${this.personId}`;
+    if (eventData) {
+      let filterStr = '';
+      Object.keys(eventData).forEach(key => {
+        filterStr += `&${key}==${eventData[key]}`
+      });
+      this.filter = this.filter.concat(filterStr);
+    }
+    this.reload();
   }
 }

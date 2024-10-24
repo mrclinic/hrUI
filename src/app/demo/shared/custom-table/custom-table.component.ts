@@ -4,6 +4,7 @@ import { DynamicFormComponent } from '../dynamic-form/dynamic-form/dynamic-form.
 import { Router } from '@angular/router';
 import { UnsubscribeComponent } from '../unsubscribe/unsubscribe.component';
 import { EmpDocService } from '../../service/employee/empdoc.service';
+import { DynamicFilterComponent } from '../dynamic-form/dynamic-filter/dynamic-filter.component';
 
 @Component({
   selector: 'app-custom-table',
@@ -32,6 +33,7 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   @Output() submitEventHandler = new EventEmitter<any>();
   @Output() deleteEventHandler = new EventEmitter<string>();
   @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
+  @ViewChild(DynamicFilterComponent) childComponentFilter: DynamicFilterComponent;
   @Input() hasCustomCssClass: boolean = false;
 
   @Input() hasClickAbleRow: boolean = false;
@@ -44,6 +46,10 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   @Input() hasUploadAction: boolean = false;
   @Input() hasDownloadAction: boolean = false;
   @Output() uploadEventHandler = new EventEmitter<any>();
+  @Input() hasFilter: boolean = true;
+  isFiltering: boolean = false;
+  @Input() formStructureFilter: IFormStructure[] = [];
+  @Output() submitEventHandlerFilter = new EventEmitter<any>();
   constructor(private router: Router, private readonly empDocService: EmpDocService,) {
     super();
   }
@@ -120,5 +126,18 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
 
   downloadDoc(item) {
     this.empDocService.DownloadEmpDoc(item.id, item.fileType, item.name);
+  }
+
+  showFilter() {
+    this.isFiltering = true;
+  }
+  hideFilter() {
+    this.isFiltering = false;
+    this.childComponentFilter.dynamicForm.reset();
+    this.submitEventHandlerFilter.emit(null);
+  }
+  search() {
+    this.isFiltering = false;
+    this.submitEventHandlerFilter.emit(this.childComponentFilter.dynamicForm.value)
   }
 }

@@ -18,6 +18,13 @@
               class="p-button-success mr-2" (click)="uploadDoc()"></button>
           </div>
         </ng-template>
+        <ng-template pTemplate="right" *ngIf="hasFilter">
+          <div class="my-2">
+            <p-button label="بحث" tooltipPosition="top" pTooltip="بحث" icon="pi pi-filter" class="p-button-success mr-2"
+              (click)="showFilter()"></p-button>
+          </div>
+
+        </ng-template>
         <!--  <ng-template pTemplate="right">
           <button pButton pRipple label="تصدير" icon="pi pi-upload" class="p-button-help"
             (click)="dt.exportCSV()"></button>
@@ -114,6 +121,17 @@
           pTooltip="إضافة" (click)="deleteItemsDialog = false"></button>
         <button pButton pRipple icon="pi pi-check" class="p-button-text" label="نعم" tooltipPosition="top"
           pTooltip="نعم" (click)="confirmDeleteSelected(item)"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="isFiltering" [style]="{width: 'auto'}" header="الفلاتر" [modal]="true" class="p-fluid">
+      <app-dynamic-filter [formStructure]="formStructureFilter"
+        [hasCustomCssClass]="hasCustomCssClass"></app-dynamic-filter>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="إلغاء" tooltipPosition="top" pTooltip="إلغاء" icon="pi pi-times"
+          class="p-button-text" (click)="hideFilter()"></button>
+        <button pButton pRipple label="بحث" tooltipPosition="top" pTooltip="بحث" icon="pi pi-check"
+          class="p-button-text" (click)="search()"></button>
       </ng-template>
     </p-dialog>
   </div>
