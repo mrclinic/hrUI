@@ -29,6 +29,13 @@
             margin: .75rem 0;
         }
 
+        .logout {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            cursor: pointer;
+        }
+
         >a {
             display: none;
         }

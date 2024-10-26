@@ -13,9 +13,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { UserManagmentRoutingModule } from './user-managment-routing.module';
 import { JwtInterceptorInterceptor } from 'src/intercepters/jwt-interceptor.interceptor';
 import { ErrorInterceptorInterceptor } from 'src/intercepters/error-interceptor.interceptor';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     imports: [
+        SharedModule,
         CommonModule,
         UserManagmentRoutingModule,
         PrimengModule,

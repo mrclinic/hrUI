@@ -9,7 +9,6 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
             {
                 path: '', component: AppLayoutComponent,
                 children: [
-                    //{ path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
                     { path: 'mgt', loadChildren: () => import('./demo/components/userManagment/user-managment.module').then(m => m.UserManagmentModule) },
                     { path: 'constants', loadChildren: () => import('./demo/components/constants/constants.module').then(m => m.ConstantsModule) },
                     { path: 'employees', loadChildren: () => import('./demo/components/employee/employees.module').then(m => m.EmployeesModule) }

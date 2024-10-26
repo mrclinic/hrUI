@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
 
     constructor(public layoutService: LayoutService, private fb: FormBuilder, private store: Store, private router: Router,
         private zone: NgZone, private messageService: MessageService, private translate: TranslateService) {
-        this.logInForm = fb.group({
+        this.logInForm = this.fb.group({
             username: new FormControl('', [Validators.required, Validators.maxLength(100)]),
             password: new FormControl('', [Validators.required, Validators.maxLength(100)])
         });
