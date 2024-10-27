@@ -2,10 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { takeUntil } from 'rxjs';
+import { forkJoin, takeUntil } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
-import { helper } from 'src/app/demo/helper/helper';
 import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
+import { GenderService } from 'src/app/demo/service/constants/gender.service';
 import { UserProfileService } from 'src/app/demo/service/userManagment/user.profile.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
 import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
@@ -18,7 +18,7 @@ import { UnsubscribeComponent } from 'src/app/demo/shared/unsubscribe/unsubscrib
   styleUrls: ['./user.profile.component.css']
 })
 export class UserProfileComponent extends UnsubscribeComponent implements OnInit {
-  sexTypes: any[] = [];
+  genders: any[] = [];
   userId: string;
   filter: string;
   userProfiles: any[] = [];
@@ -28,14 +28,14 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
   canSingleDelete: string = 'UserManagment_UserProfile_DeleteUserProfile';
   tableActions: ActionDef[] = [];
   cols: any[] = [];
+  fetched: boolean = false;
   constructor(private datePipe: DatePipe, private messageService: MessageService,
     private readonly userProfileService: UserProfileService,
-    private route: ActivatedRoute, private readonly authServiceService: AuthServiceService) {
+    private route: ActivatedRoute, private readonly authServiceService: AuthServiceService,
+    private readonly genderService: GenderService) {
     super();
-    this.sexTypes = helper.sexTypes;
     this.initColumns();
     this.initActions();
-    this.initFormStructure();
   }
 
   ngOnInit(): void {
@@ -43,11 +43,18 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
       this.userId = params['userId']
     });
     this.filter = `Filters=UserId==${this.userId}`;
-    this.userProfileService.GetAllUserProfiles(this.filter).subscribe(
-      (userProfiles) => {
+    forkJoin([this.genderService.GetAllGenders(''), this.userProfileService.GetAllUserProfilesInfo(this.filter)])
+      .pipe(takeUntil(this.destroy$)).subscribe((([genders, userProfiles]) => {
         this.userProfiles = this.mapItemList(userProfiles);
-      }
-    );
+        this.genders = genders.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        });
+        this.initFormStructure();
+        this.fetched = true;
+      }));
   }
 
   initColumns() {
@@ -56,7 +63,7 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
       { dataKey: 'motherName', header: APP_CONSTANTS.MOTHERNAME, type: 'string' },
       { dataKey: 'birthPlace', header: APP_CONSTANTS.BIRTHPLACE, type: 'string' },
       { dataKey: 'birthDate', header: APP_CONSTANTS.BIRTHDATE, type: 'string' },
-      { dataKey: 'gender', header: APP_CONSTANTS.GENDER_NAME, type: 'string' },
+      { dataKey: 'genderName', header: APP_CONSTANTS.GENDER_NAME, type: 'string' },
       { dataKey: 'cardNumber', header: APP_CONSTANTS.cardNumber, type: 'string' },
       { dataKey: 'address', header: APP_CONSTANTS.ADDRESS, type: 'string' },
       { dataKey: 'userName', header: APP_CONSTANTS.userName, type: 'string' }
@@ -76,6 +83,12 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 100
+          },
         ],
       },
       {
@@ -89,6 +102,12 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 100
+          },
         ],
       },
       {
@@ -101,6 +120,12 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
             name: 'required',
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 100
           },
         ],
       },
@@ -122,9 +147,9 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
       {
         type: 'autoComplete',
         label: APP_CONSTANTS.GENDER_NAME,
-        name: 'gender',
+        name: 'genderId',
         value: '',
-        options: [...this.sexTypes],
+        options: [...this.genders],
         placeHolder: APP_CONSTANTS.GENDER_PLACE_HOLDER,
         validations: [
           {
@@ -145,6 +170,12 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
+          {
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 20
+          },
         ],
       },
       {
@@ -158,19 +189,11 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
             validator: 'required',
             message: APP_CONSTANTS.FIELD_REQUIRED,
           },
-        ],
-      },
-      {
-        type: 'text',
-        label: APP_CONSTANTS.userName,
-        name: 'userName',
-        value: '',
-        readonly: true,
-        validations: [
           {
-            name: 'required',
-            validator: 'required',
-            message: APP_CONSTANTS.FIELD_REQUIRED,
+            name: 'maxlength',
+            validator: 'maxlength',
+            message: APP_CONSTANTS.FIELD_MAX_LENGTH,
+            value: 100
           },
         ],
       }
@@ -191,6 +214,7 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
   }
 
   submitEventHandler(eventData) {
+    eventData.userId = this.userId;
     if (eventData.id) {
       this.userProfileService.UpdateUserProfile(eventData).subscribe(
         () => {
@@ -221,7 +245,7 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
 
   reload() {
     this.filter = `Filters=UserId==${this.userId}`;
-    this.userProfileService.GetAllUserProfiles(this.filter).subscribe(
+    this.userProfileService.GetAllUserProfilesInfo(this.filter).subscribe(
       (userProfiles) => {
         this.userProfiles = this.mapItemList(userProfiles);
       }
@@ -232,7 +256,8 @@ export class UserProfileComponent extends UnsubscribeComponent implements OnInit
     return items.map((item) => {
       return Object.assign(item, {
         ...item,
-        userName: item?.user?.name,
+        userName: item?.user?.userName,
+        genderName: item?.gender?.name,
         birthDate: this.transformDate(item?.birthDate)
       });
     })

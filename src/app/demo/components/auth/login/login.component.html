@@ -27,7 +27,11 @@
                         <p-password formControlName="password" name="password" id="password" type="password"
                             class="input" data-type="password" placeholder="أدخل كلمة المرور الخاصة بك"
                             [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
-
+                        <small [ngStyle]="{'color': 'red' }"
+                            *ngIf="logInForm.touched && f['password'].invalid && f['password'].errors && f['password'].errors['required']">
+                            كلمة المرور إجباري</small>
+                        <small class="p-invalid" [style]="{color: 'red'}"
+                            *ngIf="f['password'].errors?.['maxlength']">طول كلمة المرور لا يتجاوز 100 محرف</small>
                         <div class="flex align-items-center justify-content-between mb-5 gap-5">
                             <div class="flex align-items-center">
                                 <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>

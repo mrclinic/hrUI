@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe, HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { CommonModule, DatePipe, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { EventService } from './demo/service/common/event.service';
 import { NgxsModule } from '@ngxs/store';
-import { UserState } from './demo/stateManagement/userManagment/states/user.state';
+import { UserState } from './demo/stateManagement/states/user.state';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { environment } from 'src/environments/environment';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -20,7 +20,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { PrimengModule } from 'src/primeng/primeng.module';
 import { LoaderComponent } from './demo/shared/loader/loader.component';
-import { SpinnerState } from './demo/stateManagement/userManagment/states/SpinnerState';
+import { SpinnerState } from './demo/stateManagement/states/SpinnerState';
 @NgModule({
     declarations: [AppComponent, NotfoundComponent, LoaderComponent
     ],

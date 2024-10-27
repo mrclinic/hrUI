@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from 'src/app/demo/models/userManagment/User';
 import { Store } from '@ngxs/store';
-import { ToggleShow } from 'src/app/demo/stateManagement/userManagment/actions/spinner.actions';
+import { ToggleShow } from 'src/app/demo/stateManagement/actions/spinner.actions';
 
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {

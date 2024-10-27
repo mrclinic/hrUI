@@ -3,8 +3,9 @@ import { Store } from "@ngxs/store";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Permission } from "../../models/userManagment/Permission";
 import { RolePermission } from "../../models/userManagment/RolePermission";
-import { PermissionActions } from "../../stateManagement/userManagment/actions/permission.action";
-import { RolePermissionActions } from "../../stateManagement/userManagment/actions/role.permission.action";
+import { RolePermissionActions } from "../../stateManagement/actions/role.permission.action";
+import { PermissionService } from "../../service/userManagment/permission.service";
+import { RolePermissionService } from "../../service/userManagment/role.permission.service";
 
 
 @Component({
@@ -49,15 +50,17 @@ export class PermissionListComponent {
   rolePermissions: RolePermission[] = [];
   roleId: string = '';
   filter: string = '';
-  constructor(private store: Store, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
+  constructor(private store: Store, public ref: DynamicDialogRef, public config: DynamicDialogConfig,
+    private readonly permissionService: PermissionService, private readonly rolePermissionService: RolePermissionService
+  ) { }
 
   ngOnInit() {
     if (this.config.data) {
       this.roleId = this.config.data;
     }
-    this.store.dispatch(new PermissionActions.GetAllPermissions('PageSize=500')).subscribe(
-      () => {
-        this.permissions = this.store.selectSnapshot<Permission[]>((state) => state.users.permissions);
+    this.permissionService.GetAllPermissions('PageSize=500').subscribe(
+      (permissions) => {
+        this.permissions = permissions;
         this.filter = `Filters=RoleId==${this.roleId}&PageSize=500`;
         this.getRolePermissions(this.filter);
       }

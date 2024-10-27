@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Select } from '@ngxs/store';
 import { PrimeNGConfig } from 'primeng/api';
-import { SpinnerState } from './demo/stateManagement/userManagment/states/SpinnerState';
+import { SpinnerState } from './demo/stateManagement/states/SpinnerState';
 import { Observable } from 'rxjs';
 
 @Component({

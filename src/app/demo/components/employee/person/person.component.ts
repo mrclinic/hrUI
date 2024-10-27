@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { BloodGroupService } from 'src/app/demo/service/constants/bloodgroup.service';
 import { CityService } from 'src/app/demo/service/constants/city.service';
 import { EmploymentStatusTypeService } from 'src/app/demo/service/constants/employmentstatustype.service';
@@ -11,6 +12,7 @@ import { MaritalStatusService } from 'src/app/demo/service/constants/maritalstat
 import { NationalityService } from 'src/app/demo/service/constants/nationality.service';
 import { PersonService } from 'src/app/demo/service/employee/person.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-person',
@@ -34,6 +36,7 @@ export class PersonComponent implements OnInit {
   hasClickAbleRow: boolean = true;
   redirectUrlUpOnClick: string = 'employees/employee-profile';
   queryParamName: string = 'personId';
+  tableActions: ActionDef[] = [];
   constructor(private messageService: MessageService,
     private readonly personService: PersonService,
     private readonly employmentStatusTypeService: EmploymentStatusTypeService,
@@ -42,10 +45,28 @@ export class PersonComponent implements OnInit {
     private readonly maritalStatusService: MaritalStatusService,
     private readonly bloodGroupService: BloodGroupService,
     private readonly cityService: CityService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe, private readonly authServiceService: AuthServiceService
   ) {
     this.initColumns();
+    this.initActions();
   }
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
+  }
+
   transformDate(date: string | number | Date) {
     return this.datePipe.transform(date, 'yyyy-MM-dd');
   }

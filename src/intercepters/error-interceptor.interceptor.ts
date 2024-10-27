@@ -3,8 +3,8 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse } fr
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { UserActions } from 'src/app/demo/stateManagement/userManagment/actions/user.action';
-import { ToggleHide } from 'src/app/demo/stateManagement/userManagment/actions/spinner.actions';
+import { UserActions } from 'src/app/demo/stateManagement/actions/user.action';
+import { ToggleHide } from 'src/app/demo/stateManagement/actions/spinner.actions';
 
 @Injectable()
 export class ErrorInterceptorInterceptor implements HttpInterceptor {

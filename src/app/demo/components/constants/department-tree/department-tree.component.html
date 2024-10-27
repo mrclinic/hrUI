@@ -1,5 +1,6 @@
 <app-custom-tree *ngIf="fetched" [treeItems]="treeNodes" (submitEventHandler)="submitEventHandler($event)"
-    (deleteEventHandler)="deleteEventHandler($event)"></app-custom-tree>
+    (deleteEventHandler)="deleteEventHandler($event)" [canAdd]="canAdd" [canEdit]="canEdit"
+    [canSingleDelete]="canSingleDelete"></app-custom-tree>
 <p-dialog [(visible)]="itemDialog" [style]="{width: 'auto'}" header="التفاصيل" [modal]="true" class="p-fluid">
     <app-dynamic-form [formStructure]="formStructure" [hasCustomCssClass]="false"></app-dynamic-form>
     <ng-template pTemplate="footer">
