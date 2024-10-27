@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { PromotionPercentage } from 'src/app/demo/models/constants/promotionpercentage.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { PromotionPercentageService } from 'src/app/demo/service/constants/promotionpercentage.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-promotionpercentage',
@@ -17,11 +19,12 @@ export class PromotionPercentageComponent implements OnInit {
   canAdd: string = 'HR_PromotionPercentage_CreatePromotionPercentage';
   canEdit: string = 'HR_PromotionPercentage_UpdatePromotionPercentage';
   canSingleDelete: string = 'HR_PromotionPercentage_DeletePromotionPercentage';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly promotionpercentageService: PromotionPercentageService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class PromotionPercentageComponent implements OnInit {
         this.promotionpercentages = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

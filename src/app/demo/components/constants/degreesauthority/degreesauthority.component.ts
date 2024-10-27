@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { DegreesAuthority } from 'src/app/demo/models/constants/degreesauthority.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { DegreesAuthorityService } from 'src/app/demo/service/constants/degreesauthority.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-degreesauthority',
@@ -17,11 +19,12 @@ export class DegreesAuthorityComponent implements OnInit {
   canAdd: string = 'HR_DegreesAuthority_CreateDegreesAuthority';
   canEdit: string = 'HR_DegreesAuthority_UpdateDegreesAuthority';
   canSingleDelete: string = 'HR_DegreesAuthority_DeleteDegreesAuthority';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly degreesauthorityService: DegreesAuthorityService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class DegreesAuthorityComponent implements OnInit {
         this.degreesauthoritys = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

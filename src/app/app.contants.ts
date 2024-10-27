@@ -219,4 +219,18 @@ export class APP_CONSTANTS {
     public static DocDescription = 'الوصف';
     public static FileType = 'نوع الملف';
     public static Extension = 'لاحقة الملف';
+
+    public static fName = 'الاسم الأول';
+    public static lName = 'الكنية';
+    public static userName = 'اسم المستخدم';
+    public static phone = 'رقم الهاتف';
+    public static natNum = 'الرقم الوطني';
+    public static emailAddress = 'البريد الالكتروني';
+    public static isActive = 'فعّال';
+    public static roleName = 'الدور';
+    public static Role_PLACE_HOLDER = 'يرجى اختيار البلد';
+    public static passWord = 'كلمة المرور';
+    public static displayName = 'الاسم العربي';
+    public static order = 'الترتيب';
+    public static cardNumber = 'رقم الهوية الشخصية';
 }

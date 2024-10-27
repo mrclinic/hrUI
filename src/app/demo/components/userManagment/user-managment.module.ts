@@ -4,7 +4,6 @@ import { PrimengModule } from 'src/primeng/primeng.module';
 import { MyProfileComponent } from './my.profile/my.profile.component';
 import { PermissionComponent } from './permission/permission.component';
 import { RoleComponent } from './role/role.component';
-import { RolePermissionComponent } from './role.permission/role.permission.component';
 import { UserComponent } from './user/user.component';
 import { UserProfileComponent } from './user.profile/user.profile.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -30,7 +29,7 @@ import { SharedModule } from '../../shared/shared.module';
             extend: true
         })
     ],
-    declarations: [MyProfileComponent, PermissionComponent, RoleComponent, RolePermissionComponent
+    declarations: [MyProfileComponent, PermissionComponent, RoleComponent
         , UserComponent, UserProfileComponent
     ],
     providers: [

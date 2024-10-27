@@ -1,143 +1,143 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Observable } from 'rxjs/internal/Observable';
+import { APP_CONSTANTS } from 'src/app/app.contants';
 import { PermissionListComponent } from 'src/app/demo/dialogs/permissions.dialog/permissions.dialog';
 import { Permission } from 'src/app/demo/models/userManagment/Permission';
-import { Role } from 'src/app/demo/models/userManagment/Role';
-import { RoleActions } from 'src/app/demo/stateManagement/userManagment/actions/role.action';
-import { RolePermissionActions } from 'src/app/demo/stateManagement/userManagment/actions/role.permission.action';
-
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
+import { RolePermissionService } from 'src/app/demo/service/userManagment/role.permission.service';
+import { RoleService } from 'src/app/demo/service/userManagment/role.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { UnsubscribeComponent } from 'src/app/demo/shared/unsubscribe/unsubscribe.component';
 
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.css']
 })
-export class RoleComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  roles: Role[] = [];
+export class RoleComponent extends UnsubscribeComponent implements OnInit {
   cols: any[];
-  roleDialog: boolean;
-  rolePermissionDialog: boolean;
-  role!: Role;
-  submitted: boolean;
-  NameHearder: string = '';
-  DisplayNameHeader: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+  roles: any[] = [];
+  formStructure: IFormStructure[] = [];
+  canAdd: string = 'UserManagment_Role_CreateRole';
+  canEdit: string = 'UserManagment_Role_UpdateRole';
+  canSingleDelete: string = 'UserManagment_Role_DeleteRole';
+  tableActions: ActionDef[] = [];
   ref?: DynamicDialogRef;
-  RolePermissionsLabel: string = '';
-  StatusCode: string = '';
-  items: MenuItem[] = [];
-  constructor(private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService,
-    private dialogService: DialogService) {
-    this.cols = [];
-    this.roleDialog = false;
-    this.submitted = false;
-    this.rolePermissionDialog = false;
+  constructor(private messageService: MessageService,
+    private dialogService: DialogService, private readonly roleService: RoleService,
+    private readonly authServiceService: AuthServiceService, private readonly rolePermissionService: RolePermissionService) {
+    super();
+    this.initColumns();
+    this.initFormStructure();
+    this.initActions();
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DIALOG,
+        tooltip: 'صلاحيات الدور'
+      }
+    ]
+  }
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.displayName,
+        name: 'displayName',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
   }
 
   ngOnInit(): void {
-    this.items = [
-      { label: 'الأدوار', icon: '', routerLink: '/roles' },
-      { label: 'إدارة المستخدمين', icon: '', routerLink: '' },
-    ];
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
-    this.store.dispatch(new RoleActions.GetAllRoles('')).subscribe(
-      () => {
-        this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);
-        this.initColumns();
+    this.roleService.GetAllRoles('').subscribe(
+      (roles) => {
+        this.roles = roles;
       }
-    );
+    )
   }
   initColumns() {
-    this.cols = [{ field: 'name', header: "الاسم" },
-    { field: 'displayName', header: "الاسم العربي" }
+    this.cols = [
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'displayName', header: APP_CONSTANTS.displayName, type: 'string' }
     ]
   }
-  openNew() {
-    this.role = {};
-    this.submitted = false;
-    this.roleDialog = true;
-  }
-  editRole(role: Role) {
-    this.role = { ...role };
-    this.roleDialog = true;
-  }
-  deleteSelectedRole(role: Role) {
-    this.role = role;
-    this.deleteRole();
-  }
-  deleteRole() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.role.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.store.dispatch(new RoleActions.DeleteRole(this.role?.id as string)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
 
-  hideDialog() {
-    this.roleDialog = false;
-    this.submitted = false;
-  }
-
-  saveRole() {
-    this.submitted = true;
-    if (this.role.name?.trim()) {
-      if (this.role.id) {
-        this.store.dispatch(new RoleActions.UpdateRole(this.role)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        delete this.role.id;
-        this.store.dispatch(new RoleActions.AddRole(this.role)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.roleDialog = false;
-      this.role = {};
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.roleService.UpdateRole(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+    else {
+      delete eventData.id;
+      this.roleService.AddRole(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
     }
   }
 
+  deleteEventHandler(eventData) {
+    this.roleService.DeleteRole(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
+  }
+
   reload() {
-    this.store.dispatch(new RoleActions.GetAllRoles('')).subscribe(
-      () => {
-        this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);
+    this.roleService.GetAllRoles('').subscribe(
+      (roles) => {
+        this.roles = roles;
       }
     )
   }
 
-  setPermissions(role: Role) {
-    this.role = { ...role }
+  setPermissions(data) {
     this.ref = this.dialogService.open(PermissionListComponent, {
       header: 'صلاحيات الدور',
       width: '70%',
@@ -145,7 +145,7 @@ export class RoleComponent implements OnInit {
       baseZIndex: 10000,
       rtl: true,
       modal: true,
-      data: this.role.id
+      data: data.id
     });
 
     this.ref.onClose.subscribe((selectedPermissions: Permission[]) => {
@@ -153,16 +153,11 @@ export class RoleComponent implements OnInit {
         return rest;
       });
       const mapped = newArr?.map((element) => ({
-        roleId: this.role.id,
+        roleId: data.id,
         permissionId: element.id
       }));
-      this.store.dispatch(new RolePermissionActions.SetRolePermission(mapped, this.role?.id!)).subscribe(data => {
+      this.rolePermissionService.SetRolePermission(mapped, data.id).subscribe(data => {
       })
     });
-  }
-  ngOnDestroy() {
-    if (this.ref) {
-      this.ref.close();
-    }
   }
 }

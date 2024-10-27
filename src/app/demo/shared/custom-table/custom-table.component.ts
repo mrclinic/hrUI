@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UnsubscribeComponent } from '../unsubscribe/unsubscribe.component';
 import { EmpDocService } from '../../service/employee/empdoc.service';
 import { DynamicFilterComponent } from '../dynamic-form/dynamic-filter/dynamic-filter.component';
+import { ActionDef, TABLE_ACTION } from '../models/action-def';
 
 @Component({
   selector: 'app-custom-table',
@@ -47,13 +48,15 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   isFiltering: boolean = false;
   @Input() formStructureFilter: IFormStructure[] = [];
   @Output() submitEventHandlerFilter = new EventEmitter<any>();
-
+  @Input() hasGoToAction: boolean = true;
+  @Input() tableActions: ActionDef[] = [];
+  @Output() openDialogEventHandler = new EventEmitter<any>();
   constructor(private router: Router, private readonly empDocService: EmpDocService,) {
     super();
   }
 
   ngOnInit(): void {
-
+    this.tableActions = this.tableActions.filter((p) => p.visible == true);
   }
   onRowSelect(event: any) {
     if (!this.hasClickAbleRow) return;
@@ -137,5 +140,17 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   search() {
     this.isFiltering = false;
     this.submitEventHandlerFilter.emit(this.childComponentFilter.dynamicForm.value)
+  }
+  goToAction(item, action) {
+    this.router.navigate([action.redirectUrl, item.id], {
+      queryParams: { [action.queryParam]: item.id },
+    });
+  }
+
+  hasAddAction() {
+    return this.tableActions.filter((p) => p.type == TABLE_ACTION.Add || p.type == TABLE_ACTION.UPLOAD).length >= 0;
+  }
+  openDialog(item) {
+    this.openDialogEventHandler.emit(item)
   }
 }

@@ -3,9 +3,11 @@ import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { City } from 'src/app/demo/models/constants/city.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { CityService } from 'src/app/demo/service/constants/city.service';
 import { CountryService } from 'src/app/demo/service/constants/country.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-city',
@@ -21,7 +23,8 @@ export class CityComponent implements OnInit {
   canEdit: string = 'HR_City_UpdateCity';
   canSingleDelete: string = 'HR_City_DeleteCity';
   fetched: boolean = false;
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly cityService: CityService, private readonly countryService: CountryService) {
     this.initColumns();
   }
@@ -36,8 +39,26 @@ export class CityComponent implements OnInit {
         });
       })
       this.initFormStructure();
+      this.initActions();
       this.fetched = true;
     })
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

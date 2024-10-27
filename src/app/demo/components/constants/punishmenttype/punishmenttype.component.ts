@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { FinancialImpactService } from 'src/app/demo/service/constants/financialimpact.service';
 import { PunishmentTypeService } from 'src/app/demo/service/constants/punishmenttype.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-punishmenttype',
@@ -20,7 +22,8 @@ export class PunishmentTypeComponent implements OnInit {
   canSingleDelete: string = 'HR_PunishmentType_DeletePunishmentType';
   fetched: boolean = false;
   financialImpacts: any[] = [];
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly punishmenttypeService: PunishmentTypeService,
     private readonly financialImpactService: FinancialImpactService) {
     this.initColumns();
@@ -37,8 +40,26 @@ export class PunishmentTypeComponent implements OnInit {
         });
       })
       this.initFormStructure();
+      this.initActions();
       this.fetched = true;
     })
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { MilitarySpecialization } from 'src/app/demo/models/constants/militaryspecialization.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { MilitarySpecializationService } from 'src/app/demo/service/constants/militaryspecialization.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-militaryspecialization',
@@ -17,11 +19,12 @@ export class MilitarySpecializationComponent implements OnInit {
   canAdd: string = 'HR_MilitarySpecialization_CreateMilitarySpecialization';
   canEdit: string = 'HR_MilitarySpecialization_UpdateMilitarySpecialization';
   canSingleDelete: string = 'HR_MilitarySpecialization_DeleteMilitarySpecialization';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly militaryspecializationService: MilitarySpecializationService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class MilitarySpecializationComponent implements OnInit {
         this.militaryspecializations = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

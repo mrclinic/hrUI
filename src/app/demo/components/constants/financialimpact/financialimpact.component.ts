@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { FinancialImpact } from 'src/app/demo/models/constants/financialimpact.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { FinancialImpactService } from 'src/app/demo/service/constants/financialimpact.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-financialimpact',
@@ -17,11 +19,12 @@ export class FinancialImpactComponent implements OnInit {
   canAdd: string = 'HR_FinancialImpact_CreateFinancialImpact';
   canEdit: string = 'HR_FinancialImpact_UpdateFinancialImpact';
   canSingleDelete: string = 'HR_FinancialImpact_DeleteFinancialImpact';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly financialimpactService: FinancialImpactService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class FinancialImpactComponent implements OnInit {
         this.financialimpacts = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

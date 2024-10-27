@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, FilterMatchMode, MenuItem, MessageService, SelectItem } from 'primeng/api';
-import { Observable } from 'rxjs/internal/Observable';
-import { FilterMatchModeCustom } from 'src/app/demo/helper/FilterMatchModeCustom';
-import { Permission } from 'src/app/demo/models/userManagment/Permission';
-import { PermissionActions } from 'src/app/demo/stateManagement/userManagment/actions/permission.action';
+import { MessageService } from 'primeng/api';
+import { APP_CONSTANTS } from 'src/app/app.contants';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
+import { PermissionService } from 'src/app/demo/service/userManagment/permission.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { UnsubscribeComponent } from 'src/app/demo/shared/unsubscribe/unsubscribe.component';
 
 
 @Component({
@@ -13,133 +13,131 @@ import { PermissionActions } from 'src/app/demo/stateManagement/userManagment/ac
   templateUrl: './permission.component.html',
   styleUrls: ['./permission.component.css']
 })
-export class PermissionComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  permissions: Permission[] = [];
-  cols: any[];
-  permissionDialog: boolean;
-  permission!: Permission;
-  submitted: boolean;
-  NameHearder: string = '';
-  OrderHearder: string = '';
-  DisplayNameHeader: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
+export class PermissionComponent extends UnsubscribeComponent implements OnInit {
   totalRecords: number = 0;
   paginationFilter: string = 'Page=1';
-  matchModeOptions: SelectItem[] = [];
-  items: MenuItem[] = [];
-  constructor(private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private translate: TranslateService) {
-    this.cols = [];
-    this.permissionDialog = false;
-    this.submitted = false;
+  cols: any[];
+  permissions: any[] = [];
+  formStructure: IFormStructure[] = [];
+  canAdd: string = 'UserManagment_Permission_CreatePermission';
+  canEdit: string = 'UserManagment_Permission_UpdatePermission';
+  canSingleDelete: string = 'UserManagment_Permission_DeletePermission';
+  tableActions: ActionDef[] = [];
+  constructor(private messageService: MessageService, private readonly authServiceService: AuthServiceService,
+    private permissionService: PermissionService) {
+    super();
+    this.initColumns();
+    this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
-    this.items = [
-      { label: 'الصلاحيات', icon: '', routerLink: '/permissions' },
-      { label: 'إدارة المستخدمين', icon: '', routerLink: '' },
-    ];
-    this.matchModeOptions = [
-      { label: FilterMatchModeCustom.STARTS_WITH, value: FilterMatchMode.STARTS_WITH },
-      { label: FilterMatchModeCustom.CONTAINS, value: FilterMatchMode.CONTAINS },
-      { label: FilterMatchModeCustom.NOT_CONTAINS, value: FilterMatchMode.NOT_CONTAINS },
-      { label: FilterMatchModeCustom.ENDS_WITH, value: FilterMatchMode.ENDS_WITH },
-      { label: FilterMatchModeCustom.EQUALS, value: FilterMatchMode.EQUALS },
-      { label: FilterMatchModeCustom.NOT_EQUALS, value: FilterMatchMode.NOT_EQUALS },
-      { label: FilterMatchModeCustom.NOT_EQUALS, value: FilterMatchMode.NOT_EQUALS },
-      //{ label: FilterMatchModeCustom.NO_FILTER, value: FilterMatchMode.NO_FILTER }
-    ];
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
-    this.store.dispatch(new PermissionActions.GetAllPermissions(this.paginationFilter)).subscribe(
-      () => {
-        this.permissions = this.store.selectSnapshot<Permission[]>((state) => state.users.permissions).slice();
-        this.totalRecords = this.permissions.length;
+    this.permissionService.GetAllPermissions(this.paginationFilter).subscribe(
+      (permissions) => {
+        this.permissions = permissions;
         this.initColumns();
       }
     );
   }
-  initColumns() {
-    this.cols = [{ field: 'name', header: 'الاسم' },
-    { field: 'displayName', header: "الاسم العربي" },
-    { field: 'order', header: "الترتيب" }]
-  }
-  openNew() {
-    this.permission = {};
-    this.submitted = false;
-    this.permissionDialog = true;
-  }
-  editPermission(permission: Permission) {
-    this.permission = { ...permission };
-    this.permissionDialog = true;
-  }
-  deleteSelectedPermission(permission: Permission) {
-    this.permission = permission;
-    this.deletePermission();
-  }
-  deletePermission() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.permission.name + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.store.dispatch(new PermissionActions.DeletePermission(this.permission?.id as string)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
       },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
+  }
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.NAME,
+        name: 'name',
+        value: '',
+        readonly: true,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.displayName,
+        name: 'displayName',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'number',
+        label: APP_CONSTANTS.order,
+        name: 'order',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
   }
 
-  hideDialog() {
-    this.permissionDialog = false;
-    this.submitted = false;
-  }
-
-  savePermission() {
-    this.submitted = true;
-    if (this.permission.name?.trim()) {
-      if (this.permission.id) {
-        this.store.dispatch(new PermissionActions.UpdatePermission(this.permission)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        delete this.permission.id;
-        this.store.dispatch(new PermissionActions.AddPermission(this.permission)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.permissionDialog = false;
-      this.permission = {};
-    }
+  initColumns() {
+    this.cols = [
+      { dataKey: 'name', header: APP_CONSTANTS.NAME, type: 'string' },
+      { dataKey: 'displayName', header: APP_CONSTANTS.displayName, type: 'string' },
+      { dataKey: 'order', header: APP_CONSTANTS.order, type: 'string' }
+    ]
   }
 
   reload() {
-    this.store.dispatch(new PermissionActions.GetAllPermissions(this.paginationFilter)).subscribe(
-      () => {
-        this.permissions = this.store.selectSnapshot<Permission[]>((state) => state.users.permissions).slice();
-        this.totalRecords = this.permissions.length;
+    this.permissionService.GetAllPermissions(this.paginationFilter).subscribe(
+      (permissions) => {
+        this.permissions = permissions;
       }
     )
+  }
+
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.permissionService.UpdatePermission(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+    else {
+      delete eventData.id;
+      this.permissionService.AddPermission(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.permissionService.DeletePermission(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
+      }
+    );
   }
 }

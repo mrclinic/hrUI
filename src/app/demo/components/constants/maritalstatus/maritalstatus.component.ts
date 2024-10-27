@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { MaritalStatus } from 'src/app/demo/models/constants/maritalstatus.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { MaritalStatusService } from 'src/app/demo/service/constants/maritalstatus.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-maritalstatus',
@@ -17,11 +19,12 @@ export class MaritalStatusComponent implements OnInit {
   canAdd: string = 'HR_MaritalStatus_CreateMaritalStatus';
   canEdit: string = 'HR_MaritalStatus_UpdateMaritalStatus';
   canSingleDelete: string = 'HR_MaritalStatus_DeleteMaritalStatus';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly maritalstatusService: MaritalStatusService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class MaritalStatusComponent implements OnInit {
         this.maritalstatuss = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

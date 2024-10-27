@@ -14,4 +14,5 @@ export interface IFormStructure {
     placeHolder?: string;
     format?: string | 'yy-mm-dd';
     maxValue?: string | number | Date;
+    readonly?: boolean;
 }

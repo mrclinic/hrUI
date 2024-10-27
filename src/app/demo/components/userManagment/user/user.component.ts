@@ -1,157 +1,265 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Observable } from 'rxjs/internal/Observable';
-import { Role } from 'src/app/demo/models/userManagment/Role';
-import { User } from 'src/app/demo/models/userManagment/User';
-import { RoleActions } from 'src/app/demo/stateManagement/userManagment/actions/role.action';
-import { UserActions } from 'src/app/demo/stateManagement/userManagment/actions/user.action';
+import { MessageService } from 'primeng/api';
+import { forkJoin, takeUntil } from 'rxjs';
+import { APP_CONSTANTS } from 'src/app/app.contants';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
+import { GeneralService } from 'src/app/demo/service/common/general-service.service';
+import { RoleService } from 'src/app/demo/service/userManagment/role.service';
+import { UserService } from 'src/app/demo/service/userManagment/user.service';
+import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { UnsubscribeComponent } from 'src/app/demo/shared/unsubscribe/unsubscribe.component';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+  styleUrls: ['./user.component.css'],
+  providers: [GeneralService]
 })
-export class UserComponent implements OnInit {
-  isLoading$!: Observable<boolean>;
-  users: User[] = [];
+export class UserComponent extends UnsubscribeComponent implements OnInit {
+  users: any[] = [];
   cols: any[];
-  userDialog: boolean;
-  user!: User;
-  submitted: boolean;
-  FNameHeader: string = '';
-  LNameHeader: string = '';
-  PhoneHeader: string = '';
-  NatNumHeader: string = '';
-  EmailAddressHeader: string = '';
-  UserTokenHeader: string = '';
-  IsActiveHeader: string = '';
-  RoleIDHeader: string = '';
-  usernameLabel: string = '';
-  passwordLabel: string = '';
-  ConfirmTitle: string = '';
-  ConfirmMsg: string = '';
-  Success: string = '';
-  deleteSuccess: string = '';
-  Yes: string = '';
-  No: string = '';
-  editSuccess: string = '';
-  addSuccess: string = '';
-  roles: Role[] = [];
-  constructor(private store: Store, private messageService: MessageService,
-    private confirmationService: ConfirmationService, private router: Router) {
-    this.cols = [];
-    this.userDialog = false;
-    this.submitted = false;
+  roles: any[] = [];
+  formStructure: IFormStructure[] = [];
+  canAdd: string = 'UserManagment_User_CreateUser';
+  canEdit: string = 'UserManagment_User_UpdateUser';
+  canSingleDelete: string = 'UserManagment_User_DeleteUser';
+  fetched: boolean = false;
+  tableActions: ActionDef[] = [];
+  constructor(private messageService: MessageService, private router: Router,
+    private readonly userService: UserService, private readonly roleService: RoleService,
+    private readonly generalService: GeneralService, private readonly authServiceService: AuthServiceService
+  ) {
+    super();
+    this.initColumns();
+    this.initActions();
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.NAVIGATE,
+        redirectUrl: 'mgt/userProfiles/',
+        queryParam: 'userId',
+        icon: 'pi-user',
+        tooltip: 'بروفايل المستخدم'
+      }
+    ]
+  }
+
+  initFormStructure() {
+    this.formStructure = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.fName,
+        name: 'fName',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.lName,
+        name: 'lName',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.userName,
+        name: 'userName',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.passWord,
+        name: 'passWord',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.phone,
+        name: 'phone',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.natNum,
+        name: 'natNum',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.emailAddress,
+        name: 'emailAddress',
+        value: '',
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'radio',
+        label: APP_CONSTANTS.isActive,
+        name: 'isActive',
+        value: '',
+        options: [...this.generalService.getRadioOptions()],
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      },
+      {
+        type: 'autoComplete',
+        label: APP_CONSTANTS.roleName,
+        name: 'roleID',
+        value: '',
+        options: [...this.roles],
+        placeHolder: APP_CONSTANTS.COUNTRY_PLACE_HOLDER,
+        validations: [
+          {
+            name: 'required',
+            validator: 'required',
+            message: APP_CONSTANTS.FIELD_REQUIRED,
+          },
+        ],
+      }
+    ];
   }
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.select<boolean>(
-      (state) => state.users.isLoading
-    );
-    this.store.dispatch(new UserActions.GetUsersInfo('')).subscribe(
-      () => {
-        this.users = this.store.selectSnapshot<User[]>((state) => state.users.users);
-        this.initColumns();
-      }
-    );
-
+    forkJoin([this.userService.GetUsersInfo(''), this.roleService.GetAllRoles('')])
+      .pipe(takeUntil(this.destroy$)).subscribe(([users, roles]) => {
+        this.users = this.mapItemList(users);
+        this.roles = roles.map((item) => {
+          return Object.assign(item, {
+            label: item?.name,
+            value: item?.id
+          });
+        })
+        this.initFormStructure();
+        this.fetched = true;
+      })
   }
+
+  mapItemList(items) {
+    return items.map((item) => {
+      return Object.assign(item, {
+        ...item,
+        roleName: item?.role?.name
+      });
+    })
+  }
+
   initColumns() {
     this.cols = [
-      { field: 'fName', header: "الاسم الأول" },
-      { field: 'lName', header: "الكنية" },
-      { field: 'userName', header: "اسم المستخدم" },
-      { field: 'phone', header: "رقم الهاتف" },
-      { field: 'natNum', header: "الرقم الوطني" },
-      { field: 'emailAddress', header: "البريد الالكتروني" },
-      { field: 'isActive', header: "فعّال" },
-      { field: 'roleID', header: "الدور" }
+      { dataKey: 'fName', header: APP_CONSTANTS.fName, type: 'string' },
+      { dataKey: 'lName', header: APP_CONSTANTS.lName, type: 'string' },
+      { dataKey: 'userName', header: APP_CONSTANTS.userName, type: 'string' },
+      { dataKey: 'phone', header: APP_CONSTANTS.phone, type: 'string' },
+      { dataKey: 'natNum', header: APP_CONSTANTS.natNum, type: 'string' },
+      { dataKey: 'emailAddress', header: APP_CONSTANTS.emailAddress, type: 'string' },
+      { dataKey: 'isActive', header: APP_CONSTANTS.isActive, type: 'string' },
+      { dataKey: 'roleName', header: APP_CONSTANTS.roleName, type: 'string' }
     ]
-  }
-  openNew() {
-    this.user = {};
-    this.submitted = false;
-    this.userDialog = true;
-  }
-  editUser(user: User) {
-    this.user = { ...user };
-    this.userDialog = true;
-  }
-  deleteSelectedUser(user: User) {
-    this.user = user;
-    this.deleteUser();
-  }
-  deleteUser() {
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف' + this.user.fName + '?',
-      header: 'تأكيد',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.store.dispatch(new UserActions.DeleteUser(this.user.id as string)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الحذف بنجاح', life: 3000 });
-            this.reload();
-          }
-        );
-      },
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-    });
-  }
-
-  hideDialog() {
-    this.userDialog = false;
-    this.submitted = false;
-  }
-
-  saveUser() {
-    this.submitted = true;
-    if (this.user.fName?.trim()) {
-      if (this.user.id) {
-        this.store.dispatch(new UserActions.UpdateUser(this.user)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية التعديل بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      else {
-        delete this.user.id;
-        this.store.dispatch(new UserActions.AddUser(this.user)).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تمت عملية الإضافة بنجاح', life: 3000 });
-            this.reload();
-          }
-        )
-      }
-      this.userDialog = false;
-      this.user = {};
-    }
   }
 
   reload() {
-    this.store.dispatch(new UserActions.GetUsersInfo('')).subscribe(
-      () => {
-        this.users = this.store.selectSnapshot<User[]>((state) => state.users.users);
+    this.userService.GetUsersInfo('').subscribe(
+      (users) => {
+        this.users = this.mapItemList(users);
       }
     )
   }
 
-  searchRole(event: any) {
-    let filter = "filters=displayName@=" + event.query;
-    this.store.dispatch(new RoleActions.GetAllRoles(filter)).subscribe(
-      () => {
-        this.roles = this.store.selectSnapshot<Role[]>((state) => state.users.roles);
+  submitEventHandler(eventData) {
+    if (eventData.id) {
+      this.userService.UpdateUser(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.EDIT_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+    else {
+      delete eventData.id;
+      this.userService.AddUser(eventData).subscribe(
+        () => {
+          this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.ADD_SUCCESS, life: 3000 });
+          this.reload();
+        }
+      )
+    }
+  }
+
+  deleteEventHandler(eventData) {
+    this.userService.DeleteUser(eventData as string).subscribe(
+      (data) => {
+        this.messageService.add({ severity: 'success', summary: APP_CONSTANTS.SUCCESS, detail: APP_CONSTANTS.DELETE_SUCCESS, life: 3000 });
+        this.reload();
       }
     );
   }
-  onSelectRole(event: any) {
-    console.log(event)
-    this.user.roleID = event?.value.id;
-    console.log(this.user)
-  }
+
   goToProfile(user) {
     this.router.navigate(['mgt/userProfiles/', user.id], {
       queryParams: { userId: user.id },

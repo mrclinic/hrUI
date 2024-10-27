@@ -3,9 +3,11 @@ import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { SubDepartment } from 'src/app/demo/models/constants/subdepartment.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { DepartmentService } from 'src/app/demo/service/constants/department.service';
 import { SubDepartmentService } from 'src/app/demo/service/constants/subdepartment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-subdepartment',
@@ -21,7 +23,8 @@ export class SubDepartmentComponent implements OnInit {
   canSingleDelete: string = 'HR_SubDepartment_DeleteSubDepartment';
   departments: any[] = [];
   fetched: boolean = false;
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly subdepartmentService: SubDepartmentService,
     private readonly departmentService: DepartmentService) {
     this.initColumns();
@@ -38,8 +41,26 @@ export class SubDepartmentComponent implements OnInit {
         });
       })
       this.initFormStructure();
+      this.initActions();
       this.fetched = true;
     })
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

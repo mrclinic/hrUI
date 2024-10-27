@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { ModificationContractType } from 'src/app/demo/models/constants/modificationcontracttype.model';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 @Component({
   selector: 'app-modificationcontracttype',
@@ -17,11 +19,12 @@ export class ModificationContractTypeComponent implements OnInit {
   canAdd: string = 'HR_ModificationContractType_CreateModificationContractType';
   canEdit: string = 'HR_ModificationContractType_UpdateModificationContractType';
   canSingleDelete: string = 'HR_ModificationContractType_DeleteModificationContractType';
-
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly modificationcontracttypeService: ModificationContractTypeService) {
     this.initColumns();
     this.initFormStructure();
+    this.initActions();
   }
 
   ngOnInit(): void {
@@ -30,6 +33,23 @@ export class ModificationContractTypeComponent implements OnInit {
         this.modificationcontracttypes = res
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
   }
 
   initFormStructure() {

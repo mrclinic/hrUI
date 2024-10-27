@@ -4,7 +4,8 @@
         <div class="field" *ngIf="['text', 'number', 'textarea'].includes(control.type)">
             <label for="name">{{ control.label }}</label>
             <input [type]="control.type" pInputText class="form-control" [formControlName]="control.name"
-                *ngIf="control.type !== 'textarea'" [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" />
+                [readonly]="control?.readonly" *ngIf="control.type !== 'textarea'"
+                [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }" />
             <textarea class="form-control" [formControlName]="control.name" *ngIf="control.type === 'textarea'">
                         </textarea>
             <span class="error"

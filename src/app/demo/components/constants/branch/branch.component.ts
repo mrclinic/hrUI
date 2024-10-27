@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { APP_CONSTANTS } from 'src/app/app.contants';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 import { BranchService } from 'src/app/demo/service/constants/branch.service';
 import { OrgDepartmentService } from 'src/app/demo/service/constants/org-department.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
 
 
 @Component({
@@ -21,7 +23,8 @@ export class BranchComponent implements OnInit {
   canEdit: string = 'HR_Branch_UpdateBranch';
   canSingleDelete: string = 'HR_Branch_DeleteBranch';
   fetched: boolean = false;
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly branchService: BranchService,
     private readonly departmentService: OrgDepartmentService) {
     this.initColumns();
@@ -38,10 +41,27 @@ export class BranchComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
   }
 
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      }
+    ]
+  }
   initFormStructure() {
     this.formStructure = [
       {
