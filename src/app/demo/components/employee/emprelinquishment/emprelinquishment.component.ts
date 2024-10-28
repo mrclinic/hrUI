@@ -7,7 +7,8 @@ import { ModificationContractTypeService } from 'src/app/demo/service/constants/
 import { RelinquishmentReasonService } from 'src/app/demo/service/constants/relinquishmentreason.service';
 import { EmpRelinquishmentService } from 'src/app/demo/service/employee/emprelinquishment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-emprelinquishment',
   templateUrl: './emprelinquishment.component.html',
@@ -25,7 +26,9 @@ export class EmpRelinquishmentComponent implements OnInit {
   @Input() personId: string;
   relinquishmentReasons: any;
   contractTypes: any;
-  constructor(private messageService: MessageService, private datePipe: DatePipe,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService, private datePipe: DatePipe,
     private readonly emprelinquishmentService: EmpRelinquishmentService,
     private readonly relinquishmentReasonService: RelinquishmentReasonService,
     private readonly modificationContractTypeService: ModificationContractTypeService
@@ -62,8 +65,33 @@ export class EmpRelinquishmentComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

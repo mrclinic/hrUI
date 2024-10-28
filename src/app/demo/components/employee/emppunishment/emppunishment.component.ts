@@ -10,7 +10,8 @@ import { OrgDepartmentService } from 'src/app/demo/service/constants/org-departm
 import { PunishmentTypeService } from 'src/app/demo/service/constants/punishmenttype.service';
 import { EmpPunishmentService } from 'src/app/demo/service/employee/emppunishment.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-emppunishment',
   templateUrl: './emppunishment.component.html',
@@ -31,7 +32,9 @@ export class EmpPunishmentComponent implements OnInit {
   orderDepartments: any;
   contractTypes: any;
   punishmentTypes: any;
-  constructor(private messageService: MessageService, private datePipe: DatePipe,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService, private datePipe: DatePipe,
     private readonly emppunishmentService: EmpPunishmentService,
     private readonly orgDepartmentService: OrgDepartmentService,
     private readonly modificationContractTypeService: ModificationContractTypeService,
@@ -75,9 +78,35 @@ export class EmpPunishmentComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
   }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
+  }
+
   mapItemList(items: any[]): any[] {
     return items.map((item) => {
       return Object.assign(item, {

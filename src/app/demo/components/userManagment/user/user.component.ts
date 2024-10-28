@@ -27,6 +27,8 @@ export class UserComponent extends UnsubscribeComponent implements OnInit {
   canSingleDelete: string = 'UserManagment_User_DeleteUser';
   fetched: boolean = false;
   tableActions: ActionDef[] = [];
+  formStructureFilter: IFormStructure[] = [];
+  filter: string = 'Filters=';
   constructor(private messageService: MessageService, private router: Router,
     private readonly userService: UserService, private readonly roleService: RoleService,
     private readonly generalService: GeneralService, private readonly authServiceService: AuthServiceService
@@ -197,8 +199,65 @@ export class UserComponent extends UnsubscribeComponent implements OnInit {
           });
         })
         this.initFormStructure();
+        this.initFormStructureFilter();
         this.fetched = true;
       })
+  }
+
+  initFormStructureFilter() {
+    this.formStructureFilter = [
+      {
+        type: 'text',
+        label: APP_CONSTANTS.fName,
+        name: 'FName',
+        value: ''
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.lName,
+        name: 'LName',
+        value: ''
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.userName,
+        name: 'UserName',
+        value: ''
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.phone,
+        name: 'Phone',
+        value: ''
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.natNum,
+        name: 'NatNum',
+        value: ''
+      },
+      {
+        type: 'text',
+        label: APP_CONSTANTS.emailAddress,
+        name: 'EmailAddress',
+        value: ''
+      },
+      {
+        type: 'radio',
+        label: APP_CONSTANTS.isActive,
+        name: 'IsActive',
+        value: '',
+        options: [...this.generalService.getRadioOptions()]
+      },
+      {
+        type: 'autoComplete',
+        label: APP_CONSTANTS.roleName,
+        name: 'RoleID',
+        value: '',
+        options: [...this.roles],
+        placeHolder: APP_CONSTANTS.COUNTRY_PLACE_HOLDER
+      }
+    ];
   }
 
   mapItemList(items) {
@@ -224,7 +283,7 @@ export class UserComponent extends UnsubscribeComponent implements OnInit {
   }
 
   reload() {
-    this.userService.GetUsersInfo('').subscribe(
+    this.userService.GetUsersInfo(this.filter).subscribe(
       (users) => {
         this.users = this.mapItemList(users);
       }
@@ -264,5 +323,18 @@ export class UserComponent extends UnsubscribeComponent implements OnInit {
     this.router.navigate(['mgt/userProfiles/', user.id], {
       queryParams: { userId: user.id },
     });
+  }
+
+  submitEventHandlerFilter(eventData) {
+    this.filter = 'Filters=';
+    if (eventData) {
+      let filterStr = '';
+      Object.keys(eventData).forEach(key => {
+        if (eventData[key])
+          filterStr += `,${key}==${eventData[key]}`
+      });
+      this.filter = this.filter.concat(filterStr);
+    }
+    this.reload();
   }
 }

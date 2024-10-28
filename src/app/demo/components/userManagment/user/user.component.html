@@ -1,4 +1,5 @@
 <app-custom-table *ngIf="fetched" [cols]="cols" [tableData]="users" [tableTitle]="'إدارة المستخدمين'"
   (submitEventHandler)="submitEventHandler($event)" (deleteEventHandler)="deleteEventHandler($event)"
-  [formStructure]="formStructure" [hasCustomCssClass]="true" [tableActions]="tableActions">
+  [formStructure]="formStructure" [hasCustomCssClass]="true" [tableActions]="tableActions"
+  [formStructureFilter]="formStructureFilter" (submitEventHandlerFilter)="submitEventHandlerFilter($event)">
 </app-custom-table>

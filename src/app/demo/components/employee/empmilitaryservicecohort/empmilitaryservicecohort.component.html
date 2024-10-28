@@ -1,5 +1,5 @@
 <app-custom-table *ngIf="fetched" [cols]="cols" [tableData]='empmilitaryservicecohorts'
     [tableTitle]="'دورات خدمة العلم'" (submitEventHandler)="submitEventHandler($event)"
     (deleteEventHandler)="deleteEventHandler($event)" [formStructure]="formStructure" [canAdd]="canAdd"
-    [canEdit]="canEdit" [canSingleDelete]="canSingleDelete" [hasCustomCssClass]="true">
+    [canEdit]="canEdit" [canSingleDelete]="canSingleDelete" [hasCustomCssClass]="true" [personId]="personId">
 </app-custom-table>

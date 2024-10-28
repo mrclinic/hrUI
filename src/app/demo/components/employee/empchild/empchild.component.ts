@@ -8,7 +8,8 @@ import { ChildStatusService } from 'src/app/demo/service/constants/childstatus.s
 import { GenderService } from 'src/app/demo/service/constants/gender.service';
 import { EmpChildService } from 'src/app/demo/service/employee/empchild.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-empchild',
   templateUrl: './empchild.component.html',
@@ -26,7 +27,9 @@ export class EmpChildComponent implements OnInit {
   fetched: boolean = false;
   genders: any[] = [];
   statuss: any[] = [];
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly empchildService: EmpChildService, private datePipe: DatePipe,
     private readonly childStatusService: ChildStatusService,
     private readonly genderService: GenderService) {
@@ -61,8 +64,33 @@ export class EmpChildComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

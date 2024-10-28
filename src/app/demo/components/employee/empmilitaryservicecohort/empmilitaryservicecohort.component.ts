@@ -4,7 +4,8 @@ import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpMilitaryServiceCohortService } from 'src/app/demo/service/employee/empmilitaryservicecohort.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-empmilitaryservicecohort',
   templateUrl: './empmilitaryservicecohort.component.html',
@@ -20,7 +21,9 @@ export class EmpMilitaryServiceCohortComponent implements OnInit {
   canEdit: string = 'HR_EmpMilitaryServiceCohort_UpdateEmpMilitaryServiceCohort';
   canSingleDelete: string = 'HR_EmpMilitaryServiceCohort_DeleteEmpMilitaryServiceCohort';
   @Input() personId: string;
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly empmilitaryservicecohortService: EmpMilitaryServiceCohortService
     , private datePipe: DatePipe) { }
 
@@ -36,8 +39,33 @@ export class EmpMilitaryServiceCohortComponent implements OnInit {
         this.empmilitaryservicecohorts = this.mapItemList(res);
         this.initColumns();
         this.initFormStructure();
+        this.initActions();
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

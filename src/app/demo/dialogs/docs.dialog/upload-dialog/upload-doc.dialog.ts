@@ -20,6 +20,7 @@ export class UploadFileDialogComponent {
   constructor(private messageService: MessageService,
     public ref: DynamicDialogRef, public config: DynamicDialogConfig,
     private fb: FormBuilder, private docTypeService: DocTypeService) { }
+
   ngOnInit() {
     this.docTypeService.GetAllDocTypes('').subscribe((res) => {
       this.docTypes = res.map((item) => {
@@ -44,6 +45,7 @@ export class UploadFileDialogComponent {
       this.refId = this.config.data?.refId;
     }
   }
+
   uploadFiles(event: any) {
     this.uploadedFiles = Object.assign([], this.uploadedFiles);
     for (let file of event.files) {
@@ -56,6 +58,8 @@ export class UploadFileDialogComponent {
     let res = { files: this.uploadedFiles, docInfo: this.docForm.value };
     this.ref.close(res);
   }
+
   save() { }
+
   close() { }
 }

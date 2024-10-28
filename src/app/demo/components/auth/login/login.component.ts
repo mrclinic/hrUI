@@ -47,7 +47,9 @@ export class LoginComponent implements OnInit {
                     .subscribe(() => {
                         const link = ['/mgt'];
                         this.zone.run(() => {
-                            this.router.navigate(link);
+                            this.router.navigate(link).then(() => {
+                                location.reload();
+                            });
                         });
                     });
             } catch (err) {

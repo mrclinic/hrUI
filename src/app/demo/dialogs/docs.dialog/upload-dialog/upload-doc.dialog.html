@@ -11,48 +11,54 @@
       </ul>
     </ng-template>
   </p-fileUpload>
-  <form [formGroup]="docForm" class="docForm">
-    <div class="field customCss">
-      <label for="exampleFormControlInput1">
-        تاريخ الوثيقة
-      </label>
-      <p-calendar class="inputCss" appendTo="body" formControlName="docDate" [placeholder]="'أدخل تاريخ الوثيقة'"
-        [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" [iconDisplay]="'input'" [showIcon]="true"
-        inputId="icondisplay" [dateFormat]="'yy-mm-dd'" />
 
+  <div class="card">
+    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+      <h5 class="m-0">معلومات الوثيقة</h5>
     </div>
+    <form [formGroup]="docForm" class="docForm">
+      <div class="field customCss">
+        <label for="exampleFormControlInput1">
+          تاريخ الوثيقة
+        </label>
+        <p-calendar class="inputCss" appendTo="body" formControlName="docDate" [placeholder]="'أدخل تاريخ الوثيقة'"
+          [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" [iconDisplay]="'input'" [showIcon]="true"
+          inputId="icondisplay" [dateFormat]="'yy-mm-dd'" />
 
-    <div class="field customCss">
-      <label for="name">رقم الوثيقة</label>
-      <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل رقم الوثيقة'"
-        formControlName="docNumber" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
-    </div>
+      </div>
 
-    <div class="field customCss">
-      <label for="name">مصدر الوثيقة</label>
-      <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل مصدر الوثيقة'"
-        formControlName="docSrc" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
-    </div>
+      <div class="field customCss">
+        <label for="name">رقم الوثيقة</label>
+        <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل رقم الوثيقة'"
+          formControlName="docNumber" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
+      </div>
 
-    <div class="field customCss">
-      <label for="name">وصف الوثيقة</label>
-      <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل وصف الوثيقة'"
-        formControlName="docDescription" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
-    </div>
+      <div class="field customCss">
+        <label for="name">مصدر الوثيقة</label>
+        <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل مصدر الوثيقة'"
+          formControlName="docSrc" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
+      </div>
 
-    <div class="field customCss">
-      <label for="exampleFormControlInput1">
-        نوع الوثيقة
-      </label>
-      <p-dropdown class="inputCss" appendTo="body" formControlName="docTypeId" [options]="docTypes" optionLabel="label"
-        [placeholder]="'اختر نوع الوثيقة'" dataKey="value" optionValue="value"
-        [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
-    </div>
+      <div class="field customCss">
+        <label for="name">وصف الوثيقة</label>
+        <input class="inputCss" type="text" pInputText class="form-control" [placeholder]="'أدخل وصف الوثيقة'"
+          formControlName="docDescription" [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
+      </div>
 
-    <div class="field customCss">
-      <label for="name">ملاحظات</label>
-      <textarea class="inputCss" class="form-control" formControlName="note" [placeholder]="'أدخل الملاحظات'">
-                  </textarea>
-    </div>
-  </form>
+      <div class="field customCss">
+        <label for="exampleFormControlInput1">
+          نوع الوثيقة
+        </label>
+        <p-dropdown class="inputCss" appendTo="body" formControlName="docTypeId" [options]="docTypes"
+          optionLabel="label" [placeholder]="'اختر نوع الوثيقة'" dataKey="value" optionValue="value"
+          [ngClass]="{'ng-invalid ng-dirty' : docForm.touched }" />
+      </div>
+
+      <div class="field customCss">
+        <label for="name">ملاحظات</label>
+        <textarea class="inputCss" class="form-control" formControlName="note" [placeholder]="'أدخل الملاحظات'">
+                    </textarea>
+      </div>
+    </form>
+  </div>
 </div>

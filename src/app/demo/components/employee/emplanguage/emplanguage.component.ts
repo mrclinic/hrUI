@@ -7,7 +7,8 @@ import { LanguageService } from 'src/app/demo/service/constants/language.service
 import { LanguageLevelService } from 'src/app/demo/service/constants/languagelevel.service';
 import { EmpLanguageService } from 'src/app/demo/service/employee/emplanguage.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-emplanguage',
   templateUrl: './emplanguage.component.html',
@@ -27,7 +28,9 @@ export class EmpLanguageComponent implements OnInit {
   languages: any[] = [];
   languageLevels: any[] = [];
   formStructureFilter: IFormStructure[] = [];
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly emplanguageService: EmpLanguageService, private readonly languageService: LanguageService
     , private readonly languageLevelService: LanguageLevelService, private readonly generalService: GeneralService) {
     this.initColumns();
@@ -56,9 +59,34 @@ export class EmpLanguageComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.initFormStructureFilter();
         this.fetched = true;
       });
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   initFormStructureFilter() {

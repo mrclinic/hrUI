@@ -37,6 +37,7 @@ export class PersonComponent implements OnInit {
   redirectUrlUpOnClick: string = 'employees/employee-profile';
   queryParamName: string = 'personId';
   tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
   constructor(private messageService: MessageService,
     private readonly personService: PersonService,
     private readonly employmentStatusTypeService: EmploymentStatusTypeService,
@@ -119,9 +120,11 @@ export class PersonComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
     this.initFormStructure();
+    this.initActions();
   }
 
   initFormStructure() {

@@ -4,7 +4,8 @@ import { MessageService } from 'primeng/api';
 import { APP_CONSTANTS } from 'src/app/app.contants';
 import { EmpWorkInjuryService } from 'src/app/demo/service/employee/empworkinjury.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-empworkinjury',
   templateUrl: './empworkinjury.component.html',
@@ -20,7 +21,9 @@ export class EmpWorkInjuryComponent implements OnInit {
   canEdit: string = 'HR_EmpWorkInjury_UpdateEmpWorkInjury';
   canSingleDelete: string = 'HR_EmpWorkInjury_DeleteEmpWorkInjury';
   @Input() personId: string;
-  constructor(private messageService: MessageService, private datePipe: DatePipe,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService, private datePipe: DatePipe,
     private readonly empworkinjuryService: EmpWorkInjuryService) { }
 
   transformDate(date: string | number | Date) {
@@ -34,8 +37,33 @@ export class EmpWorkInjuryComponent implements OnInit {
         this.empworkinjurys = this.mapItemList(res);
         this.initColumns();
         this.initFormStructure();
+        this.initActions();
       }
     );
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

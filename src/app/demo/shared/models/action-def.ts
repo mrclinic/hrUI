@@ -17,5 +17,6 @@ export enum TABLE_ACTION {
   DOWNLOAD = 4,
   NAVIGATE = 5,
   UPLOAD = 6,
-  DIALOG = 7
+  DIALOG = 7,
+  VIEWINFO = 8
 }

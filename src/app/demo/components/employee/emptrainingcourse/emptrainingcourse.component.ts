@@ -7,7 +7,8 @@ import { GeneralService } from 'src/app/demo/service/common/general-service.serv
 import { ModificationContractTypeService } from 'src/app/demo/service/constants/modificationcontracttype.service';
 import { EmpTrainingCourseService } from 'src/app/demo/service/employee/emptrainingcourse.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-emptrainingcourse',
   templateUrl: './emptrainingcourse.component.html',
@@ -25,7 +26,9 @@ export class EmpTrainingCourseComponent implements OnInit {
   canSingleDelete: string = 'HR_EmpTrainingCourse_DeleteEmpTrainingCourse';
   @Input() personId: string;
   contractTypes: any[] = [];
-  constructor(private messageService: MessageService, private datePipe: DatePipe,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService, private datePipe: DatePipe,
     private readonly emptrainingcourseService: EmpTrainingCourseService,
     private readonly modificationContractTypeService: ModificationContractTypeService, private readonly generalService: GeneralService) {
     this.initColumns();
@@ -51,8 +54,33 @@ export class EmpTrainingCourseComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

@@ -8,7 +8,8 @@ import { APP_CONSTANTS } from 'src/app/app.contants';
 import { UploadFileDialogComponent } from 'src/app/demo/dialogs/docs.dialog/upload-dialog/upload-doc.dialog';
 import { EmpDocService } from 'src/app/demo/service/employee/empdoc.service';
 import { UnsubscribeComponent } from 'src/app/demo/shared/unsubscribe/unsubscribe.component';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-empdocs',
   templateUrl: './empdocs.component.html',
@@ -25,12 +26,16 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
   fetched: boolean = false;
   refId: string;
   ref?: DynamicDialogRef;
-  constructor(private messageService: MessageService, private datePipe: DatePipe,
+  tableActions: ActionDef[] = [];
+  canDownloadDocs: string = 'HR_EmpDoc_DownloadEmpDoc';
+  canUploadDocs: string = 'HR_EmpDoc_UploadEmpDoc';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService, private datePipe: DatePipe,
     private readonly empDocService: EmpDocService,
     private route: ActivatedRoute, private dialogService: DialogService
   ) {
     super();
     this.initColumns();
+    this.initActions();
   }
 
   transformDate(date: string | number | Date) {
@@ -46,6 +51,31 @@ export class EmpDocsComponent extends UnsubscribeComponent implements OnInit {
     this.empDocService.GetEmpDocsInfo(this.filter).subscribe((res) => {
       this.empDocs = this.mapItemList(res);
     })
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canUploadDocs),
+        type: TABLE_ACTION.UPLOAD,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canDownloadDocs),
+        type: TABLE_ACTION.DOWNLOAD,
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

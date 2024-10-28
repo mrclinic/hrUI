@@ -9,7 +9,8 @@ import { NationalityService } from 'src/app/demo/service/constants/nationality.s
 import { OccurrencePartnerTypeService } from 'src/app/demo/service/constants/occurrencepartnertype.service';
 import { EmpPartnerService } from 'src/app/demo/service/employee/emppartner.service';
 import { IFormStructure } from 'src/app/demo/shared/dynamic-form/from-structure-model';
-
+import { ActionDef, TABLE_ACTION } from 'src/app/demo/shared/models/action-def';
+import { AuthServiceService } from 'src/app/demo/service/common/auth-service.service';
 @Component({
   selector: 'app-emppartner',
   templateUrl: './emppartner.component.html',
@@ -29,7 +30,9 @@ export class EmpPartnerComponent implements OnInit {
   nationalitys: any;
   occurrenceTypes: any;
   partnerWorks: any;
-  constructor(private messageService: MessageService,
+  tableActions: ActionDef[] = [];
+  canViewDocs: string = 'HR_EmpDoc_GetEmpDocsInfo';
+  constructor(private readonly authServiceService: AuthServiceService, private messageService: MessageService,
     private readonly emppartnerService: EmpPartnerService, private datePipe: DatePipe,
     private readonly genderService: GenderService, private readonly nationalityService: NationalityService,
     private readonly occurrencePartnerTypeService: OccurrencePartnerTypeService,
@@ -82,8 +85,33 @@ export class EmpPartnerComponent implements OnInit {
           });
         });
         this.initFormStructure();
+        this.initActions();
         this.fetched = true;
       });
+  }
+
+  initActions() {
+    this.tableActions = [
+      {
+        visible: this.authServiceService.checkPermission(this.canEdit),
+        type: TABLE_ACTION.EDIT,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canAdd),
+        type: TABLE_ACTION.Add,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canSingleDelete),
+        type: TABLE_ACTION.DELETE,
+      },
+      {
+        visible: this.authServiceService.checkPermission(this.canViewDocs),
+        type: TABLE_ACTION.VIEWINFO,
+        redirectUrl: 'employees/docs',
+        icon: 'pi-file',
+        tooltip: 'عرض الوثائق'
+      }
+    ]
   }
 
   mapItemList(items: any[]): any[] {

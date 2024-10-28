@@ -44,6 +44,7 @@ export class BloodGroupComponent implements OnInit {
       }
     ]
   }
+
   ngOnInit(): void {
     this.bloodgroupService.GetAllBloodGroups('').subscribe(
       (res) => {

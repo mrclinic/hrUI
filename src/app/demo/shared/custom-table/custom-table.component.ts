@@ -13,44 +13,42 @@ import { ActionDef, TABLE_ACTION } from '../models/action-def';
   styleUrls: ['./custom-table.component.css']
 })
 export class CustomTableComponent extends UnsubscribeComponent implements OnInit {
+
+  //Inputs
   @Input() cols: any[] = [];
-  @Input() canAdd: string = '';
-  @Input() canEdit: string = '';
-  @Input() canSingleDelete: string = '';
-  @Input() canMultiDelete: boolean = true;
-  @Input() hasCheckBox: boolean = true;
-  selectedItems: any[] = [];
   @Input() tableData: any[] = [];
   @Input() hasPaginator: boolean = true;
   @Input() showCurrentPageReport: boolean = true;
   @Input() tableTitle: string = '';
-  itemDialog: boolean = false;
   @Input() formStructure: IFormStructure[] = [];
-  deleteItemDialog: boolean = false;
-  deleteItemsDialog: boolean = false;
-  item: any = {};
-  selectedItemId: string;
-  @Output() submitEventHandler = new EventEmitter<any>();
-  @Output() deleteEventHandler = new EventEmitter<string>();
-  @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
-  @ViewChild(DynamicFilterComponent) childComponentFilter: DynamicFilterComponent;
   @Input() hasCustomCssClass: boolean = false;
   @Input() hasClickAbleRow: boolean = false;
   @Input() redirectUrlUpOnClick: string;
   @Input() queryParamName: string;
-  selectedItem: any;
   @Input() personId: string;
-  @Input() hasDocs: boolean = false;
-  @Input() hasUploadAction: boolean = false;
-  @Input() hasDownloadAction: boolean = false;
-  @Output() uploadEventHandler = new EventEmitter<any>();
   @Input() hasFilter: boolean = true;
-  isFiltering: boolean = false;
   @Input() formStructureFilter: IFormStructure[] = [];
-  @Output() submitEventHandlerFilter = new EventEmitter<any>();
-  @Input() hasGoToAction: boolean = true;
   @Input() tableActions: ActionDef[] = [];
+
+  //outputs
+  @Output() submitEventHandler = new EventEmitter<any>();
+  @Output() deleteEventHandler = new EventEmitter<string>();
+  @Output() uploadEventHandler = new EventEmitter<any>();
+  @Output() submitEventHandlerFilter = new EventEmitter<any>();
   @Output() openDialogEventHandler = new EventEmitter<any>();
+
+  //variables
+  itemDialog: boolean = false;
+  deleteItemDialog: boolean = false;
+  item: any = {};
+  selectedItemId: string;
+  selectedItem: any;
+  isFiltering: boolean = false;
+  isFiltered: boolean = false;
+  //viewchilds
+  @ViewChild(DynamicFormComponent) childComponent: DynamicFormComponent;
+  @ViewChild(DynamicFilterComponent) childComponentFilter: DynamicFilterComponent;
+
   constructor(private router: Router, private readonly empDocService: EmpDocService,) {
     super();
   }
@@ -58,6 +56,7 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   ngOnInit(): void {
     this.tableActions = this.tableActions.filter((p) => p.visible == true);
   }
+
   onRowSelect(event: any) {
     if (!this.hasClickAbleRow) return;
     this.router.navigate([this.redirectUrlUpOnClick, event.data.id], {
@@ -65,6 +64,7 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
     });
 
   }
+
   openNew() {
     this.childComponent.dynamicForm?.reset();
     this.item = {};
@@ -72,12 +72,14 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
     this.itemDialog = true;
 
   }
+
   editItem(item) {
     this.item = { ...item };
     this.selectedItemId = this.item?.id;
     this.itemDialog = true;
     this.childComponent.dynamicForm.patchValue({ ...this.item });
   }
+
   deleteSelectedItem(item) {
     this.item = item;
     this.deleteItemDialog = true;
@@ -91,18 +93,12 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   hideDialog() {
     this.itemDialog = false;
   }
+
   confirmDelete(item) {
     this.deleteEventHandler.emit(item?.id);
     this.deleteItemDialog = false;
   }
 
-  deleteSelectedItems() {
-    this.deleteItemsDialog = true;
-  }
-  confirmDeleteSelected() {
-    this.deleteItemsDialog = false;
-    let itemIdsToDelete = this.tableData.map((item) => { return item?.id });
-  }
   saveItem() {
     this.childComponent.dynamicForm.markAllAsTouched();
     this.item = { ...this.childComponent.dynamicForm.value, id: this.selectedItemId };
@@ -117,11 +113,11 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
     this.uploadEventHandler.emit(true);
   }
 
-  goToDocs(item) {
+  viewInfo(item, action) {
     this.router.navigate([
-      'employees/docs',
+      action.redirectUrl,
       item.id,
-      this.personId,
+      this.personId
     ]);
   }
 
@@ -132,15 +128,20 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   showFilter() {
     this.isFiltering = true;
   }
+
   hideFilter() {
     this.isFiltering = false;
+    this.isFiltered = false;
     this.childComponentFilter.dynamicForm.reset();
     this.submitEventHandlerFilter.emit(null);
   }
+
   search() {
     this.isFiltering = false;
-    this.submitEventHandlerFilter.emit(this.childComponentFilter.dynamicForm.value)
+    this.isFiltered = true;
+    this.submitEventHandlerFilter.emit(this.childComponentFilter.dynamicForm.value);
   }
+
   goToAction(item, action) {
     this.router.navigate([action.redirectUrl, item.id], {
       queryParams: { [action.queryParam]: item.id },
@@ -150,7 +151,14 @@ export class CustomTableComponent extends UnsubscribeComponent implements OnInit
   hasAddAction() {
     return this.tableActions.filter((p) => p.type == TABLE_ACTION.Add || p.type == TABLE_ACTION.UPLOAD).length >= 0;
   }
+
   openDialog(item) {
-    this.openDialogEventHandler.emit(item)
+    this.openDialogEventHandler.emit(item);
+  }
+
+  clearFilter() {
+    this.isFiltered = false;
+    this.childComponentFilter.dynamicForm.reset();
+    this.submitEventHandlerFilter.emit(null);
   }
 }
