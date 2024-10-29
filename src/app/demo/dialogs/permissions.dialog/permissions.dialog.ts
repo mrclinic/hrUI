@@ -35,11 +35,11 @@ import { TreeNode } from "primeng/api";
 export class PermissionListComponent {
   metaKeySelection: boolean = false;
   permissions: Permission[] = [];
-  selectedPermissions: Permission[] = [];
+  selectedPermissions: any[] = [];
   roleId: string = '';
   filter: string = '';
-  items: TreeNode[] = [];
-  selectedItems: TreeNode[] = [];
+  items: any[] = [];
+  selectedItems: any[] = [];
   constructor(private store: Store, public ref: DynamicDialogRef, public config: DynamicDialogConfig,
     private readonly permissionService: PermissionService, private readonly rolePermissionService: RolePermissionService
   ) { }
@@ -67,9 +67,14 @@ export class PermissionListComponent {
   getRolePermissions(filter: string) {
     this.store.dispatch(new RolePermissionActions.GetRolePermissionsInfo(filter)).subscribe(() => {
       this.selectedPermissions = this.store.selectSnapshot<Permission[]>((state) => state.users.selectedPermissions);
-      this.selectedItems = this.createPermissionsTree(this.selectedPermissions, true);
+      this.selectedItems = this.selectedPermissions.map((item) => ({
+        ...item,
+        key: item.name,
+        label: item.displayName,
+        data: item.name
+      }));
       this.items = this.createPermissionsTree(this.permissions);
-      console.log(this.selectedItems)
+      this.checkTreenode();
       console.log(this.items)
     });
   }
@@ -116,5 +121,19 @@ export class PermissionListComponent {
 
   nodeUnselect(event: any) {
     console.log(event);
+  }
+
+  checkTreenode() {
+    this.items.forEach((item) => {
+      let hasSelectedChild = false;
+      item.children.forEach((child) => {
+        if (this.selectedItems.filter((p) => p.key == child.key).length > 0) {
+          child.selected = true;
+          hasSelectedChild = true;
+        }
+      });
+      if (hasSelectedChild) item.partialSelected = true;
+      //if (item.children.filter((p) => p.selected == true) == item.children) item.selected = true;
+    })
   }
 }
