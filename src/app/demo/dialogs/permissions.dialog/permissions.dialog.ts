@@ -2,10 +2,10 @@ import { Component } from "@angular/core";
 import { Store } from "@ngxs/store";
 import { DynamicDialogConfig, DynamicDialogRef } from "primeng/dynamicdialog";
 import { Permission } from "../../models/userManagment/Permission";
-import { RolePermission } from "../../models/userManagment/RolePermission";
 import { RolePermissionActions } from "../../stateManagement/actions/role.permission.action";
 import { PermissionService } from "../../service/userManagment/permission.service";
 import { RolePermissionService } from "../../service/userManagment/role.permission.service";
+import { TreeNode } from "primeng/api";
 
 
 @Component({
@@ -22,34 +22,24 @@ import { RolePermissionService } from "../../service/userManagment/role.permissi
   </ng-template>
 </p-toolbar>
 
-<p-table [value]="permissions" selectionMode="multiple" [(selection)]="selectedPermissions" dir="rtl" [paginator]="true"
-  [rows]="5" [responsive]="true" [selectionPageOnly]="true">
-  <ng-template pTemplate="header">
-    <tr>
-      <th class="th" pSortableColumn="price">الاسم العربي <p-sortIcon field="price"></p-sortIcon>
-      </th>
-      <th style="width: 2.25em">
-        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-permission>
-    <tr>
-      <td class="td">{{permission.displayName}}</td>
-      <td>
-        <p-tableCheckbox [value]="permission"> </p-tableCheckbox>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<p-tree 
+ [metaKeySelection]="metaKeySelection"
+        [value]="items" 
+        selectionMode="checkbox" 
+        class="w-full md:w-30rem" 
+        [(selection)]="selectedItems"
+         (onNodeSelect)="nodeSelect($event)"
+        (onNodeUnselect)="nodeUnselect($event)" />
         `
 })
 export class PermissionListComponent {
+  metaKeySelection: boolean = false;
   permissions: Permission[] = [];
   selectedPermissions: Permission[] = [];
-  rolePermissions: RolePermission[] = [];
   roleId: string = '';
   filter: string = '';
+  items: TreeNode[] = [];
+  selectedItems: TreeNode[] = [];
   constructor(private store: Store, public ref: DynamicDialogRef, public config: DynamicDialogConfig,
     private readonly permissionService: PermissionService, private readonly rolePermissionService: RolePermissionService
   ) { }
@@ -76,10 +66,55 @@ export class PermissionListComponent {
   }
   getRolePermissions(filter: string) {
     this.store.dispatch(new RolePermissionActions.GetRolePermissionsInfo(filter)).subscribe(() => {
-      this.rolePermissions = this.store.selectSnapshot<RolePermission[]>((state) => state.users.rolePermissions);
       this.selectedPermissions = this.store.selectSnapshot<Permission[]>((state) => state.users.selectedPermissions);
+      this.selectedItems = this.createPermissionsTree(this.selectedPermissions, true);
+      this.items = this.createPermissionsTree(this.permissions);
+      console.log(this.selectedItems)
+      console.log(this.items)
     });
   }
 
+  createPermissionsTree(permissions, withSelection: boolean = false) {
+    const map = new Map();
+    let items = [];
+    permissions.forEach((item) => {
+      const key = item.name.split('_')[1];
+      const collection = map.get(key);
+      if (!collection) {
+        let object = {
+          'key': item.name,
+          'label': item.displayName,
+          'data': item.name,
+          'expanded': true,
+          'selected': withSelection,
+          'selectable': true
+        }
+        map.set(key, [object]);
+      } else {
+        let object = {
+          'key': item.name,
+          'label': item.displayName,
+          'data': item.name,
+          'expanded': true,
+          'selected': withSelection,
+          'selectable': true
+        }
+        collection.push(object);
+      }
+    })
+    for (let item of map) {
+      let object =
+        { 'key': item[0], 'expanded': true, 'selectable': true, label: item[0], 'data': item[0], 'children': item[1] }
+      items.push(object);
+    }
+    return items;
+  }
 
+  nodeSelect(event: any) {
+    console.log(event);
+  }
+
+  nodeUnselect(event: any) {
+    console.log(event);
+  }
 }
