@@ -260,7 +260,9 @@ export class AppMenuComponent implements OnInit {
         localStorage.clear();
         const link = ['/auth/login'];
         this.zone.run(() => {
-            this.router.navigate(link);
+            this.router.navigate(link).then(() => {
+                location.reload();
+            });
         });
     }
 }

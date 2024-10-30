@@ -21,7 +21,17 @@ import { TreeNode } from "primeng/api";
     [disabled]="!this.selectedPermissions || !this.selectedPermissions.length" (click)="addPermToRole()"></button>
   </ng-template>
 </p-toolbar>
-
+<div class="mb-3" style="direction: rtl;">
+    <p-button 
+        icon="pi pi-plus" 
+        label="توسيع الكل" 
+        (onClick)="expandAll()" 
+        class="ml-2" />
+    <p-button 
+        icon="pi pi-minus" 
+        label="طي الكل" 
+        (onClick)="collapseAll()" />
+</div>
 <p-tree 
  [metaKeySelection]="metaKeySelection"
         [value]="items" 
@@ -33,7 +43,7 @@ import { TreeNode } from "primeng/api";
         `
 })
 export class PermissionListComponent {
-  metaKeySelection: boolean = false;
+  metaKeySelection: boolean = true;
   permissions: Permission[] = [];
   selectedPermissions: any[] = [];
   roleId: string = '';
@@ -57,7 +67,7 @@ export class PermissionListComponent {
     );
   }
   addPermToRole() {
-    this.ref.close(this.selectedPermissions);
+    this.ref.close(this.selectedItems.filter((p) => p.id));
   }
 
   addPermsToRole() {
@@ -92,7 +102,8 @@ export class PermissionListComponent {
           'data': item.name,
           'expanded': true,
           'selected': withSelection,
-          'selectable': true
+          'selectable': true,
+          'id': item.id
         }
         map.set(key, [object]);
       } else {
@@ -102,7 +113,8 @@ export class PermissionListComponent {
           'data': item.name,
           'expanded': true,
           'selected': withSelection,
-          'selectable': true
+          'selectable': true,
+          'id': item.id
         }
         collection.push(object);
       }
@@ -133,7 +145,29 @@ export class PermissionListComponent {
         }
       });
       if (hasSelectedChild) item.partialSelected = true;
-      //if (item.children.filter((p) => p.selected == true) == item.children) item.selected = true;
+      if (item.children.filter((p) => p.selected == true).length == item.children.length) item.partialSelected = false;
+      console.log(item)
     })
+  }
+
+  expandAll() {
+    this.items.forEach((node) => {
+      this.expandRecursive(node, true);
+    });
+  }
+
+  collapseAll() {
+    this.items.forEach((node) => {
+      this.expandRecursive(node, false);
+    });
+  }
+
+  private expandRecursive(node: TreeNode, isExpand: boolean) {
+    node.expanded = isExpand;
+    if (node.children) {
+      node.children.forEach((childNode) => {
+        this.expandRecursive(childNode, isExpand);
+      });
+    }
   }
 }
