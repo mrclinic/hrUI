@@ -233,4 +233,6 @@ export class APP_CONSTANTS {
     public static displayName = 'الاسم العربي';
     public static order = 'الترتيب';
     public static cardNumber = 'رقم الهوية الشخصية';
+    public static CurrentPassword = 'كلمة المرور الحالية';
+    public static NewPassword = 'كلمة المرور الجديدة';
 }

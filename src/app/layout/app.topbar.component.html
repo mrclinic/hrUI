@@ -16,13 +16,22 @@
 
     <div #topbarmenu class="layout-topbar-menu"
         [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-calendar"></i>
-            <span>Calendar</span>
-        </button>
-        <button class="p-link layout-topbar-button" [routerLink]="['/mgt/myProfile']">
+        <button class="p-link layout-topbar-button" tooltipPosition="top" pTooltip="حسابي"
+            (click)="menu.toggle($event)">
             <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <span>حسابي</span>
         </button>
+        <p-menu #menu [popup]="true" [model]="itemsProfile"></p-menu>
     </div>
 </div>
+
+<p-dialog [(visible)]="changePWDialog" [style]="{width: '300PX'}" header="تغيير كلمة المرور" [modal]="true"
+    class="p-fluid">
+    <app-dynamic-form [formStructure]="formStructure"></app-dynamic-form>
+    <ng-template pTemplate="footer">
+        <p-button pRipple label="إلغاء" tooltipPosition="top" [raised]="true" [rounded]="true" pTooltip="إلغاء"
+            icon="pi pi-times" class="p-button-text" severity="secondary" (click)="hideDialog()"></p-button>
+        <p-button pRipple label="حفظ" tooltipPosition="top" [raised]="true" [rounded]="true" pTooltip="حفظ"
+            icon="pi pi-check" class="p-button-text" (click)="setChangePW()"></p-button>
+    </ng-template>
+</p-dialog>
