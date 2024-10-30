@@ -1,8 +1,7 @@
-import { NgZone, OnInit } from '@angular/core';
+import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { AuthServiceService } from '../demo/service/common/auth-service.service';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-menu',
@@ -12,10 +11,7 @@ export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
 
-    constructor(public layoutService: LayoutService, private authServiceService: AuthServiceService,
-        private router: Router,
-        private zone: NgZone
-    ) { }
+    constructor(public layoutService: LayoutService, private authServiceService: AuthServiceService) { }
 
     ngOnInit() {
         this.model = [
@@ -244,23 +240,7 @@ export class AppMenuComponent implements OnInit {
                     'HR_TerminationReason_GetTerminationReasons', 'HR_University_GetUniversitys', 'HR_VacationType_GetVacationTypes',
                     'HR_DocType_GetDocTypes'
                 ])
-            },
-            {
-                label: 'تسجيل الخروج',
-                hasAction: true,
-                command: (item) => {
-                    this.logOut(item);
-                },
-                icon: 'pi pi-sign-out',
-                visible: true
-            },
+            }
         ];
-    }
-    logOut(item) {
-        localStorage.clear();
-        const link = ['/auth/login'];
-        this.zone.run(() => {
-            this.router.navigate(link);
-        });
     }
 }

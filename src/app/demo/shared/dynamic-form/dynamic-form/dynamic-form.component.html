@@ -14,6 +14,20 @@
             </span>
         </div>
 
+        <!-- password -->
+        <div class="field" *ngIf="['password'].includes(control.type)">
+            <label for="name">{{ control.label }}</label>
+            <p-password [formControlName]="control.name" [toggleMask]="true" [placeholder]="control.placeHolder"
+                promptLabel="أدخل كلمة المرور" weakLabel="كلمة المرور ضعيفة" mediumLabel="كلمة المرور متوسطة"
+                strongLabel="كلمة المرور قوية" appendTo="body"
+                [ngClass]="{'ng-invalid ng-dirty' : dynamicForm.touched }">
+            </p-password>
+            <span class="error"
+                *ngIf="dynamicForm.controls[control.name]?.invalid && dynamicForm.controls[control.name]?.touched">
+                {{ getErrorMessage(control) }}
+            </span>
+        </div>
+
         <!-- Radio Button -->
         <div class="field" *ngIf="['radio'].includes(control.type)">
             <div>
